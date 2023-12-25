@@ -1,13 +1,18 @@
-import { createContext } from "react";
+import { Context, createContext } from "react";
+import { AppAccount, AppTransaction, AppCategory } from "../models/lunchmoney/appModels";
 
 const defaultState = {
-  lmApiKey: ""
+  lmApiKey: "",
+  transactions: [],
+  accounts: [],
+  categories: []
 }
-type AppState = typeof defaultState;
 
-const defaultAppState = {
-  // async doRpcCall(method, args) { return new Promise(() => null); } // never complete by default }
-}
-// type RpcContextData = typeof defaultRpcContext;
+type AppState = {
+  lmApiKey: string;
+  transactions: AppTransaction[];
+  accounts: AppAccount[];
+  categories: AppCategory[];
+};
 
-export const ParentContext = createContext(null);
+export const ParentContext: Context<AppState> = createContext(defaultState);

@@ -1,10 +1,10 @@
-import { Transaction } from "lunch-money";
 import { View, Text, StyleSheet } from "react-native";
 import { commonStyles } from "../styles/commonStyles";
 import { brandingColours } from "../styles/brandingConstants";
+import { AppTransaction } from "../models/lunchmoney/appModels";
 
 type TransactionProps = {
-  transaction: Transaction
+  transaction: AppTransaction
 }
 
 const transactionStyles = StyleSheet.create({
@@ -37,6 +37,7 @@ export function TransactionComponent({ transaction }: TransactionProps) {
     <View style={transactionStyles.card}>
       <View style={transactionStyles.topBar}>
         <Text style={transactionStyles.transactionName}>{transaction.payee}</Text>
+        <Text style={transactionStyles.transactionName}>{transaction.assetName}</Text>
         <Text style={transactionStyles.amount}>{parseFloat(transaction.amount).toFixed(2)}</Text>
       </View>
       <Text style={transactionStyles.date}>{transaction.date}</Text>
