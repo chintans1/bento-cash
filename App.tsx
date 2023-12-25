@@ -6,6 +6,7 @@ import { LocalStorageKeys } from './models/enums/localStorageKeys';
 import Initialization from './screens/Initialization';
 import Transactions from './screens/Transactions';
 import { commonStyles } from './styles/commonStyles';
+import Charts from './screens/Charts';
 
 const styles = StyleSheet.create({
   bottomBar: {
@@ -35,7 +36,10 @@ export default function App() {
       />
       {lmApiKey && lmApiKey.length > 0 ?
         <View style={commonStyles.container}>
-          {showTransactions ? <Transactions lmApiKey={lmApiKey} /> : <Text>Charts</Text>}
+          {showTransactions ?
+            <Transactions lmApiKey={lmApiKey} />
+          :
+            <Charts lmApiKey={lmApiKey} />}
           <View style={styles.bottomBar}>
             <Button
               title="Transactions"
