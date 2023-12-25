@@ -1,16 +1,17 @@
 import { StyleSheet } from "react-native";
 import { brandingColours } from "./brandingConstants";
 
+
 const base = {
-  padding: 5,
   color: brandingColours.secondaryColour
 }
 
 export const commonStyles = StyleSheet.create({
   container: {
+    ...base,
     flex: 1,
     backgroundColor: brandingColours.backgroundColour,
-    paddingTop: 22
+    // paddingTop: 22
   },
   textBase: {
     ...base,
