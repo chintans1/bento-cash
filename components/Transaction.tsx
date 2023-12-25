@@ -1,6 +1,7 @@
 import { Transaction } from "lunch-money";
 import { View, Text, StyleSheet } from "react-native";
 import { commonStyles } from "../styles/commonStyles";
+import { brandingColours } from "../styles/brandingConstants";
 
 type TransactionProps = {
   transaction: Transaction
@@ -9,7 +10,7 @@ type TransactionProps = {
 const transactionStyles = StyleSheet.create({
   card: {
     // alignItems: 'center',
-    backgroundColor: "#f0f0f0",
+    backgroundColor: brandingColours.shadedColour,
     borderRadius: 2,
     flex: 1,
     margin: 5,
@@ -23,6 +24,7 @@ const transactionStyles = StyleSheet.create({
     verticalAlign: "bottom"
   },
   transactionName: {
+    color: brandingColours.primaryColour,
     ...commonStyles.headerText,
     fontWeight: "bold"
   },

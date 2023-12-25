@@ -7,6 +7,7 @@ import Initialization from './screens/Initialization';
 import Transactions from './screens/Transactions';
 import { commonStyles } from './styles/commonStyles';
 import Charts from './screens/Charts';
+import { NavigationContainer } from '@react-navigation/native';
 
 const styles = StyleSheet.create({
   bottomBar: {
@@ -29,30 +30,32 @@ export default function App() {
   }, [])
 
   return (
-    <View style={{flex: 1}}>
-      <StatusBar
-        animated={true}
-        style="auto"
-      />
-      {lmApiKey && lmApiKey.length > 0 ?
-        <View style={commonStyles.container}>
-          {showTransactions ?
-            <Transactions lmApiKey={lmApiKey} />
-          :
-            <Charts lmApiKey={lmApiKey} />}
-          <View style={styles.bottomBar}>
-            <Button
-              title="Transactions"
-              onPress={() => setTransactionsView(true)}
-            />
-            <Button
-              title="Charts"
-              onPress={() => setTransactionsView(false)}
-            />
+    <NavigationContainer>
+      <View style={{flex: 1}}>
+        <StatusBar
+          animated={true}
+          style="auto"
+        />
+        {lmApiKey && lmApiKey.length > 0 ?
+          <View style={commonStyles.container}>
+            {showTransactions ?
+              <Transactions lmApiKey={lmApiKey} />
+            :
+              <Charts lmApiKey={lmApiKey} />}
+            <View style={styles.bottomBar}>
+              <Button
+                title="Transactions"
+                onPress={() => setTransactionsView(true)}
+              />
+              <Button
+                title="Charts"
+                onPress={() => setTransactionsView(false)}
+              />
+            </View>
           </View>
-        </View>
-      :
-        <Initialization />}
-    </View>
+        :
+          <Initialization />}
+      </View>
+    </NavigationContainer>
   );
 }

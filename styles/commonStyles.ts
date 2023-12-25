@@ -1,13 +1,15 @@
 import { StyleSheet } from "react-native";
+import { brandingColours } from "./brandingConstants";
 
 const base = {
-  padding: 5
+  padding: 5,
+  color: brandingColours.secondaryColour
 }
 
 export const commonStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: brandingColours.backgroundColour,
     paddingTop: 22
   },
   textBase: {
@@ -18,12 +20,14 @@ export const commonStyles = StyleSheet.create({
     ...base,
     fontSize: 18,
     height: 44,
-    display: "flex"
+    display: "flex",
+    color: brandingColours.primaryColour
   },
   headerTextBold: {
     ...base,
     fontSize: 24,
     height: 44,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    color: brandingColours.primaryColour
   }
 });
