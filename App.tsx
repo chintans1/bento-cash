@@ -4,16 +4,8 @@ import React from 'react';
 import { getValueFor } from './utils/secureStore';
 import { LocalStorageKeys } from './models/enums/localStorageKeys';
 import Initialization from './screens/Initialization';
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "white",
-    alignItems: 'center',
-    justifyContent: 'center',
-  }
-});
-
+import Transactions from './screens/Transactions';
+import { commonStyles } from './styles/commonStyles';
 
 export default function App() {
   // getLunchMoneyTransactions();
@@ -30,10 +22,13 @@ export default function App() {
   }, [])
 
   return (
-    <View style={styles.container}>
+    <View style={commonStyles.container}>
       {lmApiKey && lmApiKey.length > 0 ?
-        <Text>Lunch Money Key: { lmApiKey }</Text>
+      // <style={styles.container}>
+        // <Text>Lunch Money Key: { lmApiKey }</Text>
+        <Transactions lmApiKey={lmApiKey} />
         // <StatusBar style="auto" />
+      // </>
       :
         <Initialization />}
     </View>
