@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { Alert, Button, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { getValueFor } from './utils/secureStore';
 import { LocalStorageKeys } from './models/enums/localStorageKeys';
@@ -7,28 +7,46 @@ import Initialization from './screens/Initialization';
 import Transactions from './screens/Transactions';
 import { commonStyles } from './styles/commonStyles';
 
+const styles = StyleSheet.create({
+  bottomBar: {
+    marginBottom: 10,
+    padding: 15,
+    justifyContent: "space-between",
+    flexDirection: "row"
+  }
+});
+
 export default function App() {
   // getLunchMoneyTransactions();
   const [lmApiKey, setLmApiKey] = React.useState<string | null>(null)
+  const [showTransactions, setTransactionsView] = React.useState(true);
 
   React.useEffect(() => {
     getValueFor(LocalStorageKeys.LUNCH_MONEY_KEY).then((lmValue) => {
       setLmApiKey(lmValue)
     });
-
-    // supabase.auth.onAuthStateChange((_event, session) => {
-    //   setSession(session)
-    // })
   }, [])
 
   return (
-    <View style={commonStyles.container}>
+    <View style={{flex: 1}}>
+      <StatusBar
+        animated={true}
+        style="auto"
+      />
       {lmApiKey && lmApiKey.length > 0 ?
-      // <style={styles.container}>
-        // <Text>Lunch Money Key: { lmApiKey }</Text>
-        <Transactions lmApiKey={lmApiKey} />
-        // <StatusBar style="auto" />
-      // </>
+        <View style={commonStyles.container}>
+          {showTransactions ? <Transactions lmApiKey={lmApiKey} /> : <Text>Charts</Text>}
+          <View style={styles.bottomBar}>
+            <Button
+              title="Transactions"
+              onPress={() => setTransactionsView(true)}
+            />
+            <Button
+              title="Charts"
+              onPress={() => setTransactionsView(false)}
+            />
+          </View>
+        </View>
       :
         <Initialization />}
     </View>
