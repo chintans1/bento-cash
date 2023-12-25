@@ -9,6 +9,7 @@ const base = {
 export const commonStyles = StyleSheet.create({
   container: {
     ...base,
+    paddingTop: 3,
     flex: 1,
     backgroundColor: brandingColours.backgroundColour,
     // paddingTop: 22

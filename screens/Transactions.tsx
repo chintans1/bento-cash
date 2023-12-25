@@ -9,7 +9,6 @@ export default function Transactions({ route, navigation }) {
 
   return (
     <View style={commonStyles.container}>
-      <Text style={commonStyles.headerTextBold}>Transactions</Text>
       <FlatList
         data={transactions}
         renderItem={({ item }) => <TransactionComponent transaction={item} />}

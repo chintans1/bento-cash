@@ -11,36 +11,50 @@ const transactionStyles = StyleSheet.create({
   card: {
     // alignItems: 'center',
     backgroundColor: brandingColours.shadedColour,
-    borderRadius: 2,
+    borderRadius: 5,
     flex: 1,
-    margin: 5,
-    // ...styles.cardShadow
-  },
-  topBar: {
-    flex: 1,
-    textAlign: "center",
+    marginHorizontal: 5,
+    marginVertical: 3,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
     flexDirection: "row",
     justifyContent: "space-between",
-    verticalAlign: "bottom"
+    // ...styles.cardShadow
+  },
+  leftSection: {
+    flex: 1,
+    flexDirection: "column"
+  },
+  rightSection: {
+    alignItems: "flex-end",
+    flexDirection: "column",
   },
   transactionName: {
     color: brandingColours.primaryColour,
-    ...commonStyles.headerText,
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   date: {...commonStyles.textBase},
-  amount: {...commonStyles.textBase }
+  account: {...commonStyles.textBase},
+  amount: {
+    color: brandingColours.secondaryColour,
+    fontWeight: "bold"
+   }
 });
 
 export function TransactionComponent({ transaction }: TransactionProps) {
   return (
     <View style={transactionStyles.card}>
-      <View style={transactionStyles.topBar}>
-        <Text style={transactionStyles.transactionName}>{transaction.payee}</Text>
-        <Text style={transactionStyles.transactionName}>{transaction.assetName}</Text>
-        <Text style={transactionStyles.amount}>{parseFloat(transaction.amount).toFixed(2)}</Text>
+      <View style={transactionStyles.leftSection}>
+        <Text
+          numberOfLines={1}
+          ellipsizeMode="tail"
+          style={transactionStyles.transactionName}>{transaction.notes}</Text>
+        <Text style={transactionStyles.account}>{transaction.assetName}</Text>
       </View>
-      <Text style={transactionStyles.date}>{transaction.date}</Text>
+      <View style={transactionStyles.rightSection}>
+        <Text style={transactionStyles.amount}>{parseFloat(transaction.amount).toFixed(2)}</Text>
+        <Text style={transactionStyles.date}>{transaction.date}</Text>
+      </View>
     </View>
   );
 }
