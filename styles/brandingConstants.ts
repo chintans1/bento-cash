@@ -5,10 +5,15 @@ const backgroundColour = "#E5E5E5";
 const shadedColour = "white";
 const black = "#000000";
 
+const red = "#D90429";
+const green = "#38B000";
+
 export const brandingColours = {
   primaryColour,
   secondaryColour,
   backgroundColour,
   shadedColour,
-  black
+  black,
+  red,
+  green
 }

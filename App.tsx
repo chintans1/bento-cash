@@ -13,7 +13,7 @@ import { AppState, ParentContext } from './data/context';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import InternalLunchMoneyClient from './clients/lunchMoneyClient';
-import { AppAccount, AppTransaction } from './models/lunchmoney/appModels';
+import { AppAccount, AppCategory, AppTransaction } from './models/lunchmoney/appModels';
 
 const styles = StyleSheet.create({
   bottomBar: {
@@ -33,7 +33,10 @@ export default function App() {
   //const [lmApiKey, setLmApiKey] = useState<string | null>("")
   // const [showTransactions, setTransactionsView] = useState(true);
 
-  const getTransactionsForApp = async (lmClient: InternalLunchMoneyClient, accounts: Map<number, AppAccount>) => {
+  const getTransactionsForApp = async (
+    lmClient: InternalLunchMoneyClient,
+    accounts: Map<number, AppAccount>,
+    categories: Map<number, AppCategory>) => {
     const lmTransactions = await lmClient.getAllTransactions();
     const appTransactions: AppTransaction[] = [];
 
@@ -46,11 +49,12 @@ export default function App() {
         currency: transaction.currency,
         notes: transaction.notes,
 
-        // categoryId?: number;
         assetId: transaction.asset_id,
         assetName: transaction.asset_id != null ?
-          accounts.get(transaction.asset_id)?.accountName : undefined,
-        // categoryName?: string;
+        accounts.get(transaction.asset_id)?.accountName : undefined,
+
+        categoryId: transaction.category_id,
+        categoryName: categories.get(transaction.category_id)?.name,
 
         status: transaction.status
       });
@@ -77,14 +81,32 @@ export default function App() {
     return accountsMap;
   }
 
+  const getCategoriesMap = async (lmClient: InternalLunchMoneyClient) => {
+    const categories = await lmClient.getClient().getCategories();
+    const categoriesMap = new Map<number, AppCategory>();
+
+    for (const category of categories) {
+      categoriesMap.set(category.id, {
+        id: category.id,
+        name: category.name,
+        is_income: category.is_income,
+        is_group: category.is_group,
+        group_id: category.group_id
+      });
+    }
+
+    return categoriesMap;
+  }
+
   const initializeState = async () => {
     const lmValue = await getValueFor(LocalStorageKeys.LUNCH_MONEY_KEY);
 
     const lunchMoneyClient = new InternalLunchMoneyClient({ token: lmValue });
     const accounts = await getAccountsMap(lunchMoneyClient);
+    const categories = await getCategoriesMap(lunchMoneyClient);
     // We have the API key so lets fetch everything we can and process it
     // We have to fetch accounts and categories first
-    const transactions = await getTransactionsForApp(lunchMoneyClient, accounts);
+    const transactions = await getTransactionsForApp(lunchMoneyClient, accounts, categories);
     setAppState({ lmApiKey: lmValue, transactions: transactions });
     setIsReady(true);
   }
