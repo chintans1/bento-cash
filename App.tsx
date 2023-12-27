@@ -13,6 +13,7 @@ import InternalLunchMoneyClient from './clients/lunchMoneyClient';
 import { AppAccount, AppCategory, AppTransaction } from './models/lunchmoney/appModels';
 import { brandingColours } from './styles/brandingConstants';
 import Accounts from './screens/Accounts';
+import Settings from './screens/Settings';
 
 
 const Tab = createBottomTabNavigator();
@@ -79,9 +80,9 @@ export default function App() {
       categoriesMap.set(category.id, {
         id: category.id,
         name: category.name,
-        is_income: category.is_income,
-        is_group: category.is_group,
-        group_id: category.group_id
+        isIncome: category.is_income,
+        isGroup: category.is_group,
+        groupId: category.group_id
       });
     }
 
@@ -150,6 +151,10 @@ export default function App() {
             <Tab.Screen
               name="Charts"
               component={Charts}
+            />
+            <Tab.Screen
+              name="Settings"
+              component={Settings}
             />
           </Tab.Navigator>
         </NavigationContainer>

@@ -27,6 +27,18 @@ export class InternalLunchMoneyClient {
   async getAllTransactions() { // : Transaction[] {
     return await this.lunchMoneyClient.getTransactions();
   }
+
+  async getLunchMoneyInfo() {
+    const response = await this.lunchMoneyClient.get("/v1/me");
+
+    return {
+      userId:	response.user_id,
+      userName: response.user_name,
+      userEmail: response.user_email,
+      budgetName: response.budget_name,
+      apiKeyLabel: response.api_key_label || "unknown"
+    }
+  }
 }
 
 export default InternalLunchMoneyClient;

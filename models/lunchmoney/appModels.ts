@@ -26,7 +26,15 @@ export type AppAccount = {
 export type AppCategory = {
   id: number;
   name: string;
-  is_income: boolean;
-  is_group: boolean;
-  group_id?: number;
+  isIncome: boolean;
+  isGroup: boolean;
+  groupId?: number;
+}
+
+export type AppLunchMoneyInfo = {
+  userId:	number;
+  userName: string;
+  userEmail: string;
+  budgetName: string;
+  apiKeyLabel?: string;
 }
