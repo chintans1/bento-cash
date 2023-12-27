@@ -1,30 +1,20 @@
 import { StatusBar } from 'expo-status-bar';
-import { Alert, Button, StyleSheet, Text, View } from 'react-native';
-import React, { createContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getValueFor } from './utils/secureStore';
 import { LocalStorageKeys } from './models/enums/localStorageKeys';
 import Initialization from './screens/Initialization';
 import Transactions from './screens/Transactions';
-import { commonStyles } from './styles/commonStyles';
 import Charts from './screens/Charts';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AppState, ParentContext } from './data/context';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import InternalLunchMoneyClient from './clients/lunchMoneyClient';
 import { AppAccount, AppCategory, AppTransaction } from './models/lunchmoney/appModels';
+import { brandingColours } from './styles/brandingConstants';
+import Accounts from './screens/Accounts';
 
-const styles = StyleSheet.create({
-  bottomBar: {
-    marginBottom: 10,
-    padding: 15,
-    justifyContent: "space-between",
-    flexDirection: "row"
-  }
-});
 
-const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 export default function App() {
@@ -107,7 +97,12 @@ export default function App() {
     // We have the API key so lets fetch everything we can and process it
     // We have to fetch accounts and categories first
     const transactions = await getTransactionsForApp(lunchMoneyClient, accounts, categories);
-    setAppState({ lmApiKey: lmValue, transactions: transactions });
+    setAppState({
+      lmApiKey: lmValue,
+      transactions: transactions,
+      accounts: Array.from(accounts.values()),
+      categories: Array.from(categories.values())
+    });
     setIsReady(true);
   }
 
@@ -124,12 +119,33 @@ export default function App() {
   return (
     <ParentContext.Provider value={appState}>
       <SafeAreaProvider>
+        <StatusBar
+          animated={true}
+          style="auto"
+        />
         <NavigationContainer>
           <Tab.Navigator
-            initialRouteName="Transactions">
+            initialRouteName="Transactions"
+            screenOptions={{
+              headerTitleAlign: "left",
+              headerShadowVisible: false,
+              headerStyle: {
+                backgroundColor: brandingColours.backgroundColour,
+                borderColor: brandingColours.backgroundColour
+              },
+              headerTitleStyle: {
+                fontSize: 28,
+                fontWeight: "bold",
+                color: brandingColours.secondaryColour
+              }
+            }}>
             <Tab.Screen
               name="Transactions"
               component={Transactions}
+            />
+            <Tab.Screen
+              name="Accounts"
+              component={Accounts}
             />
             <Tab.Screen
               name="Charts"

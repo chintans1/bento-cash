@@ -1,11 +1,11 @@
 import { View, Text, StyleSheet } from "react-native";
 import { commonStyles } from "../styles/commonStyles";
 import { brandingColours } from "../styles/brandingConstants";
-import { AppTransaction } from "../models/lunchmoney/appModels";
+import { AppAccount, AppTransaction } from "../models/lunchmoney/appModels";
 import { CategoryComponent } from "./Category";
 
-type TransactionProps = {
-  transaction: AppTransaction
+type AccountProps = {
+  account: AppAccount
 }
 
 // borderStyle: "dotted", borderColor: "#000000", borderWidth: 1
@@ -14,7 +14,8 @@ const transactionStyles = StyleSheet.create({
   card: {
     flex: 1,
     flexDirection: "row",
-    justifyContent: "flex-start",
+    justifyContent: "space-between",
+    alignItems: "center",
 
     backgroundColor: brandingColours.shadedColour,
     borderRadius: 5,
@@ -37,7 +38,7 @@ const transactionStyles = StyleSheet.create({
     flexWrap: "wrap",
     flexShrink: 1,
     color: brandingColours.primaryColour,
-    fontSize: 16,
+    fontSize: 24,
     fontWeight: "bold"
   },
   date: {
@@ -62,9 +63,20 @@ const transactionStyles = StyleSheet.create({
   }
 });
 
-export function TransactionComponent({ transaction }: TransactionProps) {
+export function AccountComponent({ account }: AccountProps) {
   return (
     <View style={transactionStyles.card}>
+      <View style={transactionStyles.leftSection}>
+        <Text style={transactionStyles.transactionName}>{ account.accountName }</Text>
+        <Text style={transactionStyles.account}>{ account.institutionName }</Text>
+      </View>
+      <View style={transactionStyles.rightSection}>
+        <Text style={transactionStyles.amount}>{ account.balance }</Text>
+      </View>
+    </View>
+  );
+}
+/*
       <View style={transactionStyles.leftSection}>
         <View style={{ flexDirection: "row" }}>
           <Text
@@ -84,6 +96,4 @@ export function TransactionComponent({ transaction }: TransactionProps) {
         </Text>
         <Text style={transactionStyles.date}>{transaction.date}</Text>
       </View>
-    </View>
-  );
-}
+      */

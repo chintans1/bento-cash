@@ -13,6 +13,7 @@ export const commonStyles = StyleSheet.create({
     flex: 1,
     backgroundColor: brandingColours.backgroundColour,
     // paddingTop: 22
+    paddingHorizontal: 10
   },
   textBase: {
     ...base,

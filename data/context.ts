@@ -8,7 +8,7 @@ const defaultState = {
   categories: []
 }
 
-type AppState = {
+export type AppState = {
   lmApiKey: string;
   transactions: AppTransaction[];
   accounts: AppAccount[];
