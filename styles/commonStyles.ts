@@ -15,6 +15,32 @@ export const commonStyles = StyleSheet.create({
     // paddingTop: 22
     paddingHorizontal: 10
   },
+  card: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "flex-start",
+
+    backgroundColor: brandingColours.shadedColour,
+    borderRadius: 5,
+
+    // marginHorizontal: 5,
+    marginVertical: 3,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+  },
+  columnCard: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "flex-start",
+
+    backgroundColor: brandingColours.shadedColour,
+    borderRadius: 5,
+
+    // marginHorizontal: 5,
+    marginVertical: 3,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+  },
   textBase: {
     ...base,
     display: "flex"

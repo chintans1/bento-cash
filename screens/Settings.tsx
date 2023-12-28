@@ -1,7 +1,7 @@
-import { useContext, useEffect, useState } from "react";
-import { FlatList, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { useContext, useEffect, useRef, useState } from "react";
+import { Alert, Button, FlatList, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { commonStyles } from "../styles/commonStyles";
-import { ParentContext } from "../data/context";
+import { ParentContext, useParentContext } from "../context/app/appContextProvider";
 import InternalLunchMoneyClient from "../clients/lunchMoneyClient";
 import { AppLunchMoneyInfo } from "../models/lunchmoney/appModels";
 import { brandingColours } from "../styles/brandingConstants";
@@ -15,20 +15,64 @@ const settingsStyles = StyleSheet.create({
     borderRadius: 10,
     height: 40,
     padding: 10,
+  },
+  button: {
+    backgroundColor: brandingColours.secondaryColour,
+    marginTop: 10,
+    height: 40,
+    borderWidth: 1,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  buttonText: {
+    color: brandingColours.shadedColour,
+    fontWeight: "bold",
+    fontSize: 18
   }
 });
-export default function Settings() {
-  const { lmApiKey } = useContext(ParentContext);
+export default function Settings({ navigation, routes }) {
+  const { appState, updateLunchMoneyToken } = useParentContext();
+  const { lmApiKey } = appState;
+
+  const lunchMoneyClient = new InternalLunchMoneyClient({ token: lmApiKey });
 
   const [userInfo, setUserInfo] = useState<AppLunchMoneyInfo|null>(null);
   const [isReady, setIsReady] = useState(false);
+  const [newLmApiKey, setNewLmApiKey] = useState<string>("");
+
+  const lmApiKeyInputReference = useRef<TextInput>(null);
 
   const getUserInfo = async function() {
-    if (lmApiKey != null) {
-      const lunchMoneyClient = new InternalLunchMoneyClient({ token: lmApiKey });
+    if (lmApiKey != null && !isReady) {
       setUserInfo(await lunchMoneyClient.getLunchMoneyInfo());
       setIsReady(true);
     }
+  }
+
+  const getUserInfoForNewToken = (newToken: string) => {
+    return lunchMoneyClient.getLunchMoneyInfoForToken(newToken);
+  }
+
+  const updateAppForNewToken = (newUserInfo: AppLunchMoneyInfo) => {
+    updateLunchMoneyToken(newLmApiKey);
+    setUserInfo(newUserInfo);
+    setNewLmApiKey("");
+    lmApiKeyInputReference.current.clear();
+
+    Alert.alert("New budget has been loaded.");
+  }
+
+  const verifyNewLmToken = async (newToken: string) => {
+    const newUserInfo = await getUserInfoForNewToken(newToken);
+    // We have the new user info so we can show the alert
+
+    Alert.alert("Verify loading new budget",
+      `You are trying to load budget ${newUserInfo.budgetName}`,
+      [
+        {text: "Cancel", style: "cancel", onPress: () => console.log('Cancel Pressed')},
+        {text: 'Submit', onPress: () => updateAppForNewToken(newUserInfo)},
+      ]);
   }
 
 
@@ -52,13 +96,33 @@ export default function Settings() {
     <ScrollView
       style={{...commonStyles.container, paddingHorizontal: 15}}
       bounces={false}>
-      <Text style={commonStyles.headerTextBold}>Budget Name: {userInfo?.budgetName}</Text>
-      <Text style={commonStyles.headerTextBold}>Lunch Money API token</Text>
-      <TextInput
-        style={settingsStyles.textInput}
-        secureTextEntry={true}
-        placeholder={lmApiKey ? "Exists already, only update if you need" : "Enter your API token here"} />
 
+      <View style={commonStyles.card}>
+        <Text style={commonStyles.headerTextBold}>Budget Name: {userInfo?.budgetName}</Text>
+      </View>
+
+      <View style={commonStyles.columnCard}>
+        <Text style={commonStyles.headerText}>Update Lunch Money API Token</Text>
+        <TextInput
+          ref={lmApiKeyInputReference}
+          style={settingsStyles.textInput}
+          secureTextEntry={true}
+          autoComplete="off"
+          autoCorrect={false}
+          placeholder={lmApiKey || lmApiKey === newLmApiKey ? "Exists already, only update if you need" : "Enter your API token here"}
+          onEndEditing={(event) => setNewLmApiKey(event.nativeEvent.text)} />
+        <Pressable
+          style={settingsStyles.button}
+          disabled={newLmApiKey.length === 0}
+          onPress={() => verifyNewLmToken(newLmApiKey)}>
+            <Text
+              style={[
+                settingsStyles.buttonText,
+                { color: newLmApiKey.length === 0 ? brandingColours.grey : settingsStyles.buttonText.color },
+                { fontWeight: newLmApiKey.length === 0 ? "normal" : settingsStyles.buttonText.fontWeight }
+              ]}>Submit</Text>
+        </Pressable>
+      </View>
       <Text>Simplefin Setup Token</Text>
     </ScrollView>
   )

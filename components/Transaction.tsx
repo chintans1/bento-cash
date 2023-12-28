@@ -12,17 +12,7 @@ type TransactionProps = {
 
 const transactionStyles = StyleSheet.create({
   card: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "flex-start",
-
-    backgroundColor: brandingColours.shadedColour,
-    borderRadius: 5,
-
-    // marginHorizontal: 5,
-    marginVertical: 3,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
+    ...commonStyles.card
   },
   leftSection: {
     flex: 3.5,
@@ -70,7 +60,7 @@ export function TransactionComponent({ transaction }: TransactionProps) {
           <Text
             numberOfLines={1}
             ellipsizeMode="tail"
-            style={transactionStyles.transactionName}>{transaction.notes}</Text>
+            style={transactionStyles.transactionName}>{transaction.payee}</Text>
           <CategoryComponent categoryName={transaction.categoryName} />
         </View>
         <View style={{ flexDirection: "row" }}>

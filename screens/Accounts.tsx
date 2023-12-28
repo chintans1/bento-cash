@@ -1,13 +1,13 @@
 import { useContext, useEffect, useState } from "react";
 import { FlatList, Text, View } from "react-native";
 import { commonStyles } from "../styles/commonStyles";
-import { ParentContext } from "../data/context";
+import { ParentContext, useParentContext } from "../context/app/appContextProvider";
 import { AccountComponent } from "../components/Account";
 
 
 export default function Accounts() {
   // const [transactions, setTransactions] = useState([]);
-  const { accounts } = useContext(ParentContext);
+  const { accounts } = useParentContext().appState;
 
   const netWorth = accounts
     .map(account => parseFloat(account.balance))

@@ -2,10 +2,10 @@ import { FlatList, View, Text } from 'react-native';
 import { commonStyles } from '../styles/commonStyles';
 import React, { useContext } from 'react';
 import { TransactionComponent } from '../components/Transaction';
-import { ParentContext } from '../data/context';
+import { ParentContext, useParentContext } from '../context/app/appContextProvider';
 
 export default function Transactions({ route, navigation }) {
-  const { transactions } = useContext(ParentContext);
+  const { transactions } = useParentContext()?.appState;
 
   return (
     <View style={commonStyles.container}>

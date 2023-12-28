@@ -1,5 +1,6 @@
 import { DraftTransaction, LunchMoney, Transaction } from 'lunch-money';
 import { Environment } from '../models/enums/environment';
+import { AppLunchMoneyInfo } from '../models/lunchmoney/appModels';
 
 export class InternalLunchMoneyClient {
   token: string;
@@ -38,6 +39,14 @@ export class InternalLunchMoneyClient {
       budgetName: response.budget_name,
       apiKeyLabel: response.api_key_label || "unknown"
     }
+  }
+
+  async getLunchMoneyInfoForToken(newToken: string) {
+    this.lunchMoneyClient.token = newToken;
+    const lunchMoneyInfo: AppLunchMoneyInfo = await this.getLunchMoneyInfo();
+
+    this.lunchMoneyClient.token = this.token;
+    return lunchMoneyInfo;
   }
 }
 

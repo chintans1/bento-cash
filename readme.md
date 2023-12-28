@@ -10,3 +10,6 @@
 - [ ] show accounts view, all balances at once
 - [ ] calculate net worth at the time with balance sum
 - [ ] improve styling
+
+we have a provider, allows update of app state itself
+when updating app state, we need to take in a new API token
