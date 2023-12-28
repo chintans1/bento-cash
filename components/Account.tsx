@@ -1,8 +1,7 @@
 import { View, Text, StyleSheet } from "react-native";
 import { commonStyles } from "../styles/commonStyles";
 import { brandingColours } from "../styles/brandingConstants";
-import { AppAccount, AppTransaction } from "../models/lunchmoney/appModels";
-import { CategoryComponent } from "./Category";
+import { AppAccount } from "../models/lunchmoney/appModels";
 
 type AccountProps = {
   account: AppAccount
@@ -67,11 +66,11 @@ export function AccountComponent({ account }: AccountProps) {
   return (
     <View style={transactionStyles.card}>
       <View style={transactionStyles.leftSection}>
-        <Text style={transactionStyles.transactionName}>{ account.accountName }</Text>
+        <Text adjustsFontSizeToFit={true} numberOfLines={1} style={transactionStyles.transactionName}>{ account.accountName }</Text>
         <Text style={transactionStyles.account}>{ account.institutionName }</Text>
       </View>
       <View style={transactionStyles.rightSection}>
-        <Text style={transactionStyles.amount}>{ account.balance }</Text>
+        <Text adjustsFontSizeToFit={true} numberOfLines={1} style={transactionStyles.amount}>${ parseFloat(account.balance).toFixed(2) }</Text>
       </View>
     </View>
   );

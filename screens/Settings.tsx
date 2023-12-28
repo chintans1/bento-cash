@@ -1,7 +1,7 @@
-import { useContext, useEffect, useRef, useState } from "react";
-import { Alert, Button, FlatList, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { commonStyles } from "../styles/commonStyles";
-import { ParentContext, useParentContext } from "../context/app/appContextProvider";
+import { useParentContext } from "../context/app/appContextProvider";
 import InternalLunchMoneyClient from "../clients/lunchMoneyClient";
 import { AppLunchMoneyInfo } from "../models/lunchmoney/appModels";
 import { brandingColours } from "../styles/brandingConstants";
@@ -31,7 +31,8 @@ const settingsStyles = StyleSheet.create({
     fontSize: 18
   }
 });
-export default function Settings({ navigation, routes }) {
+
+export default function Settings() {
   const { appState, updateLunchMoneyToken } = useParentContext();
   const { lmApiKey } = appState;
 
@@ -68,7 +69,7 @@ export default function Settings({ navigation, routes }) {
     // We have the new user info so we can show the alert
 
     Alert.alert("Verify loading new budget",
-      `You are trying to load budget ${newUserInfo.budgetName}`,
+      `You are trying to load budget "${newUserInfo.budgetName}"`,
       [
         {text: "Cancel", style: "cancel", onPress: () => console.log('Cancel Pressed')},
         {text: 'Submit', onPress: () => updateAppForNewToken(newUserInfo)},
