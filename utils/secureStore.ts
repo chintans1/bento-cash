@@ -8,6 +8,11 @@ export async function getValueFor(key: string): Promise<string> {
   return await SecureStore.getItemAsync(key);
 }
 
-export async function doesKeyExist(key: string): Promise<boolean> {
-  return (await SecureStore.getItemAsync(key)).length > 0;
+export async function doesKeyExist(key: string) {
+  const value = await SecureStore.getItemAsync(key);
+
+  if (value != null) {
+    return value.length > 0;
+  }
+  return false;
 }

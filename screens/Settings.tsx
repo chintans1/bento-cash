@@ -5,6 +5,9 @@ import { useParentContext } from "../context/app/appContextProvider";
 import InternalLunchMoneyClient from "../clients/lunchMoneyClient";
 import { AppLunchMoneyInfo } from "../models/lunchmoney/appModels";
 import { brandingColours } from "../styles/brandingConstants";
+import { getClaimUrl, storeSimpleFinAuth } from "../clients/simplefinClient";
+import { isAuthPresent, storeAuthenticationDetails } from "../utils/auth";
+import { SimpleFinAuthentication } from "../models/simplefin/authentication";
 
 
 const settingsStyles = StyleSheet.create({
@@ -23,7 +26,16 @@ const settingsStyles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.29,
+    shadowRadius: 4.65,
+    elevation: 7,
   },
   buttonText: {
     color: brandingColours.shadedColour,
@@ -42,12 +54,15 @@ export default function Settings() {
   const [isReady, setIsReady] = useState(false);
   const [newLmApiKey, setNewLmApiKey] = useState<string>("");
 
+  const [simpleFinToken, setSimpleFinToken] = useState<string>("");
+  const [simpleFinTokenExists, setSimpleFinTokenExists] = useState<boolean>(false);
+
   const lmApiKeyInputReference = useRef<TextInput>(null);
+  const simpleFinTokenReference = useRef<TextInput>(null);
 
   const getUserInfo = async function() {
     if (lmApiKey != null && !isReady) {
       setUserInfo(await lunchMoneyClient.getLunchMoneyInfo());
-      setIsReady(true);
     }
   }
 
@@ -76,9 +91,40 @@ export default function Settings() {
       ]);
   }
 
+  const checkForSimpleFinAuth = async() => {
+    if (!isReady) {
+      setSimpleFinTokenExists(await isAuthPresent());
+    }
+  }
+
+  const setupSimpleFinAuthentication = async (newSfToken: string) => {
+    const claimUrl = getClaimUrl(newSfToken);
+    const simpleFinAuthDetails = await storeSimpleFinAuth(claimUrl);
+
+    Alert.alert("Verify",
+      simpleFinTokenExists ?
+        "Are you sure you want to override the existing SimpleFIN auth?" :
+        "Are you sure you want to set SimpleFIN auth?",
+      [
+        {text: "Cancel", style: "cancel"},
+        {text: "Submit", onPress: () => submitSimpleFinAuth(simpleFinAuthDetails)}
+      ]);
+  }
+
+  const submitSimpleFinAuth = (simpleFinAuthDetails: SimpleFinAuthentication) => {
+    storeAuthenticationDetails(simpleFinAuthDetails);
+    setSimpleFinToken("");
+    setSimpleFinTokenExists(true);
+    simpleFinTokenReference.current.clear();
+
+    Alert.alert("SimpleFIN auth has been saved.");
+  }
+
 
   useEffect(() => {
+    checkForSimpleFinAuth();
     getUserInfo();
+    setIsReady(true);
   });
 
   /*
@@ -110,7 +156,7 @@ export default function Settings() {
           secureTextEntry={true}
           autoComplete="off"
           autoCorrect={false}
-          placeholder={lmApiKey || lmApiKey === newLmApiKey ? "Exists already, only update if you need" : "Enter your API token here"}
+          placeholder={lmApiKey || lmApiKey === newLmApiKey ? "exists already, update if you need." : "enter your API token here."}
           onEndEditing={(event) => setNewLmApiKey(event.nativeEvent.text)} />
         <Pressable
           style={settingsStyles.button}
@@ -124,7 +170,29 @@ export default function Settings() {
               ]}>Submit</Text>
         </Pressable>
       </View>
-      <Text>Simplefin Setup Token</Text>
+
+      <View style={commonStyles.columnCard}>
+        <Text>Simplefin Setup Token</Text>
+        <TextInput
+          ref={simpleFinTokenReference}
+          style={settingsStyles.textInput}
+          autoComplete="off"
+          autoCapitalize="none"
+          autoCorrect={false}
+          placeholder={simpleFinTokenExists ? "exists already, update if you need." : "enter your simpleFIN setup token here."}
+          onEndEditing={(event) => setSimpleFinToken(event.nativeEvent.text)} />
+        <Pressable
+          style={settingsStyles.button}
+          disabled={simpleFinToken.length === 0}
+          onPress={() => setupSimpleFinAuthentication(simpleFinToken)}>
+            <Text
+              style={[
+                settingsStyles.buttonText,
+                { color: simpleFinToken.length === 0 ? brandingColours.grey : settingsStyles.buttonText.color },
+                { fontWeight: simpleFinToken.length === 0 ? "normal" : settingsStyles.buttonText.fontWeight }
+              ]}>Submit</Text>
+        </Pressable>
+      </View>
     </ScrollView>
   )
 }

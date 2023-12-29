@@ -1,18 +1,13 @@
 import { AccountsResponse } from '../models/simplefin/accounts';
 import { SimpleFinAuthentication } from '../models/simplefin/authentication';
-import { getAuthentication, isAuthPresent, storeAuthenticationDetails } from '../utils/auth';
+import { storeAuthenticationDetails } from '../utils/auth';
+import base64 from 'react-native-base64';
 
 export function getClaimUrl(setupToken: string): string {
-  return atob(setupToken);
+  return base64.decode(setupToken);
 }
 
-export async function getSimpleFinAuth(claimUrl: string): Promise<SimpleFinAuthentication> {
-  if (isAuthPresent()) {
-    console.log("Ignoring claim URL because auth exists...")
-    return new Promise(resolve => resolve(getAuthentication()));
-  }
-
-  console.log("Found no existing auth details, fetching fresh...");
+export async function storeSimpleFinAuth(claimUrl: string): Promise<SimpleFinAuthentication> {
   const response = await fetch(claimUrl, {
     method: "POST",
     headers: {
