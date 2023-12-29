@@ -23,6 +23,14 @@ export type AppAccount = {
   currency: string;
 }
 
+export type AppDraftAccount = {
+  accountName: string;
+  institutionName?: string;
+  type?: string;
+  balance: string;
+  currency: string;
+}
+
 export type AppCategory = {
   id: number;
   name: string;
@@ -37,4 +45,20 @@ export type AppLunchMoneyInfo = {
   userEmail: string;
   budgetName: string;
   apiKeyLabel?: string;
+}
+
+export type AppDraftTransaction = {
+  date: string,
+	payee: string,
+	amount: string,
+	currency: string,
+	notes?: string,
+  status: "cleared" | "uncleared"
+  externalId: string,
+
+  // User could decide
+	categoryId?: number,
+  categoryName?: string,
+  lmAccountId?: number,
+  externalAccountId: string,
 }

@@ -1,11 +1,11 @@
 import { SimpleFinAuthentication } from "../models/simplefin/authentication";
-import { StorageKeys } from "../models/enums/storageKeys";
+import { SecureStorageKeys } from "../models/enums/storageKeys";
 import { doesKeyExist, getValueFor, save } from "./secureStore";
 
 export async function isAuthPresent() {
-  return await doesKeyExist(StorageKeys.BASE_URL_KEY)
-    && await doesKeyExist(StorageKeys.USERNAME_KEY)
-    && await doesKeyExist(StorageKeys.PASSWORD_KEY);
+  return await doesKeyExist(SecureStorageKeys.BASE_URL_KEY)
+    && await doesKeyExist(SecureStorageKeys.USERNAME_KEY)
+    && await doesKeyExist(SecureStorageKeys.PASSWORD_KEY);
 }
 
 export async function getSimpleFinAuth(): Promise<SimpleFinAuthentication> {
@@ -13,9 +13,9 @@ export async function getSimpleFinAuth(): Promise<SimpleFinAuthentication> {
 
   if (await isAuthPresent()) {
     simpleFinAuth = {
-      baseUrl: await getValueFor(StorageKeys.BASE_URL_KEY),
-      username: await getValueFor(StorageKeys.USERNAME_KEY),
-      password: await getValueFor(StorageKeys.PASSWORD_KEY)
+      baseUrl: await getValueFor(SecureStorageKeys.BASE_URL_KEY),
+      username: await getValueFor(SecureStorageKeys.USERNAME_KEY),
+      password: await getValueFor(SecureStorageKeys.PASSWORD_KEY)
     }
   }
 
@@ -23,7 +23,7 @@ export async function getSimpleFinAuth(): Promise<SimpleFinAuthentication> {
 }
 
 export async function storeAuthenticationDetails(authDetails: SimpleFinAuthentication) {
-  await save(StorageKeys.BASE_URL_KEY, authDetails.baseUrl);
-  await save(StorageKeys.USERNAME_KEY, authDetails.username);
-  await save(StorageKeys.PASSWORD_KEY, authDetails.password);
+  await save(SecureStorageKeys.BASE_URL_KEY, authDetails.baseUrl);
+  await save(SecureStorageKeys.USERNAME_KEY, authDetails.username);
+  await save(SecureStorageKeys.PASSWORD_KEY, authDetails.password);
 }

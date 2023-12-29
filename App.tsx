@@ -1,21 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useEffect, useState } from 'react';
-import { getValueFor } from './utils/secureStore';
-import { StorageKeys } from './models/enums/storageKeys';
-import Initialization from './screens/Initialization';
+import React from 'react';
 import Transactions from './screens/Transactions';
 import Charts from './screens/Charts';
 import { NavigationContainer } from '@react-navigation/native';
-import { AppState, ParentContext } from './context/app/appContextProvider';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import InternalLunchMoneyClient from './clients/lunchMoneyClient';
-import { AppAccount, AppCategory, AppTransaction } from './models/lunchmoney/appModels';
 import { brandingColours } from './styles/brandingConstants';
 import Accounts from './screens/Accounts';
-import Settings from './screens/Settings';
 import { AppProvider } from './context/app/AppProvider';
-import { getAccountsMap, getCategoriesMap, getTransactionsForApp } from './data/transformLunchMoney';
+import SettingsStackScreen from './screens/SettingsStackScreen';
 
 
 const Tab = createBottomTabNavigator();
@@ -58,7 +51,7 @@ export default function App() {
             />
             <Tab.Screen
               name="Settings"
-              component={Settings}
+              component={SettingsStackScreen}
             />
           </Tab.Navigator>
         </NavigationContainer>

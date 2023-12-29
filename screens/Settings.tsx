@@ -44,7 +44,7 @@ const settingsStyles = StyleSheet.create({
   }
 });
 
-export default function Settings() {
+export default function Settings({ navigation }) {
   const { appState, updateLunchMoneyToken } = useParentContext();
   const { lmApiKey } = appState;
 
@@ -146,8 +146,13 @@ export default function Settings() {
       style={{...commonStyles.container, paddingHorizontal: 15}}
       bounces={false}>
 
-      <View style={commonStyles.card}>
+      <View style={commonStyles.columnCard}>
         <Text style={commonStyles.headerTextBold}>Budget Name: {userInfo?.budgetName}</Text>
+        <Pressable
+          style={settingsStyles.button}
+          onPress={() => navigation.navigate("SimpleFinImport")}>
+            <Text style={settingsStyles.buttonText}>Fetch data via SimpleFIN</Text>
+          </Pressable>
       </View>
 
       <View style={commonStyles.columnCard}>

@@ -12,5 +12,7 @@ export type SimpleFinAccount = {
   "balance-date": EpochTimeStamp,
   transactions: SimpleFinTransaction[],
   holdings: SimpleFinHolding[],
-  extra: {}
+  extra: {},
+
+  lunchMoneyAccountId?: number
 }

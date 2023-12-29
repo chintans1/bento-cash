@@ -39,7 +39,7 @@ export async function getAccountsData(simpleFinAuth: SimpleFinAuthentication): P
   // TODO: natively handle query params
   const response = await fetch(`${simpleFinAuth.baseUrl}/accounts?start-date=1702191600`, {
     headers: {
-      Authorization: `Basic ${btoa(`${simpleFinAuth.username}:${simpleFinAuth.password}`)}`
+      Authorization: `Basic ${base64.encode(`${simpleFinAuth.username}:${simpleFinAuth.password}`)}`
     }
   });
 
