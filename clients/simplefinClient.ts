@@ -1,6 +1,6 @@
 import { AccountsResponse } from '../models/simplefin/accounts';
 import { SimpleFinAuthentication } from '../models/simplefin/authentication';
-import { storeAuthenticationDetails } from '../utils/auth';
+import { storeAuthenticationDetails } from '../utils/simpleFinAuth';
 import base64 from 'react-native-base64';
 
 export function getClaimUrl(setupToken: string): string {

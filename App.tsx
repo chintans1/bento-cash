@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { getValueFor } from './utils/secureStore';
-import { LocalStorageKeys } from './models/enums/localStorageKeys';
+import { StorageKeys } from './models/enums/storageKeys';
 import Initialization from './screens/Initialization';
 import Transactions from './screens/Transactions';
 import Charts from './screens/Charts';

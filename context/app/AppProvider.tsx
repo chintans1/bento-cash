@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { AppState, ParentContext, defaultAppState, updateLmToken } from "./appContextProvider";
 import { getValueFor } from "../../utils/secureStore";
-import { LocalStorageKeys } from "../../models/enums/localStorageKeys";
+import { StorageKeys } from "../../models/enums/storageKeys";
 
 // Create a AppProvider component to provide the context value to child components
 export const AppProvider = ({ children } ) => {
@@ -16,7 +16,7 @@ export const AppProvider = ({ children } ) => {
   };
 
   const initializeState = async () => {
-    const lmValue = await getValueFor(LocalStorageKeys.LUNCH_MONEY_KEY);
+    const lmValue = await getValueFor(StorageKeys.LUNCH_MONEY_KEY);
     updateAppForNewToken(lmValue);
     setIsReady(true);
   }

@@ -3,7 +3,7 @@ const USERNAME_KEY: string = "username";
 const PASSWORD_KEY: string = "password";
 const LUNCH_MONEY_KEY: string = "lunchMoneyKey";
 
-export const LocalStorageKeys = {
+export const StorageKeys = {
   BASE_URL_KEY,
   USERNAME_KEY,
   PASSWORD_KEY,

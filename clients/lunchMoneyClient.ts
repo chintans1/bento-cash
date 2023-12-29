@@ -1,5 +1,4 @@
 import { DraftTransaction, LunchMoney, Transaction } from 'lunch-money';
-import { Environment } from '../models/enums/environment';
 import { AppLunchMoneyInfo } from '../models/lunchmoney/appModels';
 
 export class InternalLunchMoneyClient {

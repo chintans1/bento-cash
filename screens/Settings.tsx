@@ -6,7 +6,7 @@ import InternalLunchMoneyClient from "../clients/lunchMoneyClient";
 import { AppLunchMoneyInfo } from "../models/lunchmoney/appModels";
 import { brandingColours } from "../styles/brandingConstants";
 import { getClaimUrl, storeSimpleFinAuth } from "../clients/simplefinClient";
-import { isAuthPresent, storeAuthenticationDetails } from "../utils/auth";
+import { isAuthPresent, storeAuthenticationDetails } from "../utils/simpleFinAuth";
 import { SimpleFinAuthentication } from "../models/simplefin/authentication";
 
 
@@ -50,10 +50,12 @@ export default function Settings() {
 
   const lunchMoneyClient = new InternalLunchMoneyClient({ token: lmApiKey });
 
+  // Used for component data
   const [userInfo, setUserInfo] = useState<AppLunchMoneyInfo|null>(null);
   const [isReady, setIsReady] = useState(false);
-  const [newLmApiKey, setNewLmApiKey] = useState<string>("");
 
+  // Text input state fields
+  const [newLmApiKey, setNewLmApiKey] = useState<string>("");
   const [simpleFinToken, setSimpleFinToken] = useState<string>("");
   const [simpleFinTokenExists, setSimpleFinTokenExists] = useState<boolean>(false);
 
@@ -79,7 +81,7 @@ export default function Settings() {
     Alert.alert("New budget has been loaded.");
   }
 
-  const verifyNewLmToken = async (newToken: string) => {
+  const verifyNewLmTokenAlert = async (newToken: string) => {
     const newUserInfo = await getUserInfoForNewToken(newToken);
     // We have the new user info so we can show the alert
 
@@ -161,7 +163,7 @@ export default function Settings() {
         <Pressable
           style={settingsStyles.button}
           disabled={newLmApiKey.length === 0}
-          onPress={() => verifyNewLmToken(newLmApiKey)}>
+          onPress={() => verifyNewLmTokenAlert(newLmApiKey)}>
             <Text
               style={[
                 settingsStyles.buttonText,

@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View, Button, TextInput } from 'react-native';
 import { save } from "../utils/secureStore";
-import { LocalStorageKeys } from "../models/enums/localStorageKeys";
+import { StorageKeys } from "../models/enums/storageKeys";
 
 export default function Initialization() {
   const [lunchMoneyKey, setLunchMoneyKey] = React.useState('');
@@ -9,7 +9,7 @@ export default function Initialization() {
 
   async function submitLunchMoneyKey() {
     setLoading(true)
-    await save(LocalStorageKeys.LUNCH_MONEY_KEY, lunchMoneyKey);
+    await save(StorageKeys.LUNCH_MONEY_KEY, lunchMoneyKey);
 
     // if (error) Alert.alert(error.message)
     // if (!session) Alert.alert('Please check your inbox for email verification!')
