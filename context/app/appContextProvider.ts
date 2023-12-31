@@ -2,6 +2,8 @@ import { Context, createContext, useContext } from "react";
 import { AppAccount, AppTransaction, AppCategory } from "../../models/lunchmoney/appModels";
 import InternalLunchMoneyClient from "../../clients/lunchMoneyClient";
 import { getAccountsMap, getCategoriesMap, getTransactionsForApp } from "../../data/transformLunchMoney";
+import { save } from "../../utils/secureStore";
+import { SecureStorageKeys } from "../../models/enums/storageKeys";
 
 export const defaultAppState = {
   lmApiKey: "",
@@ -51,6 +53,8 @@ export const updateLmToken = async (newToken: string) => {
   // We have the API key so lets fetch everything we can and process it
   // We have to fetch accounts and categories first
   const transactions = await getTransactionsForApp(lunchMoneyClient, accounts, categories);
+
+  await save(SecureStorageKeys.LUNCH_MONEY_KEY, newToken);
 
   return {
     lmApiKey: newToken,
