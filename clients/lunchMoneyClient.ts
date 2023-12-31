@@ -27,7 +27,9 @@ export class InternalLunchMoneyClient {
   }
 
   async getAllTransactions() { // : Transaction[] {
-    const transactions = await this.lunchMoneyClient.getTransactions();
+    const transactions = await this.lunchMoneyClient.getTransactions({
+      debit_as_negative: true
+    });
     return transactions.sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
   }
 
