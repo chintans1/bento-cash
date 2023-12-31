@@ -1,5 +1,6 @@
+import { DraftTransaction } from "lunch-money";
 import InternalLunchMoneyClient from "../clients/lunchMoneyClient";
-import { AppAccount, AppCategory, AppTransaction } from "../models/lunchmoney/appModels";
+import { AppAccount, AppCategory, AppDraftTransaction, AppTransaction } from "../models/lunchmoney/appModels";
 
 export const getTransactionsForApp = async (
   lmClient: InternalLunchMoneyClient,
@@ -78,4 +79,22 @@ export const getCategoriesMap = async (lmClient: InternalLunchMoneyClient) => {
   }
 
   return categoriesMap;
+}
+
+export const getDraftTransactions = (appDraftTransactions: AppDraftTransaction[]): DraftTransaction[] => {
+  const draftTransactions: DraftTransaction[] = [];
+  for (const transaction of appDraftTransactions) {
+    draftTransactions.push({
+      date: transaction.date,
+      category_id: transaction.categoryId,
+      payee: transaction.payee,
+      amount: transaction.amount,
+      currency: transaction.currency.toLowerCase(),
+      notes: transaction.notes,
+      asset_id: transaction.lmAccountId,
+      status: transaction.status,
+      external_id: transaction.externalId
+    })
+  }
+  return draftTransactions;
 }

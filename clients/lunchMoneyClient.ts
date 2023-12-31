@@ -1,6 +1,7 @@
-import { Asset, DraftTransaction, LunchMoney, Transaction } from 'lunch-money';
+import { Asset, DraftTransaction, LunchMoney } from 'lunch-money';
 import { AppDraftAccount, AppLunchMoneyInfo } from '../models/lunchmoney/appModels';
 
+// TODO: handle response format
 export class InternalLunchMoneyClient {
   token: string;
   lunchMoneyClient: LunchMoney;
@@ -15,6 +16,7 @@ export class InternalLunchMoneyClient {
   }
 
   createTransactions(draftTransactions: DraftTransaction[]) {
+    // TODO: handle batching
     return this.lunchMoneyClient.createTransactions(
       draftTransactions,
       true, // apply rules

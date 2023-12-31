@@ -15,10 +15,6 @@ How to handle SimpleFIN sync:
     - we can't choose category so user will decide given existing categories
   - once ready, we validate and create transactions and all
 
-
-
-
-
 ### TODO
 - [ ] store simple fin auth details in context
   - [ ] move towards maybe only storing LM API key and simple FIN auth in context

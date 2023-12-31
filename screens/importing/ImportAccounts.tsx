@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, Alert, Button, FlatList, StyleSheet, Text, View } from "react-native";
 import { SimpleFinImportData, getImportData } from "../../data/transformSimpleFin";
 import { getAccountsData } from "../../clients/simplefinClient";
@@ -29,11 +29,12 @@ export default function ImportAccountsScreen({ navigation }) {
   }
 
   const fetchDataFromSimpleFin = async () => {
-    const fetchedAccountsResponse = await getAccountsData(await getSimpleFinAuth());
-    const fetchedAccountMappings = await getAccountMappings();
+    if (!isReady) {
+      const fetchedAccountsResponse = await getAccountsData(await getSimpleFinAuth());
+      const fetchedAccountMappings = await getAccountMappings();
 
-    // setAccountMappings(fetchedAccountMappings);
-    setImportData(getImportData(fetchedAccountMappings, lmAccounts, fetchedAccountsResponse));
+      setImportData(getImportData(fetchedAccountMappings, lmAccounts, fetchedAccountsResponse));
+    }
 
     setIsReady(true);
   }
@@ -56,14 +57,17 @@ export default function ImportAccountsScreen({ navigation }) {
       existingAccountMappings.set(id, accountCreated.id.toString());
     }
     await storeData(StorageKeys.ACCOUNT_MAPPING_KEY, Array.from(existingAccountMappings.entries()));
+    Alert.alert("Accounts created!", "Moving to importing transactions now",
+      [{text: "Ok", onPress: () => moveToTransactions()}]);
   }
 
   const handleNextButtonClick = () => {
     // TODO: need to make sure we disable the button when creating accounts
     // TODO: need to allow choosing existing LM accounts to map
-    // TODO: need to ensure LM account exists if mapping exists
     if (importableAccounts.size == 0) {
-      Alert.alert("No accounts selected", "Are you sure you do not want to import any accounts?");
+      Alert.alert("No accounts selected",
+        "Are you sure you do not want to import any accounts?",
+        [{text: "Ok", onPress: () => moveToTransactions()}]);
       return;
     }
 
@@ -77,20 +81,26 @@ export default function ImportAccountsScreen({ navigation }) {
     )
   }
 
+  const moveToTransactions = () => {
+    navigation.navigate("ImportTransactions", {
+      transactionsToImport: importData.transactionsToImport,
+      lunchMoneyClient: lunchMoneyClient
+    });
+  }
+
   useEffect(() => {
     fetchDataFromSimpleFin();
-    // Use `setOptions` to update the button that we previously specified
-    // Now the button includes an `onPress` handler to update the count
     navigation.setOptions({
       headerRight: () => (
         <Button
           title="Next"
           color={brandingColours.primaryColour}
           onPress={() => handleNextButtonClick()}
+          disabled={creatingAccounts}
         />
       ),
     });
-  }, [navigation]);
+  }, [navigation, importData]);
 
   if (!isReady) {
     return (

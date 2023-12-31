@@ -69,4 +69,6 @@ export type AppDraftTransaction = {
   lmAccountId?: number;
   externalAccountId: string;
   externalAccountName: string;
+
+  importable?: boolean;
 }

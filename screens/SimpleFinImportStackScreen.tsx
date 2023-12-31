@@ -8,25 +8,19 @@ const SimpleFinImportStack = createNativeStackNavigator();
 
 export default function SimpleFinImportStackScreen() {
 
-
-  //     <Text style={commonStyles.headerText}>Transactions to import</Text>
-  //     <FlatList
-  //       data={importData.transactionsToImport}
-  //       renderItem={({ item }) => <ImportTransactionComponent transaction={item} />}
-  //     />
-  //   </View>
-  // )
-
   return (
     <SimpleFinImportStack.Navigator
       screenOptions={{
         headerShown: true,
-        presentation: "modal",
+        headerBackVisible: false,
+        gestureEnabled: false,
         //headerStyle: { backgroundColor: 'tomato' },
       }}>
-      <SimpleFinImportStack.Screen name="ImportAccounts"
+      <SimpleFinImportStack.Screen
+        name="ImportAccounts"
         options={{
           title:"Importing accounts",
+          presentation: "modal",
           headerRight: () => (
             <Button
               onPress={() => alert("Something went wrong, this should not happen.")}
@@ -35,7 +29,8 @@ export default function SimpleFinImportStackScreen() {
             />
           )
         }} component={ImportAccountsScreen} />
-      <SimpleFinImportStack.Screen name="ImportTransactions"
+      <SimpleFinImportStack.Screen
+        name="ImportTransactions"
         options={{
           title: "Importing transactions",
           // headerShown: true,
