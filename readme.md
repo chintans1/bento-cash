@@ -1,5 +1,10 @@
 # React Native Application for Lunch Money
 
+### Existing Screens
+[Transactions, Accounts, Charts, Settings] (Hidden: Initialization)
+                                    ^-> [Settings, SimpleFin Import]
+                                                        ^-> [Import Accounts -> Import Transactions -> Finished]
+
 How to handle SimpleFIN sync:
   - premise of the sync is to get transaction data into Lunch Money
   - can show "found x new transactions to import, x new accounts"

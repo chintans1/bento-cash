@@ -1,5 +1,5 @@
-import { DraftTransaction, LunchMoney, Transaction } from 'lunch-money';
-import { AppLunchMoneyInfo } from '../models/lunchmoney/appModels';
+import { Asset, DraftTransaction, LunchMoney, Transaction } from 'lunch-money';
+import { AppDraftAccount, AppLunchMoneyInfo } from '../models/lunchmoney/appModels';
 
 export class InternalLunchMoneyClient {
   token: string;
@@ -46,6 +46,17 @@ export class InternalLunchMoneyClient {
 
     this.lunchMoneyClient.token = this.token;
     return lunchMoneyInfo;
+  }
+
+  async createAccount(lmAccount: AppDraftAccount): Promise<Asset> {
+    console.log(`Trying to create account ${lmAccount.accountName}`);
+    return await this.lunchMoneyClient.post("/v1/assets", {
+      "name": lmAccount.accountName,
+      "type_name": lmAccount.type,
+      "balance": lmAccount.balance,
+      "currency": lmAccount.currency.toLowerCase(),
+      "institution_name": lmAccount.institutionName
+    });
   }
 }
 

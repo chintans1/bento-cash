@@ -6,14 +6,14 @@ import { getAccountsMap, getCategoriesMap, getTransactionsForApp } from "../../d
 export const defaultAppState = {
   lmApiKey: "",
   transactions: [],
-  accounts: [],
+  accounts: new Map<number, AppAccount>(),
   categories: []
 }
 
 export type AppState = {
   lmApiKey: string;
   transactions: AppTransaction[];
-  accounts: AppAccount[];
+  accounts: Map<number, AppAccount>;
   categories: AppCategory[];
 };
 
@@ -51,7 +51,7 @@ export const updateLmToken = async (newToken: string) => {
   return {
     lmApiKey: newToken,
     transactions: transactions,
-    accounts: Array.from(accounts.values()),
+    accounts: accounts,
     categories: Array.from(categories.values())
   }
 }

@@ -14,7 +14,11 @@ export type AppTransaction = {
   status: "cleared" | "uncleared" | "recurring" | "recurring_suggested";
 }
 
+export const accountTypes = ["employee compensation", "cash", "vehicle", "loan", "cryptocurrency", "investment", "other", "credit", "real estate"];
+export type AccountType = typeof accountTypes[number];
+
 export type AppAccount = {
+  id: number;
   accountName: string;
   institutionName: string;
   type: string;
@@ -24,11 +28,13 @@ export type AppAccount = {
 }
 
 export type AppDraftAccount = {
+  externalAccountId: string;
   accountName: string;
   institutionName?: string;
   type?: string;
   balance: string;
   currency: string;
+  importable?: boolean;
 }
 
 export type AppCategory = {
@@ -48,17 +54,19 @@ export type AppLunchMoneyInfo = {
 }
 
 export type AppDraftTransaction = {
-  date: string,
-	payee: string,
-	amount: string,
-	currency: string,
-	notes?: string,
-  status: "cleared" | "uncleared"
-  externalId: string,
+  date: string;
+	payee: string;
+	amount: string;
+	currency: string;
+	notes?: string;
+  status: "cleared" | "uncleared";
+  externalId: string;
 
   // User could decide
-	categoryId?: number,
-  categoryName?: string,
-  lmAccountId?: number,
-  externalAccountId: string,
+	categoryId?: number;
+  categoryName?: string;
+
+  lmAccountId?: number;
+  externalAccountId: string;
+  externalAccountName: string;
 }

@@ -1,26 +1,30 @@
-import { AppDraftAccount, AppDraftTransaction } from "../models/lunchmoney/appModels";
+import { AppAccount, AppDraftAccount, AppDraftTransaction } from "../models/lunchmoney/appModels";
 import { SimpleFinAccount } from "../models/simplefin/account";
 import { AccountsResponse } from "../models/simplefin/accounts";
 import { SimpleFinTransaction } from "../models/simplefin/transaction";
 
 export type SimpleFinImportData = {
   transactionsToImport: AppDraftTransaction[],
-  accountsToImport: AppDraftAccount[],
+  accountsToImport: Map<string, AppDraftAccount>,
   totalAccounts: number
 }
 
 export const getImportData = (
-  accountMappings: Map<string, string>, accountsResponse: AccountsResponse): SimpleFinImportData =>
+  accountMappings: Map<string, string>,
+  lmAccounts: Map<number, AppAccount>,
+  accountsResponse: AccountsResponse): SimpleFinImportData =>
 {
   const transactions: AppDraftTransaction[] = [];
-  const unmatchedAccounts: AppDraftAccount[] = [];
+  const unmatchedAccounts: Map<string, AppDraftAccount> = new Map();
 
   for (const account of accountsResponse.accounts) {
     const accountTransactions = account.transactions;
-    const mappingExists = accountMappings.has(account.id);
+    const mappingExists = accountMappings.has(account.id)
+      && lmAccounts.has(parseInt(accountMappings.get(account.id)));
     // Accounts to import is any SF account ID that has no mapping
     if (!mappingExists) {
-      unmatchedAccounts.push({
+      unmatchedAccounts.set(account.id, {
+        externalAccountId: account.id,
         accountName: account.name,
         institutionName: account.org.name || null,
         balance: account.balance,
@@ -56,6 +60,7 @@ function parseTransaction(
     status: transaction.pending ? "uncleared" : "cleared",
     externalId: transaction.id,
     externalAccountId: account.id,
+    externalAccountName: account.name,
     lmAccountId: account.lunchMoneyAccountId || null,
 
     // User could decide

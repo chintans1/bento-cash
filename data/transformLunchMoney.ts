@@ -38,6 +38,7 @@ export const getAccountsMap = async (lmClient: InternalLunchMoneyClient) => {
 
   for (const account of manualAccounts) {
     accountsMap.set(account.id, {
+      id: account.id,
       accountName: account.name,
       institutionName: account.institution_name || "unknown",
       type: account.type_name,
@@ -49,6 +50,7 @@ export const getAccountsMap = async (lmClient: InternalLunchMoneyClient) => {
 
   for (const account of plaidAccounts) {
     accountsMap.set(account.id, {
+      id: account.id,
       accountName: account.name,
       institutionName: account.institution_name || "unknown",
       type: account.type,

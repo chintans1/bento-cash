@@ -6,7 +6,8 @@ import { AppAccount } from "../models/lunchmoney/appModels";
 
 
 export default function Accounts() {
-  const { accounts } = useParentContext().appState;
+  const { accounts: accountsMap } = useParentContext().appState;
+  const accounts = Array.from(accountsMap.values());
 
   const netWorth = accounts
     .map(account => parseFloat(account.balance))
