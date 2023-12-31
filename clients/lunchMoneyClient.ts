@@ -27,7 +27,8 @@ export class InternalLunchMoneyClient {
   }
 
   async getAllTransactions() { // : Transaction[] {
-    return await this.lunchMoneyClient.getTransactions();
+    const transactions = await this.lunchMoneyClient.getTransactions();
+    return transactions.sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
   }
 
   async getLunchMoneyInfo() {

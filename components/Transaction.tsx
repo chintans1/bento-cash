@@ -64,7 +64,7 @@ export function TransactionComponent({ transaction }: TransactionProps) {
           <CategoryComponent categoryName={transaction.categoryName} />
         </View>
         <View style={{ flexDirection: "row" }}>
-          <Text style={transactionStyles.account}>{transaction.assetName}</Text>
+          <Text style={transactionStyles.account}>{transaction.assetName ? transaction.assetName : "unknown account"}</Text>
         </View>
       </View>
       <View style={transactionStyles.rightSection}>
