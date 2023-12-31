@@ -58,30 +58,3 @@ export default function App() {
     </AppProvider>
   );
 }
-/*
-        <View style={{flex: 1}}>
-          <StatusBar
-            animated={true}
-            style="auto"
-          />
-          {lmApiKey && lmApiKey.length > 0 ?
-            <View style={commonStyles.container}>
-              {showTransactions ?
-                <Transactions lmApiKey={lmApiKey} />
-              :
-                <Charts lmApiKey={lmApiKey} />}
-              <View style={styles.bottomBar}>
-                <Button
-                  title="Transactions"
-                  onPress={() => setTransactionsView(true)}
-                />
-                <Button
-                  title="Charts"
-                  onPress={() => setTransactionsView(false)}
-                />
-              </View>
-            </View>
-          :
-            <Initialization />}
-        </View>
-        */

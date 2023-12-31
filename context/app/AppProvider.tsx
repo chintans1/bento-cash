@@ -3,6 +3,8 @@ import { AppState, ParentContext, defaultAppState, updateLmToken } from "./appCo
 import { getValueFor } from "../../utils/secureStore";
 import { SecureStorageKeys } from "../../models/enums/storageKeys";
 import Initialization from "../../screens/Initialization";
+import { ActivityIndicator, View } from "react-native";
+import { brandingColours } from "../../styles/brandingConstants";
 
 export const AppProvider = ({ children } ) => {
   const [appState, setAppState] = useState<AppState>(defaultAppState);
@@ -11,23 +13,27 @@ export const AppProvider = ({ children } ) => {
   const updateAppForNewToken = (newLmApiToken: string) => {
     updateLmToken(newLmApiToken).then(newerAppState => {
       setAppState(newerAppState);
+      setIsReady(true);
     });
   };
 
   const initializeState = async () => {
     const lmValue = await getValueFor(SecureStorageKeys.LUNCH_MONEY_KEY);
     updateAppForNewToken(lmValue);
-    setIsReady(true);
   }
 
   useEffect(() => {
     if (!isReady) {
       initializeState();
     }
-  });
+  }, [isReady]);
 
   if (!isReady) {
-    return null;
+    return (
+      <View style={{ flex: 1, justifyContent: "center" }}>
+        <ActivityIndicator size="large" color={brandingColours.primaryColour} />
+      </View>
+    )
   }
 
   return (

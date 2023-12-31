@@ -147,7 +147,7 @@ export default function Settings({ navigation }) {
       bounces={false}>
 
       <View style={commonStyles.columnCard}>
-        <Text style={commonStyles.headerTextBold}>Budget Name: {userInfo?.budgetName}</Text>
+        <Text style={commonStyles.headerTextBold}>Budget Name: {userInfo ? userInfo?.budgetName : "unknown"}</Text>
         <Pressable
           style={settingsStyles.button}
           onPress={() => navigation.navigate("SimpleFinImport")}>
@@ -163,7 +163,7 @@ export default function Settings({ navigation }) {
           secureTextEntry={true}
           autoComplete="off"
           autoCorrect={false}
-          placeholder={lmApiKey || lmApiKey === newLmApiKey ? "exists already, update if you need." : "enter your API token here."}
+          placeholder={lmApiKey.length > 0 ? "exists already, update if you need." : "enter your API token here."}
           onEndEditing={(event) => setNewLmApiKey(event.nativeEvent.text)} />
         <Pressable
           style={settingsStyles.button}

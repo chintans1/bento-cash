@@ -41,7 +41,7 @@ export default function Initialization() {
     if (lmApiKey.length === 0) {
       setRender(true);
     }
-  });
+  }, [lmApiKey]);
 
   if (!render) {
     return null;
