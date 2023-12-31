@@ -19,7 +19,7 @@ export const AppProvider = ({ children } ) => {
 
   const initializeState = async () => {
     const lmValue = await getValueFor(SecureStorageKeys.LUNCH_MONEY_KEY);
-    updateAppForNewToken(lmValue);
+    updateAppForNewToken(lmValue === null ? "" : lmValue);
   }
 
   useEffect(() => {

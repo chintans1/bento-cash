@@ -41,6 +41,10 @@ export const useParentContext = () => {
 
 // This should be used as the value of updateLunchMoneyToken() in ParentAppState
 export const updateLmToken = async (newToken: string) => {
+  if (newToken === null || newToken.length <= 0) {
+    return defaultAppState;
+  }
+
   const lunchMoneyClient = new InternalLunchMoneyClient({ token: newToken });
   const accounts = await getAccountsMap(lunchMoneyClient);
   const categories = await getCategoriesMap(lunchMoneyClient);
