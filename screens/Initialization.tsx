@@ -1,51 +1,66 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Button, TextInput } from 'react-native';
-import { save } from "../utils/secureStore";
-import { SecureStorageKeys } from "../models/enums/storageKeys";
+import { useParentContext } from "../context/app/appContextProvider";
+import { brandingColours } from "../styles/brandingConstants";
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  textInput: {
+    backgroundColor: brandingColours.shadedColour,
+    color: brandingColours.secondaryColour,
+
+    borderColor: brandingColours.secondaryColour,
+    borderWidth: 1,
+    borderRadius: 10,
+
+    padding: 15,
+  },
+});
 
 export default function Initialization() {
-  const [lunchMoneyKey, setLunchMoneyKey] = React.useState('');
-  const [loading, setLoading] = React.useState(false)
+  const { updateLunchMoneyToken } = useParentContext();
+  const { lmApiKey } = useParentContext().appState;
+
+  const [lunchMoneyKey, setLunchMoneyKey] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [render, setRender] = useState<boolean>(false);
 
   async function submitLunchMoneyKey() {
-    setLoading(true)
-    await save(SecureStorageKeys.LUNCH_MONEY_KEY, lunchMoneyKey);
+    setLoading(true);
+    updateLunchMoneyToken(lunchMoneyKey);
+    setRender(false);
+    setLoading(false);
+  }
 
-    // if (error) Alert.alert(error.message)
-    // if (!session) Alert.alert('Please check your inbox for email verification!')
-    setLoading(false)
+  useEffect(() => {
+    if (lmApiKey.length === 0) {
+      setRender(true);
+    }
+  });
+
+  if (!render) {
+    return null;
   }
 
   return (
     <View style={styles.container}>
-      <View style={[styles.verticallySpaced, styles.mt20]}>
+      <View>
         <TextInput
-          // la="Email"
-          // leftIcon={{ type: 'font-awesome', name: 'envelope' }}
+          style={styles.textInput}
           onChangeText={(text) => setLunchMoneyKey(text)}
           value={lunchMoneyKey}
-          placeholder="lunch money API key"
+          placeholder="Enter your Lunch Money API token here"
           autoCapitalize={'none'}
         />
       </View>
-      <View style={styles.verticallySpaced}>
+      <View>
         <Button title="Submit" disabled={loading} onPress={() => submitLunchMoneyKey()} />
       </View>
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 40,
-    padding: 12,
-  },
-  verticallySpaced: {
-    paddingTop: 4,
-    paddingBottom: 4,
-    alignSelf: 'stretch',
-  },
-  mt20: {
-    marginTop: 20,
-  },
-})

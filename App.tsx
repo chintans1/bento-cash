@@ -10,7 +10,6 @@ import Accounts from './screens/Accounts';
 import { AppProvider } from './context/app/AppProvider';
 import SettingsStackScreen from './screens/SettingsStackScreen';
 
-
 const Tab = createBottomTabNavigator();
 
 export default function App() {
