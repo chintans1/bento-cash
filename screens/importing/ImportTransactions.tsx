@@ -48,12 +48,17 @@ export default function ImportTransactionsScreen({ route, navigation }) {
 
   const handleTransactionsCreation = async () => {
     setCreatingTransactions(true);
+    if (selectedTransactions.size === 0) {
+      Alert.alert("No transactions to import", null, [{text: "Ok", onPress: () => navigation.getParent()?.goBack()}]);
+      return;
+    }
+
     const draftTransactions = getDraftTransactions(Array.from(selectedTransactions.values()));
     await lunchMoneyClient.createTransactions(draftTransactions);
 
     Alert.alert("Transactions succussfully created!",
       "Your transaction data should be available to view on Lunch Money now", [
-        {text: "Ok", onPress: () => navigation.navigate("Settings")}
+        {text: "Ok", onPress: () => navigation.getParent()?.goBack()}
       ]);
   }
 

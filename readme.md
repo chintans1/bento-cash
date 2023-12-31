@@ -27,6 +27,8 @@ How to handle SimpleFIN sync:
 - [x] show accounts view, all balances at once
 - [x] calculate net worth at the time with balance sum
 - [ ] improve styling
+- [ ] store last date of import transactions
+- [ ] beta on testflight
 
 we have a provider, allows update of app state itself
 when updating app state, we need to take in a new API token
