@@ -96,7 +96,7 @@ export default function ImportAccountsScreen({ navigation }) {
           title="Next"
           color={brandingColours.primaryColour}
           onPress={() => handleNextButtonClick()}
-          disabled={creatingAccounts}
+          disabled={!isReady || creatingAccounts}
         />
       ),
     });

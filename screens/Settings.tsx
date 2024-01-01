@@ -149,6 +149,7 @@ export default function Settings({ navigation }) {
       <View style={commonStyles.columnCard}>
         <Text style={commonStyles.headerTextBold}>Budget Name: {userInfo ? userInfo?.budgetName : "unknown"}</Text>
         <Pressable
+          disabled={!simpleFinTokenExists}
           style={settingsStyles.button}
           onPress={() => navigation.navigate("SimpleFinImport")}>
             <Text style={settingsStyles.buttonText}>Fetch data via SimpleFIN</Text>

@@ -23,6 +23,7 @@ export default function SimpleFinImportStackScreen() {
           presentation: "modal",
           headerRight: () => (
             <Button
+              disabled={true}
               onPress={() => alert("Something went wrong, this should not happen.")}
               title="Next"
               color={brandingColours.primaryColour}
