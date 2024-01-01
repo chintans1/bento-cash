@@ -11,7 +11,7 @@ export type AppTransaction = {
   assetName?: string;
   categoryName?: string;
 
-  status: "cleared" | "uncleared" | "recurring" | "recurring_suggested";
+  status: "cleared" | "uncleared" | "recurring" | "recurring_suggested" | "pending";
 }
 
 export const accountTypes = ["employee compensation", "cash", "vehicle", "loan", "cryptocurrency", "investment", "other", "credit", "real estate"];

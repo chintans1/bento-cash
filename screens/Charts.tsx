@@ -8,7 +8,7 @@ export default function Charts({ lmApiKey }: { lmApiKey: string }) {
 
   return (
     <View style={commonStyles.container}>
-      <Text style={commonStyles.headerTextBold}>Charts</Text>
+      <Text style={commonStyles.headerTextBold}>Not implemented.</Text>
     </View>
   )
 }

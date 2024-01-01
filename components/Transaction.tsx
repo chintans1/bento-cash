@@ -61,6 +61,7 @@ export function TransactionComponent({ transaction }: TransactionProps) {
             numberOfLines={1}
             ellipsizeMode="tail"
             style={transactionStyles.transactionName}>{transaction.payee}</Text>
+          {transaction.status === "pending" ? <CategoryComponent categoryName="pending" /> : null}
           <CategoryComponent categoryName={transaction.categoryName} />
         </View>
         <View style={{ flexDirection: "row" }}>
