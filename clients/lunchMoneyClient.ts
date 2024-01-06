@@ -1,5 +1,5 @@
 import { Asset, DraftTransaction, LunchMoney, Transaction } from 'lunch-money';
-import { AppDraftAccount, AppLunchMoneyInfo } from '../models/lunchmoney/appModels';
+import { AppAccount, AppDraftAccount, AppLunchMoneyInfo } from '../models/lunchmoney/appModels';
 
 // TODO: handle response format
 export class InternalLunchMoneyClient {
@@ -69,6 +69,13 @@ export class InternalLunchMoneyClient {
       "balance": lmAccount.balance,
       "currency": lmAccount.currency.toLowerCase(),
       "institution_name": lmAccount.institutionName
+    });
+  }
+
+  async updateAccountBalance(lmAccount: AppAccount) {
+    return await this.lunchMoneyClient.updateAsset({
+      id: lmAccount.id,
+      balance: lmAccount.balance
     });
   }
 }

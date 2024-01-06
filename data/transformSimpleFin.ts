@@ -6,6 +6,7 @@ import { SimpleFinTransaction } from "../models/simplefin/transaction";
 export type SimpleFinImportData = {
   transactionsToImport: AppDraftTransaction[],
   accountsToImport: Map<string, AppDraftAccount>,
+  syncedAccounts: Map<number, AppAccount>,
   totalAccounts: number
 }
 
@@ -16,31 +17,37 @@ export const getImportData = (
 {
   const transactions: AppDraftTransaction[] = [];
   const unmatchedAccounts: Map<string, AppDraftAccount> = new Map();
+  const syncedAccounts: Map<number, AppAccount> = new Map();
 
-  for (const account of accountsResponse.accounts) {
-    const accountTransactions = account.transactions;
-    const mappingExists = accountMappings.has(account.id)
-      && lmAccounts.has(parseInt(accountMappings.get(account.id)));
+  for (const sfAccount of accountsResponse.accounts) {
+    const accountTransactions = sfAccount.transactions;
+    const mappingExists = accountMappings.has(sfAccount.id)
+      && lmAccounts.has(parseInt(accountMappings.get(sfAccount.id)));
     // Accounts to import is any SF account ID that has no mapping
     if (!mappingExists) {
-      unmatchedAccounts.set(account.id, {
-        externalAccountId: account.id,
-        accountName: account.name,
-        institutionName: account.org.name || null,
-        balance: account.balance,
-        currency: account.currency.toLowerCase()
+      unmatchedAccounts.set(sfAccount.id, {
+        externalAccountId: sfAccount.id,
+        accountName: sfAccount.name,
+        institutionName: sfAccount.org.name || null,
+        balance: sfAccount.balance,
+        currency: sfAccount.currency.toLowerCase()
       });
     } else {
-      account.lunchMoneyAccountId = parseInt(accountMappings.get(account.id));
+      sfAccount.lunchMoneyAccountId = parseInt(accountMappings.get(sfAccount.id));
+      syncedAccounts.set(sfAccount.lunchMoneyAccountId, {
+        ...lmAccounts.get(sfAccount.lunchMoneyAccountId),
+        balance: sfAccount.balance
+      });
     }
 
     accountTransactions.forEach(transaction =>
-      transactions.push(parseTransaction(account, transaction)));
+      transactions.push(parseTransaction(sfAccount, transaction)));
   }
 
   return {
     transactionsToImport: transactions,
     accountsToImport: unmatchedAccounts,
+    syncedAccounts: syncedAccounts,
     totalAccounts: accountsResponse.accounts.length
   };
 }

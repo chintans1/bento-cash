@@ -29,7 +29,8 @@ How to handle SimpleFIN sync:
 - [ ] improve styling
 - [ ] store last date of import transactions
 - [ ] beta on testflight
-= [ ] need to sync simplefin accounts with lunch money
+- [ ] need to sync simplefin accounts with lunch money
+- [ ] need to show a way of letting customer choose existing account for importing simplefin account
 
 we have a provider, allows update of app state itself
 when updating app state, we need to take in a new API token

@@ -14,7 +14,6 @@ export default function SimpleFinImportStackScreen() {
         headerShown: true,
         headerBackVisible: false,
         gestureEnabled: false,
-        //headerStyle: { backgroundColor: 'tomato' },
       }}>
       <SimpleFinImportStack.Screen
         name="ImportAccounts"
@@ -34,7 +33,6 @@ export default function SimpleFinImportStackScreen() {
         name="ImportTransactions"
         options={{
           title: "Importing transactions",
-          // headerShown: true,
          }} component={ImportTransactionsScreen} />
     </SimpleFinImportStack.Navigator>
   );

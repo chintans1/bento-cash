@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, Alert, Button, FlatList, StyleSheet, Text, View } from "react-native";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, Alert, Button, FlatList, Text, View } from "react-native";
 import { SimpleFinImportData, getImportData } from "../../data/transformSimpleFin";
 import { getAccountsData } from "../../clients/simplefinClient";
 import { getSimpleFinAuth } from "../../utils/simpleFinAuth";
@@ -7,20 +7,25 @@ import { StorageKeys } from "../../models/enums/storageKeys";
 import { brandingColours } from "../../styles/brandingConstants";
 import { commonStyles } from "../../styles/commonStyles";
 import { ImportAccountComponent } from "../../components/importing/ImportAccount";
-import { AppDraftAccount } from "../../models/lunchmoney/appModels";
+import { AppAccount, AppDraftAccount } from "../../models/lunchmoney/appModels";
 import { useParentContext } from "../../context/app/appContextProvider";
 import InternalLunchMoneyClient from "../../clients/lunchMoneyClient";
 import { getData, storeData } from "../../utils/asyncStorage";
 
+// TODO: need to refresh lmAccounts after account creation
+// TODO: need to refresh transactions after transaction creation
 export default function ImportAccountsScreen({ navigation }) {
   const { lmApiKey, accounts: lmAccounts } = useParentContext().appState;
   const lunchMoneyClient = new InternalLunchMoneyClient({ token: lmApiKey });
 
   const [importData, setImportData] = useState<SimpleFinImportData>(null);
-  const [importableAccounts, setImportableAccounts] = useState<Map<string, AppDraftAccount>>(new Map());
+  const [importableAccounts] = useState<Map<string, AppDraftAccount>>(new Map());
 
   const [isReady, setIsReady] = useState<boolean>(false);
   const [creatingAccounts, setCreatingAccounts] = useState<boolean>(false);
+
+  const [syncingAccounts, setSyncingAccounts] = useState<boolean>(false);
+  const [noAccountsToImport, setNoAccountsToImport] = useState<boolean>(false);
 
   const getAccountMappings = async (): Promise<Map<string, string>> => {
     const existingAccountMappings = await getData(StorageKeys.ACCOUNT_MAPPING_KEY);
@@ -33,10 +38,18 @@ export default function ImportAccountsScreen({ navigation }) {
       const fetchedAccountsResponse = await getAccountsData(await getSimpleFinAuth());
       const fetchedAccountMappings = await getAccountMappings();
 
-      setImportData(getImportData(fetchedAccountMappings, lmAccounts, fetchedAccountsResponse));
-    }
+      const fetchedImportData = getImportData(fetchedAccountMappings, lmAccounts, fetchedAccountsResponse);
+      setImportData(fetchedImportData);
 
-    setIsReady(true);
+      if (fetchedImportData.accountsToImport.size === 0) {
+        // No accounts to import, lets pivot to syncing accounts
+        setSyncingAccounts(true);
+        setIsReady(true);
+        setNoAccountsToImport(true);
+        return;
+      }
+      setIsReady(true);
+    }
   }
 
   const handleAccountChange = (newAccount: AppDraftAccount) => {
@@ -57,13 +70,32 @@ export default function ImportAccountsScreen({ navigation }) {
       existingAccountMappings.set(id, accountCreated.id.toString());
     }
     await storeData(StorageKeys.ACCOUNT_MAPPING_KEY, Array.from(existingAccountMappings.entries()));
-    Alert.alert("Accounts created!", "Moving to importing transactions now",
-      [{text: "Ok", onPress: () => moveToTransactions()}]);
+    moveToTransactions();
   }
 
-  const handleNextButtonClick = () => {
+  const handleSyncingAccounts = async () => {
+    setSyncingAccounts(true);
+
+    // need to gather accounts that exist (AppAccount specifically, any draft accounts were already created)
+    // only sync accounts where LM account exists, we need to ensure the mapping is legitimate
+    // to ensure mapping is legitimate, we can filter using lmAccounts, already present
+
+    const accountsToSync: Map<number, AppAccount> = importData.syncedAccounts;
+    for (const [id, accountToUpdate] of accountsToSync) {
+      await lunchMoneyClient.updateAccountBalance(accountToUpdate);
+    }
+  }
+
+  const handleNextButtonClick = async () => {
     // TODO: need to make sure we disable the button when creating accounts
     // TODO: need to allow choosing existing LM accounts to map
+    await handleSyncingAccounts();
+
+    if (noAccountsToImport) {
+      moveToTransactions();
+      return;
+    }
+
     if (importableAccounts.size == 0) {
       Alert.alert("No accounts selected",
         "Are you sure you do not want to import any accounts?",
@@ -73,12 +105,10 @@ export default function ImportAccountsScreen({ navigation }) {
 
     Alert.alert("Create these accounts",
     `Do you want to create the following accounts?\n
-    ${Array.from(importableAccounts.values()).map(v => v.accountName).join("\n")}`,
-    [
+    ${Array.from(importableAccounts.values()).map(v => v.accountName).join("\n")}`, [
       {text: "Cancel", style: "cancel"},
-      {text: "Create", onPress: () => handleAccountCreation()}
-    ]
-    )
+      {text: "Create", onPress: async () => await handleAccountCreation()}
+    ]);
   }
 
   const moveToTransactions = () => {
@@ -96,12 +126,13 @@ export default function ImportAccountsScreen({ navigation }) {
           title="Next"
           color={brandingColours.primaryColour}
           onPress={() => handleNextButtonClick()}
-          disabled={!isReady || creatingAccounts}
+          disabled={!isReady || creatingAccounts || syncingAccounts}
         />
       ),
     });
   }, [navigation, importData]);
 
+  // TODO: there are 3 loading screens here; loading all accounts, creating accounts in LM, syncing accounts in LM
   if (!isReady) {
     return (
       <View style={{ flex: 1, justifyContent: "center" }}>
@@ -110,15 +141,26 @@ export default function ImportAccountsScreen({ navigation }) {
     )
   }
 
-  if (creatingAccounts) {
+  if (noAccountsToImport) {
     return (
       <View style={{ flex: 1, justifyContent: "center" }}>
-        <ActivityIndicator size="large" color={brandingColours.primaryColour} />
-        <Text style={{ textAlign: "center" }}>Creating accounts...</Text>
+        <Text style={{ textAlign: "center" }}>
+          No accounts found to import, press next to continue
+        </Text>
       </View>
     )
   }
 
+  if (creatingAccounts || syncingAccounts) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center" }}>
+        <ActivityIndicator size="large" color={brandingColours.primaryColour} />
+        <Text style={{ textAlign: "center" }}>
+          {creatingAccounts ? "Creating accounts..." : "Syncing accounts..."}
+        </Text>
+      </View>
+    )
+  }
 
   // User will update the accounts presented, once ready they can checkmark it
   // All checkmarked accounts can be created now when user selects "Create/Next"

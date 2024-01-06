@@ -14,7 +14,7 @@ export type AppTransaction = {
   status: "cleared" | "uncleared" | "recurring" | "recurring_suggested" | "pending";
 }
 
-export const accountTypes = ["employee compensation", "cash", "vehicle", "loan", "cryptocurrency", "investment", "other", "credit", "real estate"];
+export const accountTypes = ["employee compensation", "cash", "vehicle", "loan", "cryptocurrency", "investment", "other liability", "other asset", "credit", "real estate"];
 export type AccountType = typeof accountTypes[number];
 
 export type AppAccount = {
