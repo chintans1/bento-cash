@@ -8,6 +8,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 
 type ImportAccountProps = {
   account: AppDraftAccount,
+  existingLmAccounts?: {"label": string, "value": number}[],
   setUpdatedAccount: (account: AppDraftAccount) => void
 }
 
@@ -71,12 +72,13 @@ const accountStyles = StyleSheet.create({
   },
 });
 
-export function ImportAccountComponent({ account, setUpdatedAccount }: ImportAccountProps) {
+export function ImportAccountComponent({ account, existingLmAccounts, setUpdatedAccount }: ImportAccountProps) {
   const [checkboxClicked, setCheckboxClicked] = useState<boolean>(false);
   const [checkboxEnabled, setCheckboxEnabled] = useState<boolean>(false);
   const [inputDisabled, setInputDisabled] = useState<boolean>(false);
 
   const [selectedAccountType, setSelectedAccountType] = useState<string>("");
+  const [selectedSyncAccount, setSelectedSyncAccount] = useState<number>(null);
   const [accountName, setAccountName] = useState<string>(account.accountName);
   const [institutionName, setInstitutionName] = useState<string>(account.institutionName);
 
@@ -84,6 +86,16 @@ export function ImportAccountComponent({ account, setUpdatedAccount }: ImportAcc
     setSelectedAccountType(accountTypeSelected);
 
     if (accountTypeSelected.length > 0 && accountName.length > 0 && institutionName.length > 0) {
+      setCheckboxEnabled(true);
+      return;
+    }
+    setCheckboxEnabled(false);
+  }
+
+  const handleExistingAccountSelect = (selectedAccountId: number) => {
+    setSelectedSyncAccount(selectedAccountId);
+
+    if (selectedAccountId > 0) {
       setCheckboxEnabled(true);
       return;
     }
@@ -102,6 +114,35 @@ export function ImportAccountComponent({ account, setUpdatedAccount }: ImportAcc
       institutionName = account.institutionName;
     }
     setInstitutionName(institutionName);
+  }
+
+  const renderExistingAccountPicker = () => {
+    if (existingLmAccounts?.length > 0) {
+      return (
+        <View>
+          <View style={{
+            borderBottomColor: brandingColours.secondaryColour,
+            borderBottomWidth: StyleSheet.hairlineWidth,
+            marginTop: 10
+          }} />
+          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 10 }}>
+            <Dropdown
+              disable={inputDisabled || selectedAccountType.length > 0}
+              style={[accountStyles.dropdown, { flex: 1 }]}
+              placeholder="choose from existing account..."
+              itemTextStyle={{ fontSize: 10 }}
+              placeholderStyle={{ fontSize: 10 }}
+              selectedTextStyle={{ fontSize: 10 }}
+              data={existingLmAccounts}
+              labelField={"label"}
+              valueField={"value"}
+              onChange={(valueSelected) => handleExistingAccountSelect(valueSelected.value)} />
+          </View>
+      </View>
+      );
+    }
+
+    return null;
   }
 
   // User will update the accounts presented, once ready they can checkmark it
@@ -142,7 +183,7 @@ export function ImportAccountComponent({ account, setUpdatedAccount }: ImportAcc
         </View>
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 10 }}>
           <Dropdown
-            disable={inputDisabled}
+            disable={inputDisabled || selectedSyncAccount > 0}
             style={accountStyles.dropdown}
             placeholder="choose account type..."
             itemTextStyle={{ fontSize: 10 }}
@@ -156,6 +197,7 @@ export function ImportAccountComponent({ account, setUpdatedAccount }: ImportAcc
           <Text style={accountStyles.smallText}>currency: <Text style={accountStyles.amount}>{ account.currency }</Text></Text>
           <Text adjustsFontSizeToFit={true} numberOfLines={1} style={accountStyles.amount}>${ parseFloat(account.balance).toFixed(2) }</Text>
         </View>
+        {renderExistingAccountPicker()}
       </View>
 
       <View style={accountStyles.checkbox}>
@@ -172,6 +214,7 @@ export function ImportAccountComponent({ account, setUpdatedAccount }: ImportAcc
               type: selectedAccountType,
               accountName: accountName,
               institutionName: institutionName,
+              lmAccountId: selectedSyncAccount,
               importable: checked
             });
           }} />

@@ -78,6 +78,18 @@ export class InternalLunchMoneyClient {
       balance: lmAccount.balance
     });
   }
+
+  async updateDraftAccountBalance(lmAccount: AppDraftAccount) {
+    if (lmAccount.lmAccountId === null) {
+      // TODO: maybe we want to throw an error
+      return;
+    }
+
+    return await this.lunchMoneyClient.updateAsset({
+      id: lmAccount.lmAccountId,
+      balance: lmAccount.balance
+    });
+  }
 }
 
 export default InternalLunchMoneyClient;

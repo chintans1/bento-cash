@@ -28,6 +28,7 @@ export type AppAccount = {
 }
 
 export type AppDraftAccount = {
+  lmAccountId?: number;
   externalAccountId: string;
   accountName: string;
   institutionName?: string;

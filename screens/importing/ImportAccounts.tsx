@@ -27,6 +27,8 @@ export default function ImportAccountsScreen({ navigation }) {
   const [syncingAccounts, setSyncingAccounts] = useState<boolean>(false);
   const [noAccountsToImport, setNoAccountsToImport] = useState<boolean>(false);
 
+  const [dropdownAccountsData, setDropdownAccountsData] = useState<{"label": string, "value": number}[]>(null);
+
   const getAccountMappings = async (): Promise<Map<string, string>> => {
     const existingAccountMappings = await getData(StorageKeys.ACCOUNT_MAPPING_KEY);
     return existingAccountMappings != null && JSON.stringify(existingAccountMappings) != "{}"
@@ -40,6 +42,11 @@ export default function ImportAccountsScreen({ navigation }) {
 
       const fetchedImportData = getImportData(fetchedAccountMappings, lmAccounts, fetchedAccountsResponse);
       setImportData(fetchedImportData);
+      setDropdownAccountsData(Array.from(lmAccounts.values())
+        .map(a => {
+          console.log("how many times is this triggering");
+          return {"label": a.accountName, "value": a.id}
+        }));
 
       if (fetchedImportData.accountsToImport.size === 0) {
         // No accounts to import, lets pivot to syncing accounts
@@ -66,8 +73,16 @@ export default function ImportAccountsScreen({ navigation }) {
     setCreatingAccounts(true);
     const existingAccountMappings = await getAccountMappings();
     for (const [id, accountToCreate] of importableAccounts) {
-      const accountCreated = await lunchMoneyClient.createAccount(accountToCreate);
-      existingAccountMappings.set(id, accountCreated.id.toString());
+      let lmAccountId: number = accountToCreate.lmAccountId;
+
+      if (accountToCreate.lmAccountId != null) {
+        await lunchMoneyClient.updateDraftAccountBalance(accountToCreate);
+      } else {
+        const accountCreated = await lunchMoneyClient.createAccount(accountToCreate);
+        lmAccountId = accountCreated.id;
+      }
+
+      existingAccountMappings.set(id, lmAccountId.toString());
     }
     await storeData(StorageKeys.ACCOUNT_MAPPING_KEY, Array.from(existingAccountMappings.entries()));
     moveToTransactions();
@@ -87,8 +102,6 @@ export default function ImportAccountsScreen({ navigation }) {
   }
 
   const handleNextButtonClick = async () => {
-    // TODO: need to make sure we disable the button when creating accounts
-    // TODO: need to allow choosing existing LM accounts to map
     await handleSyncingAccounts();
 
     if (noAccountsToImport) {
@@ -103,6 +116,7 @@ export default function ImportAccountsScreen({ navigation }) {
       return;
     }
 
+    // TODO: if account being imported is an account map to existing LM account, maybe create is bad language
     Alert.alert("Create these accounts",
     `Do you want to create the following accounts?\n
     ${Array.from(importableAccounts.values()).map(v => v.accountName).join("\n")}`, [
@@ -171,7 +185,11 @@ export default function ImportAccountsScreen({ navigation }) {
       <Text style={commonStyles.headerText}>Accounts to import: {importData.accountsToImport.size}</Text>
       <FlatList
         data={Array.from(importData.accountsToImport.values())}
-        renderItem={({ item }) => <ImportAccountComponent account={item} setUpdatedAccount={handleAccountChange} />}
+        renderItem={({ item }) =>
+          <ImportAccountComponent
+            account={item}
+            setUpdatedAccount={handleAccountChange}
+            existingLmAccounts={dropdownAccountsData} />}
       />
     </View>
   )
