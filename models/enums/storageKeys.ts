@@ -11,7 +11,9 @@ export const SecureStorageKeys = {
 }
 
 const ACCOUNT_MAPPING_KEY: string = "accountMapping";
+const LAST_DATE_OF_IMPORT: string = "lastDateOfImport";
 
 export const StorageKeys = {
-  ACCOUNT_MAPPING_KEY
+  ACCOUNT_MAPPING_KEY,
+  LAST_DATE_OF_IMPORT
 }

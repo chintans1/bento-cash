@@ -35,13 +35,23 @@ export default function ImportAccountsScreen({ navigation }) {
       ? new Map(existingAccountMappings) : new Map<string, string>();
   }
 
+  // TODO: maybe this logic does not need to live here??
+  const getLastImportDate = async (): Promise<Date> => {
+    const lastImportDate = await getData(StorageKeys.LAST_DATE_OF_IMPORT);
+    console.log(lastImportDate);
+    return lastImportDate != null ? new Date(lastImportDate) : new Date();
+  }
+
   const fetchDataFromSimpleFin = async () => {
     if (!isReady) {
-      const fetchedAccountsResponse = await getAccountsData(await getSimpleFinAuth());
+      const lastImportDate = await getLastImportDate();
+      const fetchedAccountsResponse = await getAccountsData(await getSimpleFinAuth(), lastImportDate);
       const fetchedAccountMappings = await getAccountMappings();
 
       const fetchedImportData = getImportData(fetchedAccountMappings, lmAccounts, fetchedAccountsResponse);
+      fetchedImportData.lastImportDate = lastImportDate;
       setImportData(fetchedImportData);
+
       setDropdownAccountsData(Array.from(lmAccounts.values())
         .map(a => {
           console.log("how many times is this triggering");
@@ -128,7 +138,8 @@ export default function ImportAccountsScreen({ navigation }) {
   const moveToTransactions = () => {
     navigation.navigate("ImportTransactions", {
       transactionsToImport: importData.transactionsToImport,
-      lunchMoneyClient: lunchMoneyClient
+      lunchMoneyClient: lunchMoneyClient,
+      lastImportDateString: importData.lastImportDate?.toString()
     });
   }
 

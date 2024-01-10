@@ -1,5 +1,6 @@
 import { AccountsResponse } from '../models/simplefin/accounts';
 import { SimpleFinAuthentication } from '../models/simplefin/authentication';
+import { getDateForSimpleFin } from '../utils/dateUtils';
 import { storeAuthenticationDetails } from '../utils/simpleFinAuth';
 import base64 from 'react-native-base64';
 
@@ -35,9 +36,10 @@ export async function storeSimpleFinAuth(claimUrl: string): Promise<SimpleFinAut
   });
 }
 
-export async function getAccountsData(simpleFinAuth: SimpleFinAuthentication): Promise<AccountsResponse> {
-  // TODO: natively handle query params
-  const response = await fetch(`${simpleFinAuth.baseUrl}/accounts?start-date=1702191600`, {
+export async function getAccountsData(
+  simpleFinAuth: SimpleFinAuthentication,
+  startDate: Date): Promise<AccountsResponse> {
+  const response = await fetch(`${simpleFinAuth.baseUrl}/accounts?start-date=${getDateForSimpleFin(startDate)}`, {
     headers: {
       Authorization: `Basic ${base64.encode(`${simpleFinAuth.username}:${simpleFinAuth.password}`)}`
     }

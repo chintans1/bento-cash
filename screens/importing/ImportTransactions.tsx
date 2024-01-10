@@ -7,21 +7,33 @@ import { brandingColours } from "../../styles/brandingConstants";
 import { useParentContext } from "../../context/app/appContextProvider";
 import InternalLunchMoneyClient from "../../clients/lunchMoneyClient";
 import { getDraftTransactions } from "../../data/transformLunchMoney";
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import { getParsedTransactions } from "../../data/transformSimpleFin";
+import { getAccountsData } from "../../clients/simplefinClient";
+import { getSimpleFinAuth } from "../../utils/simpleFinAuth";
+import { StorageKeys } from "../../models/enums/storageKeys";
+import { storeData } from "../../utils/asyncStorage";
 
 export default function ImportTransactionsScreen({ route, navigation }) {
   const {
     transactionsToImport,
     lmAccounts,
-    lunchMoneyClient
+    lunchMoneyClient,
+    lastImportDateString
   }: {
     transactionsToImport: AppDraftTransaction[],
     lmAccounts: Map<number, AppAccount>,
-    lunchMoneyClient: InternalLunchMoneyClient
+    lunchMoneyClient: InternalLunchMoneyClient,
+    lastImportDateString: string
   } = route.params;
   const { categories } = useParentContext().appState;
 
   const [categoriesAvailable, setCategoriesAvailable] = useState<{"label": string, "value": AppCategory}[]>([]);
   const [isReady, setIsReady] = useState<boolean>(false);
+
+  const [importDate, setImportDate] = useState<Date>(new Date(lastImportDateString));
+  const [isFetchingTransactions, setIsFetchingTransactions] = useState<boolean>(false);
+  const [importingTransactions, setImportingTransactions] = useState<AppDraftTransaction[]>(transactionsToImport);
 
   const [selectedTransactions] = useState<Map<string, AppDraftTransaction>>(new Map());
   const [creatingTransactions, setCreatingTransactions] = useState<boolean>(false);
@@ -36,6 +48,19 @@ export default function ImportTransactionsScreen({ route, navigation }) {
       );
     }
     setIsReady(true);
+  }
+
+  const handleDateChange = async (event: DateTimePickerEvent, date: Date) => {
+    // TODO: we should get simplefinAuth from global state
+    setImportDate(date);
+    if (event.type === "dismissed") {
+      setIsFetchingTransactions(true);
+      await storeData(StorageKeys.LAST_DATE_OF_IMPORT, date.toISOString());
+
+      const parsedTransactions = getParsedTransactions(await getAccountsData(await getSimpleFinAuth(), date));
+      setImportingTransactions(parsedTransactions);
+      setIsFetchingTransactions(false);
+    }
   }
 
   const handleTransactionUpdate = (updatedTransaction: AppDraftTransaction) => {
@@ -91,6 +116,15 @@ export default function ImportTransactionsScreen({ route, navigation }) {
     )
   }
 
+  if (isFetchingTransactions) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center" }}>
+        <ActivityIndicator size="large" color={brandingColours.primaryColour} />
+        <Text style={{ textAlign: "center" }}>Fetching transactions...</Text>
+      </View>
+    )
+  }
+
   if (creatingTransactions) {
     return (
       <View style={{ flex: 1, justifyContent: "center" }}>
@@ -102,9 +136,17 @@ export default function ImportTransactionsScreen({ route, navigation }) {
 
   return (
   <View style={[commonStyles.container]}>
-    <Text style={commonStyles.headerText}>Transactions to import</Text>
+    <View style={{ flexDirection: "row", justifyContent: "flex-start", alignItems: "center" }}>
+      <Text>Importing transactions from</Text>
+      <DateTimePicker
+        style={{ width: 150 }}
+        mode="date"
+        value={importDate}
+        maximumDate={new Date()}
+        onChange={handleDateChange} />
+    </View>
     <FlatList
-      data={transactionsToImport}
+      data={importingTransactions}
       renderItem={({ item }) => <ImportTransactionComponent
         transaction={item}
         updateTransaction={handleTransactionUpdate}

@@ -7,7 +7,8 @@ export type SimpleFinImportData = {
   transactionsToImport: AppDraftTransaction[],
   accountsToImport: Map<string, AppDraftAccount>,
   syncedAccounts: Map<number, AppAccount>,
-  totalAccounts: number
+  totalAccounts: number,
+  lastImportDate?: Date
 }
 
 export const getImportData = (
@@ -50,6 +51,20 @@ export const getImportData = (
     syncedAccounts: syncedAccounts,
     totalAccounts: accountsResponse.accounts.length
   };
+}
+
+// TODO: take in account mappings
+export const getParsedTransactions = (
+  accountsResponse: AccountsResponse): AppDraftTransaction[] =>
+{
+  const transactions: AppDraftTransaction[] = [];
+
+  for (const sfAccount of accountsResponse.accounts) {
+    const accountTransactions = sfAccount.transactions;
+    accountTransactions.forEach(transaction => transactions.push(parseTransaction(sfAccount, transaction)));
+  }
+
+  return transactions;
 }
 
 function parseTransaction(
