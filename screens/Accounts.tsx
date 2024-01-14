@@ -1,9 +1,28 @@
-import { FlatList, Text, View } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import { commonStyles } from "../styles/commonStyles";
 import { useParentContext } from "../context/app/appContextProvider";
 import { AccountComponent } from "../components/Account";
-import { AppAccount } from "../models/lunchmoney/appModels";
+import { brandingColours } from "../styles/brandingConstants";
 
+export const separator = () => {
+  return (
+    <View style={{
+      borderBottomColor: brandingColours.dividerColour,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      marginHorizontal: 10
+    }} />
+  );
+}
+
+const styles = StyleSheet.create({
+  card: {
+    ...commonStyles.card,
+    flexDirection: "column",
+    flex: 0,
+    borderRadius: 8,
+    marginBottom: 10,
+  }
+});
 
 export default function Accounts() {
   const { accounts: accountsMap } = useParentContext().appState;
@@ -18,8 +37,14 @@ export default function Accounts() {
 
   return (
     <View style={commonStyles.container}>
-      <Text style={{ fontSize: 20, fontWeight: "bold" }}>Net worth: ${netWorth}</Text>
+      <View style={styles.card}>
+        <Text style={{ color: brandingColours.primaryColour, fontSize: 20, fontWeight: "bold" }}>Overview</Text>
+        <Text style={{ color: brandingColours.secondaryColour, fontSize: 16 }}>Net worth: ${netWorth}</Text>
+      </View>
+
       <FlatList
+        style={commonStyles.list}
+        ItemSeparatorComponent={separator}
         data={accounts}
         renderItem={({ item }) => <AccountComponent account={item} />}
       />

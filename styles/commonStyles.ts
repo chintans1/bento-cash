@@ -1,6 +1,5 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { brandingColours } from "./brandingConstants";
-
 
 const base = {
   color: brandingColours.secondaryColour
@@ -15,13 +14,17 @@ export const commonStyles = StyleSheet.create({
     // paddingTop: 22
     paddingHorizontal: 10
   },
+  list: {
+    backgroundColor: brandingColours.shadedColour,
+    borderRadius: 8,
+    marginBottom: 10,
+  },
   card: {
     flex: 1,
     flexDirection: "row",
     justifyContent: "flex-start",
 
     backgroundColor: brandingColours.shadedColour,
-    borderRadius: 5,
 
     // marginHorizontal: 5,
     marginVertical: 3,
@@ -34,7 +37,7 @@ export const commonStyles = StyleSheet.create({
     justifyContent: "flex-start",
 
     backgroundColor: brandingColours.shadedColour,
-    borderRadius: 5,
+    borderRadius: 8,
 
     // marginHorizontal: 5,
     marginVertical: 3,
@@ -48,14 +51,12 @@ export const commonStyles = StyleSheet.create({
   headerText: {
     ...base,
     fontSize: 18,
-    height: 44,
     display: "flex",
     color: brandingColours.primaryColour
   },
   headerTextBold: {
     ...base,
     fontSize: 24,
-    height: 44,
     fontWeight: 'bold',
     color: brandingColours.primaryColour
   }

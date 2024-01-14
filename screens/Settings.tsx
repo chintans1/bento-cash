@@ -18,6 +18,7 @@ const settingsStyles = StyleSheet.create({
     borderRadius: 10,
     height: 40,
     padding: 10,
+    marginTop: 10,
   },
   button: {
     backgroundColor: brandingColours.secondaryColour,
@@ -180,7 +181,7 @@ export default function Settings({ navigation }) {
       </View>
 
       <View style={commonStyles.columnCard}>
-        <Text>Simplefin Setup Token</Text>
+        <Text style={commonStyles.headerText}>Simplefin Setup Token</Text>
         <TextInput
           ref={simpleFinTokenReference}
           style={settingsStyles.textInput}

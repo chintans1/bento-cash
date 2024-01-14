@@ -71,7 +71,7 @@ export function TransactionComponent({ transaction }: TransactionProps) {
       <View style={transactionStyles.rightSection}>
         <Text
           style={[transactionStyles.amount, parseFloat(transaction.amount) > 0 ? transactionStyles.amountPositive : transactionStyles.amountNegative]}>
-          {parseFloat(transaction.amount).toFixed(2)}
+          ${parseFloat(transaction.amount).toFixed(2)}
         </Text>
         <Text style={transactionStyles.date}>{transaction.date}</Text>
       </View>

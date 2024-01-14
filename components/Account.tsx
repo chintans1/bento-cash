@@ -11,18 +11,8 @@ type AccountProps = {
 
 const transactionStyles = StyleSheet.create({
   card: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-between",
+    ...commonStyles.card,
     alignItems: "center",
-
-    backgroundColor: brandingColours.shadedColour,
-    borderRadius: 5,
-
-    // marginHorizontal: 5,
-    marginVertical: 3,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
   },
   leftSection: {
     flex: 3.5,

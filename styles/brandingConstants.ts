@@ -4,6 +4,8 @@ const secondaryColour = "#14213D";
 const backgroundColour = "#E5E5E5";
 const shadedColour = "white";
 
+const dividerColour = "#EFEFEF";
+
 const black = "#000000";
 const red = "#D90429";
 const green = "#38B000";
@@ -14,6 +16,7 @@ export const brandingColours = {
   secondaryColour,
   backgroundColour,
   shadedColour,
+  dividerColour,
   black,
   red,
   green,
