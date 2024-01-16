@@ -127,6 +127,7 @@ export function ImportTransactionComponent({ transaction, availableCategories, u
           ]}>  ${parsedAmount.toFixed(2)}</Text>
           <Text style={transactionStyles.date}>  {transaction.date}</Text>
         </View>
+
         <View style={{ flexDirection: "row" }}>
           <Text style={[transactionStyles.smallText, { flex: 1 }]}>{transaction.notes}</Text>
         </View>

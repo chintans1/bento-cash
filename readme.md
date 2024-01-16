@@ -17,7 +17,7 @@ How to handle SimpleFIN sync:
 
 ### TODO
 - [x] store last date of import transactions
-- [ ] publish new build
+- [x] publish new build
 
 - [ ] update state after import of data
 - [ ] improve styling

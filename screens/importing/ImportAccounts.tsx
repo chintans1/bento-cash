@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Button, FlatList, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Button, FlatList, StyleSheet, Text, View } from "react-native";
 import { SimpleFinImportData, getImportData } from "../../data/transformSimpleFin";
 import { getAccountsData } from "../../clients/simplefinClient";
 import { getSimpleFinAuth } from "../../utils/simpleFinAuth";
@@ -143,6 +143,16 @@ export default function ImportAccountsScreen({ navigation }) {
     });
   }
 
+  const separator = () => {
+    return (
+      <View style={{
+        borderBottomColor: brandingColours.dividerColour,
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        marginHorizontal: 10
+      }} />
+    )
+  }
+
   useEffect(() => {
     fetchDataFromSimpleFin();
     navigation.setOptions({
@@ -193,15 +203,22 @@ export default function ImportAccountsScreen({ navigation }) {
 
   return (
     <View style={[commonStyles.container]}>
-      <Text style={commonStyles.headerText}>Accounts to import: {importData.accountsToImport.size}</Text>
-      <FlatList
-        data={Array.from(importData.accountsToImport.values())}
-        renderItem={({ item }) =>
-          <ImportAccountComponent
-            account={item}
-            setUpdatedAccount={handleAccountChange}
-            existingLmAccounts={dropdownAccountsData} />}
-      />
+      <View>
+        <Text style={commonStyles.headerTextBold}>Accounts to import: {importData.accountsToImport.size}</Text>
+      </View>
+      <View>
+        <FlatList
+          style={[commonStyles.list, { marginTop: 3 }]}
+          windowSize={1}
+          ItemSeparatorComponent={separator}
+          data={Array.from(importData.accountsToImport.values())}
+          renderItem={({ item }) =>
+            <ImportAccountComponent
+              account={item}
+              setUpdatedAccount={handleAccountChange}
+              existingLmAccounts={dropdownAccountsData} />}
+        />
+      </View>
     </View>
   )
 }

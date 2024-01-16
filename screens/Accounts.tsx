@@ -17,6 +17,7 @@ export const separator = () => {
 const styles = StyleSheet.create({
   card: {
     ...commonStyles.card,
+    marginVertical: 0,
     flexDirection: "column",
     flex: 0,
     borderRadius: 8,
@@ -36,7 +37,7 @@ export default function Accounts() {
   // const mappedAccounts: Map<string, AppAccount[]> = new Map();
 
   return (
-    <View style={commonStyles.container}>
+    <View style={[commonStyles.container, { flex: 1 }]}>
       <View style={styles.card}>
         <Text style={{ color: brandingColours.primaryColour, fontSize: 20, fontWeight: "bold" }}>Overview</Text>
         <Text style={{ color: brandingColours.secondaryColour, fontSize: 16 }}>Net worth: ${netWorth}</Text>

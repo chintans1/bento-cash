@@ -8,11 +8,13 @@ const base = {
 export const commonStyles = StyleSheet.create({
   container: {
     ...base,
-    paddingTop: 3,
-    flex: 1,
     backgroundColor: brandingColours.backgroundColour,
-    // paddingTop: 22
-    paddingHorizontal: 10
+    paddingHorizontal: 10,
+    height: '100%'
+  },
+  rowView: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   list: {
     backgroundColor: brandingColours.shadedColour,

@@ -1,4 +1,4 @@
-import { ActivityIndicator, Alert, Button, FlatList, Text, View } from "react-native"
+import { ActivityIndicator, Alert, Button, FlatList, StyleSheet, Text, View } from "react-native"
 import { AppAccount, AppCategory, AppDraftTransaction } from "../../models/lunchmoney/appModels";
 import { commonStyles } from "../../styles/commonStyles";
 import { ImportTransactionComponent } from "../../components/importing/ImportTransaction";
@@ -13,6 +13,17 @@ import { getAccountsData } from "../../clients/simplefinClient";
 import { getSimpleFinAuth } from "../../utils/simpleFinAuth";
 import { StorageKeys } from "../../models/enums/storageKeys";
 import { storeData } from "../../utils/asyncStorage";
+
+
+const styles = StyleSheet.create({
+  card: {
+    ...commonStyles.card,
+    flex: 0,
+    borderRadius: 8,
+    alignItems: "center",
+    marginVertical: 6
+  }
+});
 
 export default function ImportTransactionsScreen({ route, navigation }) {
   const {
@@ -94,6 +105,16 @@ export default function ImportTransactionsScreen({ route, navigation }) {
     ])
   }
 
+  const separator = () => {
+    return (
+      <View style={{
+        borderBottomColor: brandingColours.dividerColour,
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        marginHorizontal: 10
+      }} />
+    )
+  }
+
   useEffect(() => {
     populateAvailableCategories();
     navigation.setOptions({
@@ -136,9 +157,12 @@ export default function ImportTransactionsScreen({ route, navigation }) {
 
   return (
   <View style={[commonStyles.container]}>
-    <View style={{ flexDirection: "row", justifyContent: "flex-start", alignItems: "center" }}>
-      <Text>Importing transactions from</Text>
+    <View style={styles.card}>
+      <Text style={{color: brandingColours.secondaryColour}}>Importing transactions from</Text>
       <DateTimePicker
+        accentColor={brandingColours.primaryColour}
+        textColor={brandingColours.primaryColour}
+        themeVariant="light"
         style={{ width: 150 }}
         mode="date"
         value={importDate}
@@ -146,6 +170,8 @@ export default function ImportTransactionsScreen({ route, navigation }) {
         onChange={handleDateChange} />
     </View>
     <FlatList
+      style={[commonStyles.list, { marginBottom: 15 }]}
+      ItemSeparatorComponent={separator}
       data={importingTransactions}
       renderItem={({ item }) => <ImportTransactionComponent
         transaction={item}

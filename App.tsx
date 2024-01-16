@@ -9,6 +9,7 @@ import { brandingColours } from './styles/brandingConstants';
 import Accounts from './screens/Accounts';
 import { AppProvider } from './context/app/AppProvider';
 import SettingsStackScreen from './screens/SettingsStackScreen';
+import { commonStyles } from './styles/commonStyles';
 
 const Tab = createBottomTabNavigator();
 

@@ -19,21 +19,19 @@ const data: {"label": string, "value": string}[] =
 
 const accountStyles = StyleSheet.create({
   card: {
+    ...commonStyles.card,
     flexDirection: "row",
-    justifyContent: "space-around",
     alignItems: "center",
-
-    backgroundColor: brandingColours.shadedColour,
-    borderRadius: 5,
-
-    marginVertical: 3,
-    paddingVertical: 10,
-    paddingHorizontal: 10,
   },
   leftSection: {
     flex: 1,
     flexDirection: "column",
     marginRight: 5,
+  },
+  dropdownView: {
+    ...commonStyles.rowView,
+    justifyContent: "space-between",
+    marginTop: 10
   },
   textInput: {
     flex: 1,
@@ -48,9 +46,13 @@ const accountStyles = StyleSheet.create({
     marginStart: 5,
     padding: 5,
   },
-  checkbox: {
+  checkboxView: {
     alignItems: "flex-end",
     flexDirection: "column",
+  },
+  checkbox: {
+    borderRadius: 15,
+    backgroundColor: brandingColours.primaryColour
   },
   smallText: {
     ...commonStyles.textBase,
@@ -121,11 +123,11 @@ export function ImportAccountComponent({ account, existingLmAccounts, setUpdated
       return (
         <View>
           <View style={{
-            borderBottomColor: brandingColours.secondaryColour,
+            borderBottomColor: brandingColours.dividerColour,
             borderBottomWidth: StyleSheet.hairlineWidth,
             marginTop: 10
           }} />
-          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 10 }}>
+          <View style={accountStyles.dropdownView}>
             <Dropdown
               disable={inputDisabled || selectedAccountType.length > 0}
               style={[accountStyles.dropdown, { flex: 1 }]}
@@ -159,7 +161,7 @@ export function ImportAccountComponent({ account, existingLmAccounts, setUpdated
   return (
     <View style={accountStyles.card}>
       <View style={accountStyles.leftSection}>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <View style={commonStyles.rowView}>
           <Text style={accountStyles.smallText}>account name: </Text>
           <TextInput
             editable={!inputDisabled}
@@ -170,7 +172,7 @@ export function ImportAccountComponent({ account, existingLmAccounts, setUpdated
             autoCorrect={false}
             onChangeText={(newValue) => handleAccountNameChange(newValue)} />
         </View>
-        <View style={{ flexDirection: "row", alignItems: "center", marginTop: 10 }}>
+        <View style={{...commonStyles.rowView, marginTop: 10 }}>
           <Text style={accountStyles.smallText}>institution:</Text>
           <TextInput
             editable={!inputDisabled}
@@ -181,7 +183,7 @@ export function ImportAccountComponent({ account, existingLmAccounts, setUpdated
             autoCorrect={false}
             onChangeText={(newValue) => handleInstitutionNameChange(newValue)} />
         </View>
-        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 10 }}>
+        <View style={accountStyles.dropdownView}>
           <Dropdown
             disable={inputDisabled || selectedSyncAccount > 0}
             style={accountStyles.dropdown}
@@ -200,10 +202,10 @@ export function ImportAccountComponent({ account, existingLmAccounts, setUpdated
         {renderExistingAccountPicker()}
       </View>
 
-      <View style={accountStyles.checkbox}>
+      <View style={accountStyles.checkboxView}>
         <Checkbox
           color={brandingColours.primaryColour}
-          style= {{ borderRadius: 15, backgroundColor: brandingColours.primaryColour }}
+          style={accountStyles.checkbox}
           disabled={!checkboxEnabled}
           value={checkboxClicked}
           onValueChange={(checked) => {
