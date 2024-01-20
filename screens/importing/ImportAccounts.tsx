@@ -12,6 +12,16 @@ import { useParentContext } from "../../context/app/appContextProvider";
 import InternalLunchMoneyClient from "../../clients/lunchMoneyClient";
 import { getData, storeData } from "../../utils/asyncStorage";
 
+const styles = StyleSheet.create({
+  card: {
+    ...commonStyles.card,
+    flex: 0,
+    borderRadius: 8,
+    alignItems: "center",
+    marginVertical: 6
+  }
+});
+
 // TODO: need to refresh lmAccounts after account creation
 // TODO: need to refresh transactions after transaction creation
 export default function ImportAccountsScreen({ navigation }) {
@@ -203,22 +213,19 @@ export default function ImportAccountsScreen({ navigation }) {
 
   return (
     <View style={[commonStyles.container]}>
-      <View>
-        <Text style={commonStyles.headerTextBold}>Accounts to import: {importData.accountsToImport.size}</Text>
+      <View style={styles.card}>
+        <Text style={commonStyles.headerText}>Accounts to import: {importData.accountsToImport.size}</Text>
       </View>
-      <View>
-        <FlatList
-          style={[commonStyles.list, { marginTop: 3 }]}
-          windowSize={1}
-          ItemSeparatorComponent={separator}
-          data={Array.from(importData.accountsToImport.values())}
-          renderItem={({ item }) =>
-            <ImportAccountComponent
-              account={item}
-              setUpdatedAccount={handleAccountChange}
-              existingLmAccounts={dropdownAccountsData} />}
-        />
-      </View>
+      <FlatList
+        style={[commonStyles.list, { marginBottom: 15 }]}
+        ItemSeparatorComponent={separator}
+        data={Array.from(importData.accountsToImport.values())}
+        renderItem={({ item }) =>
+          <ImportAccountComponent
+            account={item}
+            setUpdatedAccount={handleAccountChange}
+            existingLmAccounts={dropdownAccountsData} />}
+      />
     </View>
   )
 }
