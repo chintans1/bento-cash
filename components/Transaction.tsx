@@ -53,6 +53,11 @@ const transactionStyles = StyleSheet.create({
 });
 
 export function TransactionComponent({ transaction }: TransactionProps) {
+  const transactionAmount = parseFloat(transaction.amount);
+  const isCreditTransaction = transactionAmount >= 0;
+  const transactionAmountString = isCreditTransaction ?
+    `$${transactionAmount.toFixed(2)}` : `-$${Math.abs(transactionAmount).toFixed(2)}`;
+
   return (
     <View style={transactionStyles.card}>
       <View style={transactionStyles.leftSection}>
@@ -70,8 +75,8 @@ export function TransactionComponent({ transaction }: TransactionProps) {
       </View>
       <View style={transactionStyles.rightSection}>
         <Text
-          style={[transactionStyles.amount, parseFloat(transaction.amount) > 0 ? transactionStyles.amountPositive : transactionStyles.amountNegative]}>
-          ${parseFloat(transaction.amount).toFixed(2)}
+          style={[transactionStyles.amount, isCreditTransaction ? transactionStyles.amountPositive : transactionStyles.amountNegative]}>
+          {transactionAmountString}
         </Text>
         <Text style={transactionStyles.date}>{transaction.date}</Text>
       </View>

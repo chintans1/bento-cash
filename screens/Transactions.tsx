@@ -1,9 +1,17 @@
-import { FlatList, StyleSheet, View } from 'react-native';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { commonStyles } from '../styles/commonStyles';
 import React from 'react';
 import { TransactionComponent } from '../components/Transaction';
 import { useParentContext } from '../context/app/appContextProvider';
 import { brandingColours } from '../styles/brandingConstants';
+
+const renderNoStateMessage = () => {
+  return (
+    <View>
+      <Text style={commonStyles.textBase}>No recent transactions</Text>
+    </View>
+  );
+}
 
 export default function Transactions({ route, navigation }) {
   const { transactions } = useParentContext()?.appState;
@@ -25,6 +33,7 @@ export default function Transactions({ route, navigation }) {
         data={transactions}
         ItemSeparatorComponent={separator}
         renderItem={({ item }) => <TransactionComponent transaction={item} />}
+        ListEmptyComponent={renderNoStateMessage()}
       />
     </View>
   )

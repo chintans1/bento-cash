@@ -34,7 +34,7 @@ export default function App() {
               headerTitleStyle: {
                 fontSize: 28,
                 fontWeight: "bold",
-                color: brandingColours.secondaryColour
+                color: brandingColours.header
               }
             }}>
             <Tab.Screen

@@ -1,15 +1,17 @@
-const primaryColour = "#FCA311";
-const secondaryColour = "#14213D";
+const primaryColour = "#171717"; //"#FCA311";
+const secondaryColour = "#219EBC"; // "#0B1215"; // "#14213D";
 
 const backgroundColour = "#E5E5E5";
 const shadedColour = "white";
 
 const dividerColour = "#EFEFEF";
 
-const black = "#000000";
+const black = "#171717";
 const red = "#D90429";
 const green = "#38B000";
 const grey = "#B8B8B8";
+
+const header = primaryColour;
 
 export const brandingColours = {
   primaryColour,
@@ -17,6 +19,7 @@ export const brandingColours = {
   backgroundColour,
   shadedColour,
   dividerColour,
+  header,
   black,
   red,
   green,

@@ -23,17 +23,12 @@ const transactionStyles = StyleSheet.create({
     alignItems: "flex-end",
     flexDirection: "column"
   },
-  transactionName: {
+  accountName: {
     flexWrap: "wrap",
     flexShrink: 1,
     color: brandingColours.primaryColour,
     fontSize: 24,
     fontWeight: "bold"
-  },
-  date: {
-    ...commonStyles.textBase,
-    color: "grey",
-    fontSize: 10
   },
   account: {
     ...commonStyles.textBase,
@@ -41,7 +36,6 @@ const transactionStyles = StyleSheet.create({
     fontSize: 10
   },
   amount: {
-    color: brandingColours.secondaryColour,
     fontWeight: "bold"
   },
   amountNegative: {
@@ -53,14 +47,24 @@ const transactionStyles = StyleSheet.create({
 });
 
 export function AccountComponent({ account }: AccountProps) {
+  const accountBalance = parseFloat(account.balance);
+  const balanceString = accountBalance >= 0 ?
+    `$${accountBalance.toFixed(2)}` : `-$${Math.abs(accountBalance).toFixed(2)}`;
+
   return (
     <View style={transactionStyles.card}>
       <View style={transactionStyles.leftSection}>
-        <Text adjustsFontSizeToFit={true} numberOfLines={1} style={transactionStyles.transactionName}>{ account.accountName }</Text>
+        <Text adjustsFontSizeToFit={true} numberOfLines={1} style={transactionStyles.accountName}>{ account.accountName }</Text>
         <Text style={transactionStyles.account}>{ account.institutionName }</Text>
       </View>
       <View style={transactionStyles.rightSection}>
-        <Text adjustsFontSizeToFit={true} numberOfLines={1} style={transactionStyles.amount}>${ parseFloat(account.balance).toFixed(2) }</Text>
+        <Text
+          adjustsFontSizeToFit={true}
+          numberOfLines={1}
+          style={[
+            transactionStyles.amount,
+            accountBalance >= 0 ? transactionStyles.amountPositive : transactionStyles.amountNegative
+          ]}>{balanceString}</Text>
       </View>
     </View>
   );

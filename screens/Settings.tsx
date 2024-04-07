@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { commonStyles } from "../styles/commonStyles";
 import { useParentContext } from "../context/app/appContextProvider";
 import InternalLunchMoneyClient from "../clients/lunchMoneyClient";
@@ -24,19 +24,19 @@ const settingsStyles = StyleSheet.create({
     backgroundColor: brandingColours.secondaryColour,
     marginTop: 10,
     height: 40,
-    borderWidth: 1,
+    borderColor: "#8ECAE6",
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
 
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.29,
-    shadowRadius: 4.65,
-    elevation: 7,
+    // shadowColor: "#023047",
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 0,
+    // },
+    // shadowOpacity: 0.29,
+    // shadowRadius: 4.65,
+    // elevation: 7,
   },
   buttonText: {
     color: brandingColours.shadedColour,
@@ -149,12 +149,12 @@ export default function Settings({ navigation }) {
 
       <View style={commonStyles.columnCard}>
         <Text style={commonStyles.headerTextBold}>Budget Name: {userInfo ? userInfo?.budgetName : "unknown"}</Text>
-        <Pressable
+        <TouchableOpacity
           disabled={!simpleFinTokenExists}
           style={settingsStyles.button}
           onPress={() => navigation.navigate("SimpleFinImport")}>
             <Text style={settingsStyles.buttonText}>Fetch data via SimpleFIN</Text>
-          </Pressable>
+        </TouchableOpacity>
       </View>
 
       <View style={commonStyles.columnCard}>
@@ -167,17 +167,16 @@ export default function Settings({ navigation }) {
           autoCorrect={false}
           placeholder={lmApiKey.length > 0 ? "exists already, update if you need." : "enter your API token here."}
           onEndEditing={(event) => setNewLmApiKey(event.nativeEvent.text)} />
-        <Pressable
+        <TouchableOpacity
           style={settingsStyles.button}
           disabled={newLmApiKey.length === 0}
           onPress={() => verifyNewLmTokenAlert(newLmApiKey)}>
             <Text
               style={[
                 settingsStyles.buttonText,
-                { color: newLmApiKey.length === 0 ? brandingColours.grey : settingsStyles.buttonText.color },
-                { fontWeight: newLmApiKey.length === 0 ? "normal" : settingsStyles.buttonText.fontWeight }
+                { opacity: newLmApiKey.length === 0 ? 0.3 : null }
               ]}>Submit</Text>
-        </Pressable>
+        </TouchableOpacity>
       </View>
 
       <View style={commonStyles.columnCard}>
@@ -190,17 +189,16 @@ export default function Settings({ navigation }) {
           autoCorrect={false}
           placeholder={simpleFinTokenExists ? "exists already, update if you need." : "enter your simpleFIN setup token here."}
           onEndEditing={(event) => setSimpleFinToken(event.nativeEvent.text)} />
-        <Pressable
+        <TouchableOpacity
           style={settingsStyles.button}
           disabled={simpleFinToken.length === 0}
           onPress={() => setupSimpleFinAuthentication(simpleFinToken)}>
             <Text
               style={[
                 settingsStyles.buttonText,
-                { color: simpleFinToken.length === 0 ? brandingColours.grey : settingsStyles.buttonText.color },
-                { fontWeight: simpleFinToken.length === 0 ? "normal" : settingsStyles.buttonText.fontWeight }
+                { opacity: simpleFinToken.length === 0 ? 0.3 : null },
               ]}>Submit</Text>
-        </Pressable>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   )
