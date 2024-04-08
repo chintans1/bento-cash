@@ -28,10 +28,11 @@ const transactionStyles = StyleSheet.create({
     flexWrap: "wrap",
     flexShrink: 1,
     color: brandingColours.primaryColour,
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold"
   },
   amount: {
+    fontSize: 12,
     fontWeight: "bold"
   },
   amountNegative: {
