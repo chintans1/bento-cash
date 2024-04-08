@@ -41,7 +41,7 @@ export const getAccountsMap = async (lmClient: InternalLunchMoneyClient) => {
     accountsMap.set(account.id, {
       id: account.id,
       accountName: account.name,
-      institutionName: account.institution_name || "unknown",
+      institutionName: account.institution_name || "Unknown",
       type: account.type_name,
       state: "open",
       balance: account.balance,
@@ -53,7 +53,7 @@ export const getAccountsMap = async (lmClient: InternalLunchMoneyClient) => {
     accountsMap.set(account.id, {
       id: account.id,
       accountName: account.name,
-      institutionName: account.institution_name || "unknown",
+      institutionName: account.institution_name || "Unknown",
       type: account.type,
       state: "open",
       balance: account.balance,

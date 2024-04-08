@@ -13,6 +13,7 @@ const transactionStyles = StyleSheet.create({
   card: {
     ...commonStyles.card,
     alignItems: "center",
+    paddingHorizontal: 10,
   },
   leftSection: {
     flex: 3.5,
@@ -27,13 +28,8 @@ const transactionStyles = StyleSheet.create({
     flexWrap: "wrap",
     flexShrink: 1,
     color: brandingColours.primaryColour,
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: "bold"
-  },
-  account: {
-    ...commonStyles.textBase,
-    color: "grey",
-    fontSize: 10
   },
   amount: {
     fontWeight: "bold"
@@ -54,8 +50,10 @@ export function AccountComponent({ account }: AccountProps) {
   return (
     <View style={transactionStyles.card}>
       <View style={transactionStyles.leftSection}>
-        <Text adjustsFontSizeToFit={true} numberOfLines={1} style={transactionStyles.accountName}>{ account.accountName }</Text>
-        <Text style={transactionStyles.account}>{ account.institutionName }</Text>
+        <Text adjustsFontSizeToFit={true} numberOfLines={1} style={transactionStyles.accountName}>
+          { account.accountName }
+        </Text>
+        {/* <Text style={transactionStyles.account}>{ account.institutionName }</Text> */}
       </View>
       <View style={transactionStyles.rightSection}>
         <Text

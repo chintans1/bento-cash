@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { brandingColours } from "./brandingConstants";
 
 const base = {
@@ -31,7 +31,7 @@ export const commonStyles = StyleSheet.create({
     // marginHorizontal: 5,
     marginVertical: 3,
     paddingVertical: 10,
-    paddingHorizontal: 15,
+    paddingHorizontal: 10,
   },
   columnCard: {
     flex: 1,

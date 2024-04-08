@@ -13,6 +13,9 @@ const grey = "#B8B8B8";
 
 const header = primaryColour;
 
+const lightTextColour = "white";
+const darkTextColour = "#171717";
+
 export const brandingColours = {
   primaryColour,
   secondaryColour,
@@ -23,5 +26,7 @@ export const brandingColours = {
   black,
   red,
   green,
-  grey
+  grey,
+  lightTextColour,
+  darkTextColour
 }
