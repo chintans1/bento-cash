@@ -61,5 +61,12 @@ export const commonStyles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: brandingColours.primaryColour
+  },
+  sectionHeader: {
+    backgroundColor: brandingColours.secondaryColour,
+    color: brandingColours.lightTextColour,
+    fontWeight: "bold",
+    fontSize: 12,
+    padding: 10,
   }
 });

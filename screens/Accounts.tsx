@@ -4,6 +4,7 @@ import { useParentContext } from "../context/app/appContextProvider";
 import { AccountComponent } from "../components/Account";
 import { brandingColours } from "../styles/brandingConstants";
 import { AppAccount } from "../models/lunchmoney/appModels";
+import { getGroupedAccountsByInstitution } from "../data/utils";
 
 
 const separator = () => {
@@ -37,27 +38,11 @@ const styles = StyleSheet.create({
   }
 });
 
-const groupDataByInstitution = (data: AppAccount[]): { [key: string]: AppAccount[] } => {
-  return data.reduce((acc, item) => {
-    const institution = item.institutionName;
-    if (!acc[institution]) {
-      acc[institution] = [];
-    }
-    acc[institution].push(item);
-    return acc;
-  }, {} as { [key: string]: AppAccount[] });
-}
-
 export default function Accounts() {
   const { accounts: accountsMap } = useParentContext().appState;
-  const groupedAccounts = groupDataByInstitution(Array.from(accountsMap.values()));
-  const accountsByInstitution = Object.keys(groupedAccounts)
-    .map(institutionName => ({
-      title: institutionName,
-      data: groupedAccounts[institutionName]
-    })
-  );
-  const netWorth = Array.from(accountsMap.values())
+  const accounts = Array.from(accountsMap.values());
+  const accountsByInstitution = getGroupedAccountsByInstitution(accounts);
+  const netWorth = accounts
     .map(account => parseFloat(account.balance))
     .reduce((partialNw, balance) => partialNw + balance, 0)
     .toFixed(2);

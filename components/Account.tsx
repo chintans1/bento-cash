@@ -54,7 +54,6 @@ export function AccountComponent({ account }: AccountProps) {
         <Text adjustsFontSizeToFit={true} numberOfLines={1} style={transactionStyles.accountName}>
           { account.accountName }
         </Text>
-        {/* <Text style={transactionStyles.account}>{ account.institutionName }</Text> */}
       </View>
       <View style={transactionStyles.rightSection}>
         <Text
@@ -68,24 +67,3 @@ export function AccountComponent({ account }: AccountProps) {
     </View>
   );
 }
-/*
-      <View style={transactionStyles.leftSection}>
-        <View style={{ flexDirection: "row" }}>
-          <Text
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            style={transactionStyles.transactionName}>{transaction.notes}</Text>
-          <CategoryComponent categoryName={transaction.categoryName} />
-        </View>
-        <View style={{ flexDirection: "row" }}>
-          <Text style={transactionStyles.account}>{transaction.assetName}</Text>
-        </View>
-      </View>
-      <View style={transactionStyles.rightSection}>
-        <Text
-          style={[transactionStyles.amount, parseFloat(transaction.amount) > 0 ? transactionStyles.amountPositive : transactionStyles.amountNegative]}>
-          {parseFloat(transaction.amount).toFixed(2)}
-        </Text>
-        <Text style={transactionStyles.date}>{transaction.date}</Text>
-      </View>
-      */

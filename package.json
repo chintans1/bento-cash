@@ -15,6 +15,7 @@
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.17",
     "@types/react": "~18.2.14",
+    "date-fns": "^3.6.0",
     "expo": "~49.0.15",
     "expo-checkbox": "~2.4.0",
     "expo-secure-store": "~12.3.1",
