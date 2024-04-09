@@ -15,8 +15,6 @@ type ImportTransactionProps = {
   updateTransaction: (transaction: AppDraftTransaction) => void;
 }
 
-// borderStyle: "dotted", borderColor: "#000000", borderWidth: 1
-
 const transactionStyles = StyleSheet.create({
   card: {
     flexDirection: "row",
@@ -32,7 +30,6 @@ const transactionStyles = StyleSheet.create({
   },
   dropdown: {
     height: 25,
-    // width: 150,
     backgroundColor: brandingColours.backgroundColour,
     borderRadius: 10,
     paddingHorizontal: 8,

@@ -2,7 +2,7 @@
   "expo": {
     "name": "LM-Mobile",
     "slug": "LM-Mobile",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -19,7 +19,7 @@
       "config": {
         "usesNonExemptEncryption": false
       },
-      "buildNumber": "4",
+      "buildNumber": "1",
       "bundleIdentifier": "com.chintans98.lunchmoney.mobile"
     },
     "android": {

@@ -15,6 +15,21 @@ How to handle SimpleFIN sync:
     - we can't choose category so user will decide given existing categories
   - once ready, we validate and create transactions and all
 
+
+### TODO for MVP
+- [ ] clean up the code
+  - [ ] log statements
+  - [ ] we should not fetch twice in import flow
+  - [ ] remove any TODOs or document them here
+- [ ] improve styling code, ensure its living in common styles
+  - [ ] import transaction styling is weird
+- [ ] need to add a refresh mechanism
+
+### TODO for future
+- [ ] no more popup alerts, use modals to dictate flow
+  - likely do not need multiple alerts for import flow
+- [ ] automatic linting
+
 ### TODO
 - [x] store last date of import transactions
 - [x] publish new build
