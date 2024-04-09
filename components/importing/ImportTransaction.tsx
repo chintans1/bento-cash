@@ -31,11 +31,16 @@ const transactionStyles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   dropdown: {
-    height: 20,
+    height: 25,
     // width: 150,
-    backgroundColor: '#EEEEEE',
-    borderRadius: 20,
-    paddingHorizontal: 5
+    backgroundColor: brandingColours.backgroundColour,
+    borderRadius: 10,
+    paddingHorizontal: 8,
+    color: brandingColours.darkTextColour
+  },
+  dropdownText: {
+    color: brandingColours.darkTextColour,
+    fontSize: 10,
   },
   leftSection: {
     flex: 4,
@@ -49,24 +54,18 @@ const transactionStyles = StyleSheet.create({
   transactionName: {
     flexWrap: "wrap",
     flexShrink: 1,
-    color: brandingColours.primaryColour,
+    color: brandingColours.darkTextColour,
     fontSize: 16,
     fontWeight: "bold"
   },
   smallText: {
     ...commonStyles.textBase,
-    color: brandingColours.grey,
-    fontSize: 12,
-    fontWeight: "bold"
+    color: "grey",
+    fontSize: 12
   },
   date: {
     ...commonStyles.textBase,
-    color: brandingColours.grey,
-    fontSize: 10
-  },
-  account: {
-    ...commonStyles.textBase,
-    color: brandingColours.grey,
+    color: "grey",
     fontSize: 10
   },
   amount: {
@@ -92,6 +91,9 @@ export function ImportTransactionComponent({ transaction, availableCategories, u
   const [selectedCategory, setSelectedCategory] = useState<AppCategory>(null);
 
   const parsedAmount: number = parseFloat(transaction.amount);
+  const isCreditTransaction = parsedAmount >= 0;
+  const transactionAmountString = isCreditTransaction ?
+    `$${parsedAmount.toFixed(2)}` : `-$${Math.abs(parsedAmount).toFixed(2)}`;
 
   const handleCategorySelection = (category: AppCategory) => {
     setSelectedCategory(category);
@@ -123,25 +125,22 @@ export function ImportTransactionComponent({ transaction, availableCategories, u
           </Text>
           <Text style={[
             transactionStyles.amount,
-            parsedAmount > 0 ? transactionStyles.amountPositive : transactionStyles.amountNegative
-          ]}>  ${parsedAmount.toFixed(2)}</Text>
+            isCreditTransaction ? transactionStyles.amountPositive : transactionStyles.amountNegative
+          ]}>  {transactionAmountString}</Text>
           <Text style={transactionStyles.date}>  {transaction.date}</Text>
         </View>
 
         <View style={{ flexDirection: "row" }}>
-          <Text style={[transactionStyles.smallText, { flex: 1 }]}>{transaction.notes}</Text>
-        </View>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Text style={transactionStyles.account}>{transaction.externalAccountName}</Text>
+          <Text style={[transactionStyles.smallText, { flex: 1 }]}>{transaction.notes ?? "no memo provided"}</Text>
         </View>
 
         <Dropdown
           disable={inputDisabled || availableCategories.length === 0}
           style={transactionStyles.dropdown}
           placeholder={availableCategories.length === 0 ? "no category to choose" : "choose category..."}
-          itemTextStyle={{ fontSize: 10 }}
-          placeholderStyle={{ fontSize: 10 }}
-          selectedTextStyle={{ fontSize: 10 }}
+          itemTextStyle={transactionStyles.dropdownText}
+          placeholderStyle={transactionStyles.dropdownText}
+          selectedTextStyle={transactionStyles.dropdownText}
           data={availableCategories}
           labelField={"label"}
           valueField={"value"}
@@ -151,8 +150,8 @@ export function ImportTransactionComponent({ transaction, availableCategories, u
       <View style={transactionStyles.rightSection}>
         <View style={transactionStyles.checkbox}>
         <Checkbox
-          color={brandingColours.primaryColour}
-          style= {{ borderRadius: 15, backgroundColor: brandingColours.primaryColour }}
+          color={brandingColours.secondaryColour}
+          style= {{ borderRadius: 15, backgroundColor: brandingColours.secondaryColour }}
           value={checkboxClicked}
           onValueChange={handleCheckboxClick} />
         </View>

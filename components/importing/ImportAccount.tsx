@@ -36,7 +36,7 @@ const accountStyles = StyleSheet.create({
   textInput: {
     flex: 1,
     backgroundColor: brandingColours.shadedColour,
-    color: brandingColours.secondaryColour,
+    color: brandingColours.darkTextColour,
     fontSize: 10,
 
     borderColor: brandingColours.secondaryColour,
@@ -45,6 +45,7 @@ const accountStyles = StyleSheet.create({
 
     marginStart: 5,
     padding: 5,
+    height: 25,
   },
   checkboxView: {
     alignItems: "flex-end",
@@ -56,22 +57,30 @@ const accountStyles = StyleSheet.create({
   },
   smallText: {
     ...commonStyles.textBase,
-    color: brandingColours.grey,
+    color: brandingColours.darkTextColour,
     fontSize: 12,
-    fontWeight: "bold"
   },
   dropdown: {
-    height: 15,
+    height: 25,
     width: 150,
-    backgroundColor: '#EEEEEE',
-    borderRadius: 20,
-    paddingHorizontal: 5
+    backgroundColor: brandingColours.backgroundColour,
+    borderRadius: 10,
+    paddingHorizontal: 8,
+  },
+  dropdownText: {
+    color: brandingColours.darkTextColour,
+    fontSize: 10,
   },
   amount: {
-    color: brandingColours.secondaryColour,
     fontSize: 12,
     fontWeight: "bold"
   },
+  amountNegative: {
+    color: brandingColours.red
+  },
+  amountPositive: {
+    color: brandingColours.green
+  }
 });
 
 export function ImportAccountComponent({ account, existingLmAccounts, setUpdatedAccount }: ImportAccountProps) {
@@ -132,9 +141,9 @@ export function ImportAccountComponent({ account, existingLmAccounts, setUpdated
               disable={inputDisabled || selectedAccountType.length > 0}
               style={[accountStyles.dropdown, { flex: 1 }]}
               placeholder="choose from existing account..."
-              itemTextStyle={{ fontSize: 10 }}
-              placeholderStyle={{ fontSize: 10 }}
-              selectedTextStyle={{ fontSize: 10 }}
+              itemTextStyle={accountStyles.dropdownText}
+              placeholderStyle={accountStyles.dropdownText}
+              selectedTextStyle={accountStyles.dropdownText}
               data={existingLmAccounts}
               labelField={"label"}
               valueField={"value"}
@@ -157,6 +166,10 @@ export function ImportAccountComponent({ account, existingLmAccounts, setUpdated
   // "balance": lmAccount.balance,
   // "currency": lmAccount.currency.toLowerCase(),
   // "institution_name": lmAccount.institutionName
+
+  const accountBalance = parseFloat(account.balance);
+  const balanceString = accountBalance >= 0 ?
+    `$${accountBalance.toFixed(2)}` : `-$${Math.abs(accountBalance).toFixed(2)}`;
 
   return (
     <View style={accountStyles.card}>
@@ -188,23 +201,28 @@ export function ImportAccountComponent({ account, existingLmAccounts, setUpdated
             disable={inputDisabled || selectedSyncAccount > 0}
             style={accountStyles.dropdown}
             placeholder="choose account type..."
-            itemTextStyle={{ fontSize: 10 }}
-            placeholderStyle={{ fontSize: 10 }}
-            selectedTextStyle={{ fontSize: 10 }}
+            itemTextStyle={accountStyles.dropdownText}
+            placeholderStyle={accountStyles.dropdownText}
+            selectedTextStyle={accountStyles.dropdownText}
             data={data}
             labelField={"label"}
             valueField={"value"}
             onChange={(valueSelected) => handleAccountTypeSelect(valueSelected.value)} />
 
           <Text style={accountStyles.smallText}>currency: <Text style={accountStyles.amount}>{ account.currency }</Text></Text>
-          <Text adjustsFontSizeToFit={true} numberOfLines={1} style={accountStyles.amount}>${ parseFloat(account.balance).toFixed(2) }</Text>
+          <Text
+            adjustsFontSizeToFit={true}
+            numberOfLines={1}
+            style={[accountStyles.amount, accountBalance >= 0 ? accountStyles.amountPositive : accountStyles.amountNegative ]}>
+              { balanceString }
+          </Text>
         </View>
         {renderExistingAccountPicker()}
       </View>
 
       <View style={accountStyles.checkboxView}>
         <Checkbox
-          color={brandingColours.primaryColour}
+          color={brandingColours.secondaryColour}
           style={accountStyles.checkbox}
           disabled={!checkboxEnabled}
           value={checkboxClicked}

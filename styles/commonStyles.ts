@@ -54,13 +54,13 @@ export const commonStyles = StyleSheet.create({
     ...base,
     fontSize: 18,
     display: "flex",
-    color: brandingColours.primaryColour
+    color: brandingColours.darkTextColour
   },
   headerTextBold: {
     ...base,
     fontSize: 24,
     fontWeight: 'bold',
-    color: brandingColours.primaryColour
+    color: brandingColours.darkTextColour
   },
   sectionHeader: {
     backgroundColor: brandingColours.secondaryColour,

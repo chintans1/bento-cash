@@ -1,4 +1,4 @@
-import { AppAccount, AppTransaction } from "../models/lunchmoney/appModels";
+import { AppAccount, AppDraftAccount, AppDraftTransaction, AppTransaction } from "../models/lunchmoney/appModels";
 
 const groupAccountByInstitution = (accounts: AppAccount[]): { [key: string]: AppAccount[]} => {
   return accounts.reduce((acc, item) => {
@@ -40,6 +40,51 @@ export const getGroupedTransactionsByDate = (transactions: AppTransaction[]): { 
     .map(date => ({
       title: date,
       data: groupedTransactions[date]
+    })
+  );
+}
+
+// For Simplefin importing
+const groupDraftAccountsByInstitution = (draftAccounts: AppDraftAccount[]): { [key: string]: AppDraftAccount[]} => {
+  return draftAccounts.reduce((acc, item) => {
+    const institutionName = item.institutionName ?? "Unknown";
+    if (!acc[institutionName]) {
+      acc[institutionName] = [];
+    }
+    acc[institutionName].push(item);
+    return acc;
+  }, {} as { [key: string]: AppDraftAccount[] });
+}
+
+export const getGroupedDraftAccountsByInstitution = (draftAccounts: AppDraftAccount[]): { title: string, data: AppDraftAccount[]}[] => {
+  const groupedAccounts = groupDraftAccountsByInstitution(draftAccounts);
+
+  return Object.keys(groupedAccounts)
+    .map(institution => ({
+      title: institution,
+      data: groupedAccounts[institution]
+    })
+  );
+}
+
+const groupDraftTransactionsByAccount = (draftTransactions: AppDraftTransaction[]): { [key: string]: AppDraftTransaction[]} => {
+  return draftTransactions.reduce((acc, item) => {
+    const accountName = item.externalAccountName;
+    if (!acc[accountName]) {
+      acc[accountName] = [];
+    }
+    acc[accountName].push(item);
+    return acc;
+  }, {} as { [key: string]: AppDraftTransaction[] });
+}
+
+export const getGroupedDraftTransactionsByAccount = (draftTransactions: AppDraftTransaction[]): { title: string, data: AppDraftTransaction[]}[] => {
+  const groupedTransactions = groupDraftTransactionsByAccount(draftTransactions);
+
+  return Object.keys(groupedTransactions)
+    .map(accountName => ({
+      title: accountName,
+      data: groupedTransactions[accountName]
     })
   );
 }

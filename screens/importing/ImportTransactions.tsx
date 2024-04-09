@@ -1,4 +1,4 @@
-import { ActivityIndicator, Alert, Button, FlatList, StyleSheet, Text, View } from "react-native"
+import { ActivityIndicator, Alert, Button, FlatList, SectionList, StyleSheet, Text, View } from "react-native"
 import { AppAccount, AppCategory, AppDraftTransaction } from "../../models/lunchmoney/appModels";
 import { commonStyles } from "../../styles/commonStyles";
 import { ImportTransactionComponent } from "../../components/importing/ImportTransaction";
@@ -13,6 +13,7 @@ import { getAccountsData } from "../../clients/simplefinClient";
 import { getSimpleFinAuth } from "../../utils/simpleFinAuth";
 import { StorageKeys } from "../../models/enums/storageKeys";
 import { storeData } from "../../utils/asyncStorage";
+import { getGroupedDraftTransactionsByAccount } from "../../data/utils";
 
 
 const styles = StyleSheet.create({
@@ -158,10 +159,10 @@ export default function ImportTransactionsScreen({ route, navigation }) {
   return (
   <View style={[commonStyles.container]}>
     <View style={styles.card}>
-      <Text style={{color: brandingColours.secondaryColour}}>Importing transactions from</Text>
+      <Text style={{color: brandingColours.darkTextColour}}>Importing transactions from</Text>
       <DateTimePicker
-        accentColor={brandingColours.primaryColour}
-        textColor={brandingColours.primaryColour}
+        accentColor={brandingColours.secondaryColour}
+        textColor={brandingColours.darkTextColour}
         themeVariant="light"
         style={{ width: 150 }}
         mode="date"
@@ -169,10 +170,13 @@ export default function ImportTransactionsScreen({ route, navigation }) {
         maximumDate={new Date()}
         onChange={handleDateChange} />
     </View>
-    <FlatList
+    <SectionList
       style={[commonStyles.list, { marginBottom: 15 }]}
       ItemSeparatorComponent={separator}
-      data={importingTransactions}
+      sections={getGroupedDraftTransactionsByAccount(importingTransactions)}
+      renderSectionHeader={({ section: { title: accountName } }) => (
+        <Text style={commonStyles.sectionHeader}>{accountName}</Text>
+      )}
       renderItem={({ item }) => <ImportTransactionComponent
         transaction={item}
         updateTransaction={handleTransactionUpdate}

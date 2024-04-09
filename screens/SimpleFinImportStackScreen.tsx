@@ -25,7 +25,7 @@ export default function SimpleFinImportStackScreen() {
               disabled={true}
               onPress={() => alert("Something went wrong, this should not happen.")}
               title="Next"
-              color={brandingColours.primaryColour}
+              color={brandingColours.darkTextColour}
             />
           )
         }} component={ImportAccountsScreen} />

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Button, FlatList, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Button, KeyboardAvoidingView, Platform, SectionList, StyleSheet, Text, View } from "react-native";
 import { SimpleFinImportData, getImportData } from "../../data/transformSimpleFin";
 import { getAccountsData } from "../../clients/simplefinClient";
 import { getSimpleFinAuth } from "../../utils/simpleFinAuth";
@@ -11,6 +11,7 @@ import { AppAccount, AppDraftAccount } from "../../models/lunchmoney/appModels";
 import { useParentContext } from "../../context/app/appContextProvider";
 import InternalLunchMoneyClient from "../../clients/lunchMoneyClient";
 import { getData, storeData } from "../../utils/asyncStorage";
+import { getGroupedDraftAccountsByInstitution } from "../../data/utils";
 
 const styles = StyleSheet.create({
   card: {
@@ -212,20 +213,26 @@ export default function ImportAccountsScreen({ navigation }) {
   // We show alert to confirm and create accounts, then we show transactions
 
   return (
-    <View style={[commonStyles.container]}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={[commonStyles.container]}>
       <View style={styles.card}>
         <Text style={commonStyles.headerText}>Accounts to import: {importData.accountsToImport.size}</Text>
       </View>
-      <FlatList
+
+      <SectionList
         style={[commonStyles.list, { marginBottom: 15 }]}
         ItemSeparatorComponent={separator}
-        data={Array.from(importData.accountsToImport.values())}
+        sections={getGroupedDraftAccountsByInstitution(Array.from(importData.accountsToImport.values()))}
+        renderSectionHeader={({ section: { title: institutionName } }) => (
+          <Text style={commonStyles.sectionHeader}>{institutionName}</Text>
+        )}
         renderItem={({ item }) =>
           <ImportAccountComponent
             account={item}
             setUpdatedAccount={handleAccountChange}
             existingLmAccounts={dropdownAccountsData} />}
       />
-    </View>
+    </KeyboardAvoidingView>
   )
 }
