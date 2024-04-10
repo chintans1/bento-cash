@@ -48,6 +48,12 @@ export const updateLmToken = async (newToken: string) => {
   }
 
   const lunchMoneyClient = new InternalLunchMoneyClient({ token: newToken });
+
+  if (!lunchMoneyClient.isTokenValid(newToken)) {
+    console.log("token was not valid")
+    return defaultAppState;
+  }
+
   const accounts = await getAccountsMap(lunchMoneyClient);
   const categories = await getCategoriesMap(lunchMoneyClient);
   // We have the API key so lets fetch everything we can and process it

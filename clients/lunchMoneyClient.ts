@@ -53,6 +53,17 @@ export class InternalLunchMoneyClient {
     }
   }
 
+  async isTokenValid(newToken: string) {
+    this.lunchMoneyClient.token = newToken;
+    try {
+      await this.lunchMoneyClient.get("/v1/me");
+    } catch (error) {
+      return false;
+    }
+
+    return true;
+  }
+
   async getLunchMoneyInfoForToken(newToken: string) {
     this.lunchMoneyClient.token = newToken;
     const lunchMoneyInfo: AppLunchMoneyInfo = await this.getLunchMoneyInfo();
