@@ -9,7 +9,14 @@ import { brandingColours } from './styles/brandingConstants';
 import Accounts from './screens/Accounts';
 import { AppProvider } from './context/app/AppProvider';
 import SettingsStackScreen from './screens/SettingsStackScreen';
-import { commonStyles } from './styles/commonStyles';
+import { FontAwesome, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
+
+const bottomTabIcons = {
+  Transactions: 'money-bill',
+  Accounts: 'piggy-bank',
+  Charts: 'chart-bar',
+  Settings: 'cog'
+};
 
 const Tab = createBottomTabNavigator();
 
@@ -24,7 +31,7 @@ export default function App() {
         <NavigationContainer>
           <Tab.Navigator
             initialRouteName="Transactions"
-            screenOptions={{
+            screenOptions={({ route }) => ({
               headerTitleAlign: "left",
               headerShadowVisible: false,
               headerStyle: {
@@ -35,8 +42,15 @@ export default function App() {
                 fontSize: 28,
                 fontWeight: "bold",
                 color: brandingColours.header
-              }
-            }}>
+              },
+              tabBarActiveTintColor: brandingColours.secondaryColour,
+              tabBarIcon: ({ color, size }) => {
+                return (<FontAwesome5
+                  name={bottomTabIcons[route.name]}
+                  color={color}
+                  size={size} />)
+              },
+            })}>
             <Tab.Screen
               name="Transactions"
               component={Transactions}

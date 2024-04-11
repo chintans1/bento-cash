@@ -11,10 +11,10 @@ const red = "#D90429";
 const green = "#38B000";
 const grey = "#B8B8B8";
 
-const header = primaryColour;
 
 const lightTextColour = "white";
 const darkTextColour = "#171717";
+const header = darkTextColour;
 
 export const brandingColours = {
   primaryColour,
