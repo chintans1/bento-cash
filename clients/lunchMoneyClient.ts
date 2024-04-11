@@ -1,5 +1,5 @@
 import { Asset, DraftTransaction, LunchMoney, Transaction } from 'lunch-money';
-import { AppAccount, AppDraftAccount, AppLunchMoneyInfo } from '../models/lunchmoney/appModels';
+import { AppAccount, AppDraftAccount } from '../models/lunchmoney/appModels';
 
 // TODO: handle response format
 export class InternalLunchMoneyClient {
@@ -51,25 +51,6 @@ export class InternalLunchMoneyClient {
       budgetName: response.budget_name,
       apiKeyLabel: response.api_key_label || "unknown"
     }
-  }
-
-  async isTokenValid(newToken: string) {
-    this.lunchMoneyClient.token = newToken;
-    try {
-      await this.lunchMoneyClient.get("/v1/me");
-    } catch (error) {
-      return false;
-    }
-
-    return true;
-  }
-
-  async getLunchMoneyInfoForToken(newToken: string) {
-    this.lunchMoneyClient.token = newToken;
-    const lunchMoneyInfo: AppLunchMoneyInfo = await this.getLunchMoneyInfo();
-
-    this.lunchMoneyClient.token = this.token;
-    return lunchMoneyInfo;
   }
 
   async createAccount(lmAccount: AppDraftAccount): Promise<Asset> {

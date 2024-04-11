@@ -8,6 +8,7 @@ import { brandingColours } from "../styles/brandingConstants";
 import { getClaimUrl, storeSimpleFinAuth } from "../clients/simplefinClient";
 import { isAuthPresent, storeAuthenticationDetails } from "../utils/simpleFinAuth";
 import { SimpleFinAuthentication } from "../models/simplefin/authentication";
+import { accessClient } from "../clients/accessClient";
 
 
 const settingsStyles = StyleSheet.create({
@@ -69,8 +70,8 @@ export default function Settings({ navigation }) {
     }
   }
 
-  const getUserInfoForNewToken = (newToken: string) => {
-    return lunchMoneyClient.getLunchMoneyInfoForToken(newToken);
+  const getUserInfoForNewToken = (newToken: string): Promise<AppLunchMoneyInfo> => {
+    return accessClient.getTokenInfo(newToken);
   }
 
   const updateAppForNewToken = (newUserInfo: AppLunchMoneyInfo) => {

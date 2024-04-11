@@ -4,6 +4,7 @@ import InternalLunchMoneyClient from "../../clients/lunchMoneyClient";
 import { getAccountsMap, getCategoriesMap, getTransactionsForApp } from "../../data/transformLunchMoney";
 import { save } from "../../utils/secureStore";
 import { SecureStorageKeys } from "../../models/enums/storageKeys";
+import { accessClient } from "../../clients/accessClient";
 
 export const defaultAppState = {
   lmApiKey: "",
@@ -47,12 +48,13 @@ export const updateLmToken = async (newToken: string) => {
     return defaultAppState;
   }
 
-  const lunchMoneyClient = new InternalLunchMoneyClient({ token: newToken });
+  const isTokenValid = await accessClient.isTokenValid(newToken);
 
-  if (!lunchMoneyClient.isTokenValid(newToken)) {
-    console.log("token was not valid")
+  if (!isTokenValid) {
     return defaultAppState;
   }
+
+  const lunchMoneyClient = new InternalLunchMoneyClient({ token: newToken });
 
   const accounts = await getAccountsMap(lunchMoneyClient);
   const categories = await getCategoriesMap(lunchMoneyClient);
