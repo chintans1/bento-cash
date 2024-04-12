@@ -21,6 +21,7 @@ export const getTransactionsForApp = async (
   const appTransactions: AppTransaction[] = [];
 
   lmTransactions.forEach(transaction => {
+    const assetId: number = transaction.asset_id != null ? transaction.asset_id : transaction.plaid_account_id;
     appTransactions.push({
       id: transaction.id,
       date: transaction.date,
@@ -29,9 +30,8 @@ export const getTransactionsForApp = async (
       currency: transaction.currency,
       notes: transaction.notes,
 
-      assetId: transaction.asset_id,
-      assetName: transaction.asset_id != null ?
-      accounts.get(transaction.asset_id)?.accountName : undefined,
+      assetId: assetId,
+      assetName: assetId != null ? accounts.get(assetId)?.accountName : undefined,
 
       categoryId: transaction.category_id,
       categoryName: categories.get(transaction.category_id)?.name,
