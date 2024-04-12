@@ -1,4 +1,4 @@
-import { Asset, DraftTransaction, PlaidAccount } from "lunch-money";
+import { Asset, DraftTransaction, PlaidAccount, Transaction } from "lunch-money";
 import InternalLunchMoneyClient from "../clients/lunchMoneyClient";
 import { AppAccount, AppCategory, AppDraftTransaction, AppTransaction } from "../models/lunchmoney/appModels";
 
@@ -17,7 +17,7 @@ export const getTransactionsForApp = async (
   lmClient: InternalLunchMoneyClient,
   accounts: Map<number, AppAccount>,
   categories: Map<number, AppCategory>) => {
-  const lmTransactions = await lmClient.getAllTransactions();
+  const lmTransactions: Transaction[] = await lmClient.getAllTransactions();
   const appTransactions: AppTransaction[] = [];
 
   lmTransactions.forEach(transaction => {

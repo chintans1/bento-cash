@@ -154,7 +154,11 @@ export default function Settings({ navigation }) {
           disabled={!simpleFinTokenExists}
           style={settingsStyles.button}
           onPress={() => navigation.navigate("SimpleFinImport")}>
-            <Text style={settingsStyles.buttonText}>Fetch data via SimpleFIN</Text>
+            <Text
+              style={[
+                settingsStyles.buttonText,
+                { opacity: !simpleFinTokenExists ? 0.3 : null }
+              ]}>Fetch data via SimpleFIN</Text>
         </TouchableOpacity>
       </View>
 
