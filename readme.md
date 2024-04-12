@@ -18,11 +18,11 @@ How to handle SimpleFIN sync:
 
 ### TODO for MVP
 - [ ] bugs
-  - [ ] blank screen after you enter API key on initialization
-  - [ ] unknown account showing up in transactions
-  - [ ] accounts page is not showing negative balance for credit accounts
+  - [/] blank screen after you enter API key on initialization
+  - [/] unknown account showing up in transactions
+  - [/] accounts page is not showing negative balance for credit accounts
   - [ ] account page should show the right name, i think its display name or mix of 2
-  - [ ] blur out `Fetch data via SimpleFIN` if there is no Simplefin token set
+  - [/] blur out `Fetch data via SimpleFIN` if there is no Simplefin token set
 - [ ] clean up the code
   - [ ] log statements
   - [ ] we should not fetch twice in import flow

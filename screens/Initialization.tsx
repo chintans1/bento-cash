@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Button, TextInput } from 'react-native';
+import { StyleSheet, View, TextInput, ActivityIndicator, Text, TouchableOpacity } from 'react-native';
 import { useParentContext } from "../context/app/appContextProvider";
 import { brandingColours } from "../styles/brandingConstants";
+import { commonStyles } from "../styles/commonStyles";
+import { accessClient } from "../clients/accessClient";
 
 const styles = StyleSheet.create({
   container: {
+    ...commonStyles.container,
     flex: 1,
-    flexDirection: "column",
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center"
+  },
+  card: {
+    ...commonStyles.columnCard,
+    padding: 25,
   },
   textInput: {
     backgroundColor: brandingColours.shadedColour,
@@ -18,8 +25,23 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
 
-    padding: 15,
+    padding: 12,
+    marginVertical: 8,
+    height: 40,
   },
+  button: {
+    backgroundColor: brandingColours.secondaryColour,
+    height: 40,
+    borderColor: "#8ECAE6",
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  buttonText: {
+    color: brandingColours.shadedColour,
+    fontWeight: "bold",
+    fontSize: 18
+  }
 });
 
 export default function Initialization() {
@@ -32,7 +54,17 @@ export default function Initialization() {
 
   async function submitLunchMoneyKey() {
     setLoading(true);
-    updateLunchMoneyToken(lunchMoneyKey);
+
+    const tokenValid = await accessClient.isTokenValid(lunchMoneyKey);
+    if (!tokenValid) {
+      setLunchMoneyKey("");
+      setRender(true);
+      setLoading(false);
+      return;
+    } else {
+      updateLunchMoneyToken(lunchMoneyKey);
+    }
+
     setRender(false);
     setLoading(false);
   }
@@ -44,12 +76,17 @@ export default function Initialization() {
   }, [lmApiKey]);
 
   if (!render) {
-    return null;
+    return (
+      <View style={{ flex: 1, justifyContent: "center" }}>
+        <ActivityIndicator size="large" color={brandingColours.primaryColour} />
+      </View>
+    )
   }
 
   return (
     <View style={styles.container}>
-      <View>
+      <View style={styles.card}>
+        <Text style={commonStyles.headerTextBold}>Setup</Text>
         <TextInput
           style={styles.textInput}
           onChangeText={(text) => setLunchMoneyKey(text)}
@@ -57,9 +94,16 @@ export default function Initialization() {
           placeholder="Enter your Lunch Money API token here"
           autoCapitalize={'none'}
         />
-      </View>
-      <View>
-        <Button title="Submit" disabled={loading} onPress={() => submitLunchMoneyKey()} />
+        <TouchableOpacity
+          disabled={loading}
+          style={styles.button}
+          onPress={() => submitLunchMoneyKey()}>
+            <Text
+              style={[
+                styles.buttonText,
+                { opacity: lunchMoneyKey.length === 0 ? 0.3 : null }
+              ]}>Submit</Text>
+        </TouchableOpacity>
       </View>
     </View>
   )
