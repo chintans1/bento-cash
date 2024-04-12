@@ -26,7 +26,7 @@ const transactionStyles = StyleSheet.create({
   transactionName: {
     flexWrap: "wrap",
     flexShrink: 1,
-    color: brandingColours.primaryColour,
+    color: brandingColours.darkTextColour,
     fontSize: 16,
     fontWeight: "bold"
   },

@@ -50,7 +50,7 @@ export default function Accounts() {
   return (
     <View style={[commonStyles.container, { flex: 1 }]}>
       <View style={styles.card}>
-        <Text style={{ color: brandingColours.primaryColour, fontSize: 20, fontWeight: "bold" }}>Overview</Text>
+        <Text style={{ color: brandingColours.darkTextColour, fontSize: 20, fontWeight: "bold" }}>Overview</Text>
         <Text style={{ color: brandingColours.secondaryColour, fontSize: 16 }}>Net worth: ${netWorth}</Text>
       </View>
 
