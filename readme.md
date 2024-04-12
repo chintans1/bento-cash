@@ -17,6 +17,10 @@ How to handle SimpleFIN sync:
 
 
 ### TODO for MVP
+- [ ] bugs
+  - [ ] blank screen after you enter API key on initialization
+  - [ ] unknown account showing up in transactions
+  - [ ] accounts page is not showing negative balance for credit accounts
 - [ ] clean up the code
   - [ ] log statements
   - [ ] we should not fetch twice in import flow

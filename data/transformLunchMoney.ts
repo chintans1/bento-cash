@@ -1,6 +1,17 @@
-import { DraftTransaction } from "lunch-money";
+import { Asset, DraftTransaction, PlaidAccount } from "lunch-money";
 import InternalLunchMoneyClient from "../clients/lunchMoneyClient";
 import { AppAccount, AppCategory, AppDraftTransaction, AppTransaction } from "../models/lunchmoney/appModels";
+
+const formatBalance = (account: Asset | PlaidAccount): string => {
+  if ('type' in account && account.type === "credit") {
+    // For credit accounts, negative balance is positive, positive is negative
+    return (parseFloat(account.balance) * -1).toString();
+  } else if ('type_name' in account && account.type_name === "credit") {
+    return (parseFloat(account.balance) * -1).toString();
+  }
+
+  return account.balance;
+}
 
 export const getTransactionsForApp = async (
   lmClient: InternalLunchMoneyClient,
@@ -44,7 +55,7 @@ export const getAccountsMap = async (lmClient: InternalLunchMoneyClient) => {
       institutionName: account.institution_name || "Unknown",
       type: account.type_name,
       state: "open",
-      balance: account.balance,
+      balance: formatBalance(account),
       currency: account.currency
     });
   }
@@ -56,7 +67,7 @@ export const getAccountsMap = async (lmClient: InternalLunchMoneyClient) => {
       institutionName: account.institution_name || "Unknown",
       type: account.type,
       state: "open",
-      balance: account.balance,
+      balance: formatBalance(account),
       currency: account.currency
     });
   }
