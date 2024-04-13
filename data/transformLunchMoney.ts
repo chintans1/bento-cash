@@ -13,6 +13,13 @@ const formatBalance = (account: Asset | PlaidAccount): string => {
   return account.balance;
 }
 
+const formatAccountName = (account: Asset | PlaidAccount): string => {
+  if (`display_name` in account) {
+    return account.display_name || account.name;
+  }
+  return account.name;
+}
+
 export const getTransactionsForApp = async (
   lmClient: InternalLunchMoneyClient,
   accounts: Map<number, AppAccount>,
@@ -51,7 +58,7 @@ export const getAccountsMap = async (lmClient: InternalLunchMoneyClient) => {
   for (const account of manualAccounts) {
     accountsMap.set(account.id, {
       id: account.id,
-      accountName: account.name,
+      accountName: formatAccountName(account),
       institutionName: account.institution_name || "Unknown",
       type: account.type_name,
       state: "open",
@@ -63,7 +70,7 @@ export const getAccountsMap = async (lmClient: InternalLunchMoneyClient) => {
   for (const account of plaidAccounts) {
     accountsMap.set(account.id, {
       id: account.id,
-      accountName: account.name,
+      accountName: formatAccountName(account),
       institutionName: account.institution_name || "Unknown",
       type: account.type,
       state: "open",
