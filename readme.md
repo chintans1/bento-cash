@@ -18,14 +18,14 @@ How to handle SimpleFIN sync:
 
 ### TODO for MVP
 - [ ] bugs
-  - [/] blank screen after you enter API key on initialization
-  - [/] unknown account showing up in transactions
-  - [/] accounts page is not showing negative balance for credit accounts
-  - [/] account page should show the right name, i think its display name or mix of 2
-  - [/] blur out `Fetch data via SimpleFIN` if there is no Simplefin token set
-  - [/] formatting of import transaction date is bad on a iphone 12
+  - [x] blank screen after you enter API key on initialization
+  - [x] unknown account showing up in transactions
+  - [x] accounts page is not showing negative balance for credit accounts
+  - [x] account page should show the right name, i think its display name or mix of 2
+  - [x] blur out `Fetch data via SimpleFIN` if there is no Simplefin token set
+  - [x] formatting of import transaction date is bad on a iphone 12
   - [ ] weird issue where accounts wasn't populated for "choose from existing accounts"? (maybe its plaid related)
-  - [/] account name field resets when you backspace all the way
+  - [x] account name field resets when you backspace all the way
   - [ ] if you press "cancel", it still presents itself as doing something
 
 ### TODO (not prioritized)
@@ -35,6 +35,7 @@ How to handle SimpleFIN sync:
           Whenever there is a valid state present, we will enable the checkbox.
           If an existing account is chosen even with account type, we will rely on existing account.
   - [ ] account data should probably be updated after importing accounts was done, not rely on total app refresh
+  - [ ] handle multiple currencies
 
 - [ ] clean up the code
   - [ ] log statements
