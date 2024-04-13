@@ -96,7 +96,9 @@ export function ImportAccountComponent({ account, existingLmAccounts, setUpdated
   const handleAccountTypeSelect = (accountTypeSelected: AccountType) => {
     setSelectedAccountType(accountTypeSelected);
 
-    if (accountTypeSelected.length > 0 && accountName.length > 0 && institutionName.length > 0) {
+    if (accountTypeSelected.length > 0
+        && accountName.trim().length > 0
+        && institutionName.trim().length > 0) {
       setCheckboxEnabled(true);
       return;
     }
@@ -114,16 +116,10 @@ export function ImportAccountComponent({ account, existingLmAccounts, setUpdated
   }
 
   const handleAccountNameChange = (accountName: string) => {
-    if (accountName.length <= 0) {
-      accountName = account.accountName;
-    }
     setAccountName(accountName);
   }
 
   const handleInstitutionNameChange = (institutionName: string) => {
-    if (institutionName.length <= 0) {
-      institutionName = account.institutionName;
-    }
     setInstitutionName(institutionName);
   }
 

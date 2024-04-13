@@ -21,12 +21,21 @@ How to handle SimpleFIN sync:
   - [/] blank screen after you enter API key on initialization
   - [/] unknown account showing up in transactions
   - [/] accounts page is not showing negative balance for credit accounts
-  - [ ] account page should show the right name, i think its display name or mix of 2
+  - [/] account page should show the right name, i think its display name or mix of 2
   - [/] blur out `Fetch data via SimpleFIN` if there is no Simplefin token set
   - [/] formatting of import transaction date is bad on a iphone 12
   - [ ] weird issue where accounts wasn't populated for "choose from existing accounts"? (maybe its plaid related)
-  - [ ] account name field resets when you backspace all the way
+  - [/] account name field resets when you backspace all the way
   - [ ] if you press "cancel", it still presents itself as doing something
+
+### TODO (not prioritized)
+  - [ ] horrible UX on import account; you essentially need to type name and institution first otherwise checkbox won't clear
+    - [ ] also you can't select a account if you already chose a type
+    - [ ] Ideal UX: you can update the account name and institution to whatever you feel
+          Whenever there is a valid state present, we will enable the checkbox.
+          If an existing account is chosen even with account type, we will rely on existing account.
+  - [ ] account data should probably be updated after importing accounts was done, not rely on total app refresh
+
 - [ ] clean up the code
   - [ ] log statements
   - [ ] we should not fetch twice in import flow
