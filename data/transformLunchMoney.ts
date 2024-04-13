@@ -3,10 +3,10 @@ import InternalLunchMoneyClient from "../clients/lunchMoneyClient";
 import { AppAccount, AppCategory, AppDraftTransaction, AppTransaction } from "../models/lunchmoney/appModels";
 
 const formatBalance = (account: Asset | PlaidAccount): string => {
-  if ('type' in account && account.type === "credit") {
+  if ('type' in account && (account.type === "credit" || account.type === "loan")) {
     // For credit accounts, negative balance is positive, positive is negative
     return (parseFloat(account.balance) * -1).toString();
-  } else if ('type_name' in account && account.type_name === "credit") {
+  } else if ('type_name' in account && (account.type_name === "credit" || account.type_name === "loan")) {
     return (parseFloat(account.balance) * -1).toString();
   }
 

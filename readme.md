@@ -27,6 +27,7 @@ How to handle SimpleFIN sync:
   - [ ] weird issue where accounts wasn't populated for "choose from existing accounts"? (maybe its plaid related)
   - [x] account name field resets when you backspace all the way
   - [ ] if you press "cancel", it still presents itself as doing something
+  - [ ] handle loan as a negative account
 
 ### TODO (not prioritized)
   - [ ] horrible UX on import account; you essentially need to type name and institution first otherwise checkbox won't clear
