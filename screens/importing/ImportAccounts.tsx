@@ -202,7 +202,7 @@ export default function ImportAccountsScreen({ navigation }) {
       <View style={{ flex: 1, justifyContent: "center" }}>
         <ActivityIndicator size="large" color={brandingColours.primaryColour} />
         <Text style={{ textAlign: "center" }}>
-          {creatingAccounts ? "Creating accounts..." : "Syncing accounts..."}
+          {creatingAccounts ? "Creating accounts..." : "Syncing existing accounts..."}
         </Text>
       </View>
     )

@@ -14,10 +14,14 @@ const formatBalance = (account: Asset | PlaidAccount): string => {
 }
 
 const formatAccountName = (account: Asset | PlaidAccount): string => {
-  if (`display_name` in account) {
-    return account.display_name || account.name;
+  const accountNameToUse = 'display_name' in account && account.display_name?.length > 0
+    ? account.display_name : account.name;
+  let formattedAccountName: string = accountNameToUse;
+
+  if (accountNameToUse.startsWith(account.institution_name)) {
+    formattedAccountName = accountNameToUse.substring(account.institution_name.length).trim();
   }
-  return account.name;
+  return formattedAccountName?.length > 0 ? formattedAccountName : account.name;
 }
 
 export const getTransactionsForApp = async (
@@ -38,7 +42,7 @@ export const getTransactionsForApp = async (
       notes: transaction.notes,
 
       assetId: assetId,
-      assetName: assetId != null ? accounts.get(assetId)?.accountName : undefined,
+      assetName: assetId != null ? accounts.get(assetId)?.fullName : undefined,
 
       categoryId: transaction.category_id,
       categoryName: categories.get(transaction.category_id)?.name,
@@ -60,6 +64,7 @@ export const getAccountsMap = async (lmClient: InternalLunchMoneyClient) => {
       id: account.id,
       accountName: formatAccountName(account),
       institutionName: account.institution_name || "Unknown",
+      fullName: account.display_name ?? account.name,
       type: account.type_name,
       state: "open",
       balance: formatBalance(account),
@@ -72,6 +77,7 @@ export const getAccountsMap = async (lmClient: InternalLunchMoneyClient) => {
       id: account.id,
       accountName: formatAccountName(account),
       institutionName: account.institution_name || "Unknown",
+      fullName: 'display_name' in account ? account.display_name.toString() : account.name,
       type: account.type,
       state: "open",
       balance: formatBalance(account),

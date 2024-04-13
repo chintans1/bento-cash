@@ -21,6 +21,7 @@ export type AppAccount = {
   id: number;
   accountName: string;
   institutionName: string;
+  fullName: string;
   type: string;
   state: string;
   balance: string;
