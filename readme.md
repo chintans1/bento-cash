@@ -23,6 +23,10 @@ How to handle SimpleFIN sync:
   - [/] accounts page is not showing negative balance for credit accounts
   - [ ] account page should show the right name, i think its display name or mix of 2
   - [/] blur out `Fetch data via SimpleFIN` if there is no Simplefin token set
+  - [/] formatting of import transaction date is bad on a iphone 12
+  - [ ] weird issue where accounts wasn't populated for "choose from existing accounts"? (maybe its plaid related)
+  - [ ] account name field resets when you backspace all the way
+  - [ ] if you press "cancel", it still presents itself as doing something
 - [ ] clean up the code
   - [ ] log statements
   - [ ] we should not fetch twice in import flow

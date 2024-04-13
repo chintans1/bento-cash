@@ -22,7 +22,8 @@ const styles = StyleSheet.create({
     flex: 0,
     borderRadius: 8,
     alignItems: "center",
-    marginVertical: 6
+    marginVertical: 8,
+    justifyContent: 'space-between'
   }
 });
 
@@ -159,12 +160,14 @@ export default function ImportTransactionsScreen({ route, navigation }) {
   return (
   <View style={[commonStyles.container]}>
     <View style={styles.card}>
-      <Text style={{color: brandingColours.darkTextColour}}>Importing transactions from</Text>
+      <View style={{ flex: 1 }}>
+        <Text style={{ color: brandingColours.darkTextColour }}>Importing transactions from</Text>
+      </View>
       <DateTimePicker
         accentColor={brandingColours.secondaryColour}
         textColor={brandingColours.darkTextColour}
         themeVariant="light"
-        style={{ width: 150 }}
+        style={{alignSelf: "flex-end"}}
         mode="date"
         value={importDate}
         maximumDate={new Date()}
