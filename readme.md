@@ -27,7 +27,16 @@ How to handle SimpleFIN sync:
   - [ ] weird issue where accounts wasn't populated for "choose from existing accounts"? (maybe its plaid related)
   - [x] account name field resets when you backspace all the way
   - [ ] if you press "cancel", it still presents itself as doing something
-  - [ ] handle loan as a negative account
+  - [x] handle loan as a negative account
+- [ ] clean up the code
+  - [ ] log statements
+  - [ ] we should not fetch twice in import flow
+  - [ ] remove any TODOs or document them here
+- [ ] improve styling code, ensure its living in common styles
+  - [ ] import transaction styling is weird
+- [ ] need to add a refresh mechanism
+- [ ] automatic linting
+- [ ] in import flow, move to having a static button on bottom of page instead of next/import in header
 
 ### TODO (not prioritized)
   - [ ] horrible UX on import account; you essentially need to type name and institution first otherwise checkbox won't clear
@@ -37,19 +46,11 @@ How to handle SimpleFIN sync:
           If an existing account is chosen even with account type, we will rely on existing account.
   - [ ] account data should probably be updated after importing accounts was done, not rely on total app refresh
   - [ ] handle multiple currencies
-
-- [ ] clean up the code
-  - [ ] log statements
-  - [ ] we should not fetch twice in import flow
-  - [ ] remove any TODOs or document them here
-- [ ] improve styling code, ensure its living in common styles
-  - [ ] import transaction styling is weird
-- [ ] need to add a refresh mechanism
+  - [ ] formatting issue with checkbox in the import flow
 
 ### TODO for future
 - [ ] no more popup alerts, use modals to dictate flow
   - likely do not need multiple alerts for import flow
-- [ ] automatic linting
 
 ### TODO
 - [x] store last date of import transactions
