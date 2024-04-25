@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Button, KeyboardAvoidingView, Platform, SectionList, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Button, KeyboardAvoidingView, Platform, SafeAreaView, SectionList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SimpleFinImportData, getImportData } from "../../data/transformSimpleFin";
 import { getAccountsData } from "../../clients/simplefinClient";
 import { getSimpleFinAuth } from "../../utils/simpleFinAuth";
@@ -20,6 +20,21 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     marginVertical: 6
+  },
+  button: {
+    backgroundColor: brandingColours.secondaryColour,
+    marginTop: 10,
+    //marginBottom: 25,
+    height: 40,
+    borderColor: "#8ECAE6",
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  buttonText: {
+    color: brandingColours.shadedColour,
+    fontWeight: "bold",
+    fontSize: 18
   }
 });
 
@@ -40,10 +55,22 @@ export default function ImportAccountsScreen({ navigation }) {
 
   const [dropdownAccountsData, setDropdownAccountsData] = useState<{"label": string, "value": number}[]>(null);
 
+  const [buttonText, setButtonText] = useState<string>("No accounts to import");
+
   const getAccountMappings = async (): Promise<Map<string, string>> => {
     const existingAccountMappings = await getData(StorageKeys.ACCOUNT_MAPPING_KEY);
     return existingAccountMappings != null && JSON.stringify(existingAccountMappings) != "{}"
       ? new Map(existingAccountMappings) : new Map<string, string>();
+  }
+
+  const handleButtonTextChange = () => {
+    if (importableAccounts.size === 0) {
+      setButtonText("No accounts to import");
+    } else if (importableAccounts.size === 1) {
+      setButtonText("Import 1 account");
+    } else {
+      setButtonText("Import " + importableAccounts.size + " accounts");
+    }
   }
 
   // TODO: maybe this logic does not need to live here??
@@ -88,6 +115,7 @@ export default function ImportAccountsScreen({ navigation }) {
     } else {
       importableAccounts.delete(newAccount.externalAccountId);
     }
+    handleButtonTextChange();
   }
 
   const handleAccountCreation = async () => {
@@ -166,16 +194,16 @@ export default function ImportAccountsScreen({ navigation }) {
 
   useEffect(() => {
     fetchDataFromSimpleFin();
-    navigation.setOptions({
-      headerRight: () => (
-        <Button
-          title="Next"
-          color={brandingColours.primaryColour}
-          onPress={() => handleNextButtonClick()}
-          disabled={!isReady || creatingAccounts || syncingAccounts}
-        />
-      ),
-    });
+    // navigation.setOptions({
+    //   headerRight: () => (
+    //     <Button
+    //       title="Next"
+    //       color={brandingColours.primaryColour}
+    //       onPress={() => handleNextButtonClick()}
+    //       disabled={!isReady || creatingAccounts || syncingAccounts}
+    //     />
+    //   ),
+    // });
   }, [navigation, importData]);
 
   // TODO: there are 3 loading screens here; loading all accounts, creating accounts in LM, syncing accounts in LM
@@ -213,15 +241,17 @@ export default function ImportAccountsScreen({ navigation }) {
   // We show alert to confirm and create accounts, then we show transactions
 
   return (
+    <SafeAreaView style={{ flex: 1 }}>
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={[commonStyles.container]}>
-      <View style={styles.card}>
+      style={[commonStyles.container, { flex: 1 }]}>
+
+      {/* <View style={styles.card}>
         <Text style={commonStyles.headerText}>Accounts to import: {importData.accountsToImport.size}</Text>
-      </View>
+      </View> */}
 
       <SectionList
-        style={[commonStyles.list, { marginBottom: 15 }]}
+        style={[commonStyles.list, { marginTop: 10, marginBottom: 0 }]}
         ItemSeparatorComponent={separator}
         sections={getGroupedDraftAccountsByInstitution(Array.from(importData.accountsToImport.values()))}
         renderSectionHeader={({ section: { title: institutionName } }) => (
@@ -233,6 +263,13 @@ export default function ImportAccountsScreen({ navigation }) {
             setUpdatedAccount={handleAccountChange}
             existingLmAccounts={dropdownAccountsData} />}
       />
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => handleNextButtonClick()}>
+        <Text style={styles.buttonText}>{buttonText}</Text>
+      </TouchableOpacity>
     </KeyboardAvoidingView>
+    </SafeAreaView>
   )
 }

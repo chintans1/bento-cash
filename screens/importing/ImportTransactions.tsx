@@ -1,4 +1,4 @@
-import { ActivityIndicator, Alert, Button, FlatList, SectionList, StyleSheet, Text, View } from "react-native"
+import { ActivityIndicator, Alert, Button, FlatList, SafeAreaView, SectionList, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { AppAccount, AppCategory, AppDraftTransaction } from "../../models/lunchmoney/appModels";
 import { commonStyles } from "../../styles/commonStyles";
 import { ImportTransactionComponent } from "../../components/importing/ImportTransaction";
@@ -24,6 +24,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 8,
     justifyContent: 'space-between'
+  },
+  button: {
+    backgroundColor: brandingColours.secondaryColour,
+    marginTop: 10,
+    //marginBottom: 25,
+    height: 40,
+    borderColor: "#8ECAE6",
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  buttonText: {
+    color: brandingColours.shadedColour,
+    fontWeight: "bold",
+    fontSize: 18
   }
 });
 
@@ -119,16 +134,6 @@ export default function ImportTransactionsScreen({ route, navigation }) {
 
   useEffect(() => {
     populateAvailableCategories();
-    navigation.setOptions({
-      headerRight: () => (
-        <Button
-          title="Import"
-          color={brandingColours.primaryColour}
-          onPress={() => handleImportButtonClick()}
-          disabled={creatingTransactions}
-        />
-      ),
-    });
   }, [navigation, isReady]);
 
   if (!isReady) {
@@ -158,35 +163,43 @@ export default function ImportTransactionsScreen({ route, navigation }) {
   }
 
   return (
-  <View style={[commonStyles.container]}>
-    <View style={styles.card}>
-      <View style={{ flex: 1 }}>
-        <Text style={{ color: brandingColours.darkTextColour }}>Importing transactions from</Text>
+  <SafeAreaView style={{ flex: 1 }}>
+    <View style={[commonStyles.container]}>
+      <View style={styles.card}>
+        <View style={{ flex: 1 }}>
+          <Text style={{ color: brandingColours.darkTextColour }}>Importing transactions from</Text>
+        </View>
+        <DateTimePicker
+          accentColor={brandingColours.secondaryColour}
+          textColor={brandingColours.darkTextColour}
+          themeVariant="light"
+          style={{alignSelf: "flex-end"}}
+          mode="date"
+          value={importDate}
+          maximumDate={new Date()}
+          onChange={handleDateChange} />
       </View>
-      <DateTimePicker
-        accentColor={brandingColours.secondaryColour}
-        textColor={brandingColours.darkTextColour}
-        themeVariant="light"
-        style={{alignSelf: "flex-end"}}
-        mode="date"
-        value={importDate}
-        maximumDate={new Date()}
-        onChange={handleDateChange} />
+      <SectionList
+        style={[commonStyles.list, { marginBottom: 15 }]}
+        ItemSeparatorComponent={separator}
+        sections={getGroupedDraftTransactionsByAccount(importingTransactions)}
+        renderSectionHeader={({ section: { title: accountName } }) => (
+          <Text style={commonStyles.sectionHeader}>{accountName}</Text>
+        )}
+        renderItem={({ item }) => <ImportTransactionComponent
+          transaction={item}
+          updateTransaction={handleTransactionUpdate}
+          availableCategories={categoriesAvailable}
+          lmAccount={lmAccounts?.get(item.lmAccountId)}
+        />}
+      />
+
+      <TouchableOpacity
+        style={styles.button}>
+        {/* //</View>onPress={() => handleNextButtonClick()}> */}
+        <Text style={styles.buttonText}>Import transactions</Text>
+      </TouchableOpacity>
     </View>
-    <SectionList
-      style={[commonStyles.list, { marginBottom: 15 }]}
-      ItemSeparatorComponent={separator}
-      sections={getGroupedDraftTransactionsByAccount(importingTransactions)}
-      renderSectionHeader={({ section: { title: accountName } }) => (
-        <Text style={commonStyles.sectionHeader}>{accountName}</Text>
-      )}
-      renderItem={({ item }) => <ImportTransactionComponent
-        transaction={item}
-        updateTransaction={handleTransactionUpdate}
-        availableCategories={categoriesAvailable}
-        lmAccount={lmAccounts?.get(item.lmAccountId)}
-      />}
-    />
-  </View>
+  </SafeAreaView>
   );
 }
