@@ -1,4 +1,5 @@
-import { AppAccount, AppDraftAccount, AppDraftTransaction, AppTransaction } from "../models/lunchmoney/appModels";
+import { AppAccount, AppDraftAccount, AppDraftTransaction, AppTransaction, ImportAccount } from "../models/lunchmoney/appModels";
+import { SimpleFinImportData } from "./transformSimpleFin";
 
 const groupAccountByInstitution = (accounts: AppAccount[]): { [key: string]: AppAccount[]} => {
   return accounts.reduce((acc, item) => {
@@ -56,7 +57,15 @@ const groupDraftAccountsByInstitution = (draftAccounts: AppDraftAccount[]): { [k
   }, {} as { [key: string]: AppDraftAccount[] });
 }
 
-export const getGroupedDraftAccountsByInstitution = (draftAccounts: AppDraftAccount[]): { title: string, data: AppDraftAccount[]}[] => {
+export const getGroupedAccountsForImport = (importData: SimpleFinImportData): { title: string, data: ImportAccount[]}[] => {
+  const groupedDraftAccounts = getGroupedDraftAccountsByInstitution(Array.from(importData.accountsToImport.values()));
+
+  groupedDraftAccounts.push({title: "Synced Accounts", data: Array.from(importData.syncedAccounts.values())});
+
+  return groupedDraftAccounts;
+}
+
+export const getGroupedDraftAccountsByInstitution = (draftAccounts: AppDraftAccount[]): { title: string, data: ImportAccount[]}[] => {
   const groupedAccounts = groupDraftAccountsByInstitution(draftAccounts);
 
   return Object.keys(groupedAccounts)

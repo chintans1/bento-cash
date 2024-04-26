@@ -1,13 +1,13 @@
 import { View, Text, StyleSheet, TextInput } from "react-native";
 import { commonStyles } from "../../styles/commonStyles";
 import { brandingColours } from "../../styles/brandingConstants";
-import { AppDraftAccount, AccountType, accountTypes } from "../../models/lunchmoney/appModels";
+import { AppDraftAccount, AccountType, accountTypes, ImportAccount } from "../../models/lunchmoney/appModels";
 import Checkbox from "expo-checkbox";
 import { useState } from "react";
 import { Dropdown } from 'react-native-element-dropdown';
 
 type ImportAccountProps = {
-  account: AppDraftAccount,
+  account: ImportAccount,
   existingLmAccounts?: {"label": string, "value": number}[],
   setUpdatedAccount: (account: AppDraftAccount) => void
 }

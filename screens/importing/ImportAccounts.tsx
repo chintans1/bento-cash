@@ -11,7 +11,8 @@ import { AppAccount, AppDraftAccount } from "../../models/lunchmoney/appModels";
 import { useParentContext } from "../../context/app/appContextProvider";
 import InternalLunchMoneyClient from "../../clients/lunchMoneyClient";
 import { getData, storeData } from "../../utils/asyncStorage";
-import { getGroupedDraftAccountsByInstitution } from "../../data/utils";
+import { getGroupedAccountsForImport, getGroupedDraftAccountsByInstitution } from "../../data/utils";
+import { AccountComponent } from "../../components/Account";
 
 const styles = StyleSheet.create({
   card: {
@@ -253,15 +254,22 @@ export default function ImportAccountsScreen({ navigation }) {
       <SectionList
         style={[commonStyles.list, { marginTop: 10, marginBottom: 0 }]}
         ItemSeparatorComponent={separator}
-        sections={getGroupedDraftAccountsByInstitution(Array.from(importData.accountsToImport.values()))}
+        sections={getGroupedAccountsForImport(importData)}
         renderSectionHeader={({ section: { title: institutionName } }) => (
           <Text style={commonStyles.sectionHeader}>{institutionName}</Text>
         )}
-        renderItem={({ item }) =>
-          <ImportAccountComponent
-            account={item}
-            setUpdatedAccount={handleAccountChange}
-            existingLmAccounts={dropdownAccountsData} />}
+        renderItem={({ item }) => {
+          if ('id' in item) {
+            return <AccountComponent account={item} showInstitution={true} />
+          } else {
+            return (
+              <ImportAccountComponent
+                account={item}
+                setUpdatedAccount={handleAccountChange}
+                existingLmAccounts={dropdownAccountsData} />
+            )
+          }
+        }}
       />
 
       <TouchableOpacity

@@ -4,7 +4,8 @@ import { brandingColours } from "../styles/brandingConstants";
 import { AppAccount } from "../models/lunchmoney/appModels";
 
 type AccountProps = {
-  account: AppAccount
+  account: AppAccount,
+  showInstitution?: boolean
 }
 
 // borderStyle: "dotted", borderColor: "#000000", borderWidth: 1
@@ -23,6 +24,11 @@ const transactionStyles = StyleSheet.create({
     flex: 1,
     alignItems: "flex-end",
     flexDirection: "column"
+  },
+  institutionName: {
+    ...commonStyles.textBase,
+    color: brandingColours.grey,
+    fontSize: 10
   },
   accountName: {
     flexWrap: "wrap",
@@ -43,7 +49,7 @@ const transactionStyles = StyleSheet.create({
   }
 });
 
-export function AccountComponent({ account }: AccountProps) {
+export function AccountComponent({ account, showInstitution }: AccountProps) {
   const accountBalance = parseFloat(account.balance);
   const balanceString = accountBalance >= 0 ?
     `$${accountBalance.toFixed(2)}` : `-$${Math.abs(accountBalance).toFixed(2)}`;
@@ -54,6 +60,11 @@ export function AccountComponent({ account }: AccountProps) {
         <Text adjustsFontSizeToFit={true} numberOfLines={1} style={transactionStyles.accountName}>
           { account.accountName }
         </Text>
+        {showInstitution ?
+          <Text adjustsFontSizeToFit={true} numberOfLines={1} style={transactionStyles.institutionName}>
+            {account.institutionName}
+          </Text>
+        : null}
       </View>
       <View style={transactionStyles.rightSection}>
         <Text
