@@ -44,14 +44,14 @@ export default function Accounts() {
   const accountsByInstitution = getGroupedAccountsByInstitution(accounts);
   const netWorth = accounts
     .map(account => parseFloat(account.balance))
-    .reduce((partialNw, balance) => partialNw + balance, 0)
-    .toFixed(2);
+    .reduce((partialNw, balance) => partialNw + balance, 0);
+  const netWorthString = netWorth >= 0 ? `$${Math.abs(netWorth).toFixed(2)}` : `-$${Math.abs(netWorth).toFixed(2)}`;
 
   return (
     <View style={[commonStyles.container, { flex: 1 }]}>
       <View style={styles.card}>
         <Text style={{ color: brandingColours.darkTextColour, fontSize: 20, fontWeight: "bold" }}>Overview</Text>
-        <Text style={{ color: brandingColours.secondaryColour, fontSize: 16 }}>Net worth: ${netWorth}</Text>
+        <Text style={{ color: brandingColours.secondaryColour, fontSize: 16 }}>Net worth: {netWorthString}</Text>
       </View>
 
       <SectionList

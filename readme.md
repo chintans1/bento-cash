@@ -36,7 +36,7 @@ How to handle SimpleFIN sync:
   - [ ] import transaction styling is weird
 - [ ] need to add a refresh mechanism
 - [ ] automatic linting
-- [ ] in import flow, move to having a static button on bottom of page instead of next/import in header
+- [x] in import flow, move to having a static button on bottom of page instead of next/import in header
 
 ### TODO (not prioritized)
   - [ ] horrible UX on import account; you essentially need to type name and institution first otherwise checkbox won't clear
