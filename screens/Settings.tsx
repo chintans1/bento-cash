@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { commonStyles } from "../styles/commonStyles";
 import { useParentContext } from "../context/app/appContextProvider";
 import InternalLunchMoneyClient from "../clients/lunchMoneyClient";
@@ -12,6 +12,11 @@ import { accessClient } from "../clients/accessClient";
 
 
 const settingsStyles = StyleSheet.create({
+  card: {
+    ...commonStyles.columnCard,
+    justifyContent: 'space-around',
+    //flex: 0
+  },
   textInput: {
     backgroundColor: brandingColours.shadedColour,
     borderColor: brandingColours.secondaryColour,
@@ -144,67 +149,71 @@ export default function Settings({ navigation }) {
   }
 
   return (
-    <ScrollView
-      style={{...commonStyles.container, paddingHorizontal: 15}}
-      bounces={false}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+        style={[{ flex: 1 }, commonStyles.container]}>
+        <ScrollView>
+          <View style={settingsStyles.card}>
+            <Text style={commonStyles.headerTextBold}>Budget Name: {userInfo ? userInfo?.budgetName : "unknown"}</Text>
+            <TouchableOpacity
+              disabled={!simpleFinTokenExists}
+              style={settingsStyles.button}
+              onPress={() => navigation.navigate("SimpleFinImport")}>
+                <Text
+                  style={[
+                    settingsStyles.buttonText,
+                    { opacity: !simpleFinTokenExists ? 0.3 : null }
+                  ]}>Fetch data via SimpleFIN</Text>
+            </TouchableOpacity>
+          </View>
 
-      <View style={commonStyles.columnCard}>
-        <Text style={commonStyles.headerTextBold}>Budget Name: {userInfo ? userInfo?.budgetName : "unknown"}</Text>
-        <TouchableOpacity
-          disabled={!simpleFinTokenExists}
-          style={settingsStyles.button}
-          onPress={() => navigation.navigate("SimpleFinImport")}>
-            <Text
-              style={[
-                settingsStyles.buttonText,
-                { opacity: !simpleFinTokenExists ? 0.3 : null }
-              ]}>Fetch data via SimpleFIN</Text>
-        </TouchableOpacity>
-      </View>
+          <View style={settingsStyles.card}>
+            <Text style={commonStyles.headerText}>Update Lunch Money API Token</Text>
+            <TextInput
+              ref={lmApiKeyInputReference}
+              style={settingsStyles.textInput}
+              secureTextEntry={true}
+              autoComplete="off"
+              autoCorrect={false}
+              placeholder={lmApiKey.length > 0 ? "exists already, update if you need." : "enter your API token here."}
+              onEndEditing={(event) => setNewLmApiKey(event.nativeEvent.text)} />
+            <TouchableOpacity
+              style={settingsStyles.button}
+              disabled={newLmApiKey.length === 0}
+              onPress={() => verifyNewLmTokenAlert(newLmApiKey)}>
+                <Text
+                  style={[
+                    settingsStyles.buttonText,
+                    { opacity: newLmApiKey.length === 0 ? 0.3 : null }
+                  ]}>Submit</Text>
+            </TouchableOpacity>
+          </View>
 
-      <View style={commonStyles.columnCard}>
-        <Text style={commonStyles.headerText}>Update Lunch Money API Token</Text>
-        <TextInput
-          ref={lmApiKeyInputReference}
-          style={settingsStyles.textInput}
-          secureTextEntry={true}
-          autoComplete="off"
-          autoCorrect={false}
-          placeholder={lmApiKey.length > 0 ? "exists already, update if you need." : "enter your API token here."}
-          onEndEditing={(event) => setNewLmApiKey(event.nativeEvent.text)} />
-        <TouchableOpacity
-          style={settingsStyles.button}
-          disabled={newLmApiKey.length === 0}
-          onPress={() => verifyNewLmTokenAlert(newLmApiKey)}>
-            <Text
-              style={[
-                settingsStyles.buttonText,
-                { opacity: newLmApiKey.length === 0 ? 0.3 : null }
-              ]}>Submit</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={commonStyles.columnCard}>
-        <Text style={commonStyles.headerText}>Simplefin Setup Token</Text>
-        <TextInput
-          ref={simpleFinTokenReference}
-          style={settingsStyles.textInput}
-          autoComplete="off"
-          autoCapitalize="none"
-          autoCorrect={false}
-          placeholder={simpleFinTokenExists ? "exists already, update if you need." : "enter your simpleFIN setup token here."}
-          onEndEditing={(event) => setSimpleFinToken(event.nativeEvent.text)} />
-        <TouchableOpacity
-          style={settingsStyles.button}
-          disabled={simpleFinToken.length === 0}
-          onPress={() => setupSimpleFinAuthentication(simpleFinToken)}>
-            <Text
-              style={[
-                settingsStyles.buttonText,
-                { opacity: simpleFinToken.length === 0 ? 0.3 : null },
-              ]}>Submit</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+          <View style={settingsStyles.card}>
+            <Text style={commonStyles.headerText}>Simplefin Setup Token</Text>
+            <TextInput
+              ref={simpleFinTokenReference}
+              style={settingsStyles.textInput}
+              autoComplete="off"
+              autoCapitalize="none"
+              autoCorrect={false}
+              placeholder={simpleFinTokenExists ? "exists already, update if you need." : "enter your simpleFIN setup token here."}
+              onEndEditing={(event) => setSimpleFinToken(event.nativeEvent.text)} />
+            <TouchableOpacity
+              style={settingsStyles.button}
+              disabled={simpleFinToken.length === 0}
+              onPress={() => setupSimpleFinAuthentication(simpleFinToken)}>
+                <Text
+                  style={[
+                    settingsStyles.buttonText,
+                    { opacity: simpleFinToken.length === 0 ? 0.3 : null },
+                  ]}>Submit</Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   )
 }

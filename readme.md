@@ -37,6 +37,8 @@ How to handle SimpleFIN sync:
 - [ ] need to add a refresh mechanism
 - [ ] automatic linting
 - [x] in import flow, move to having a static button on bottom of page instead of next/import in header
+- [ ] settings screen: you can't paste the simplefin key as keyboard covers half the screen
+- [ ] show "synced accounts" in the import accounts flow to ensure nothing is hidden
 
 ### TODO (not prioritized)
   - [ ] horrible UX on import account; you essentially need to type name and institution first otherwise checkbox won't clear
