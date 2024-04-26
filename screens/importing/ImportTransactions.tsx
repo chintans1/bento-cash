@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: brandingColours.secondaryColour,
-    marginTop: 10,
+    //marginTop: 10,
     //marginBottom: 25,
     height: 40,
     borderColor: "#8ECAE6",
@@ -66,6 +66,18 @@ export default function ImportTransactionsScreen({ route, navigation }) {
   const [selectedTransactions] = useState<Map<string, AppDraftTransaction>>(new Map());
   const [creatingTransactions, setCreatingTransactions] = useState<boolean>(false);
 
+  const [buttonText, setButtonText] = useState<string>("No transactions selected");
+
+  const handleButtonTextChange = () => {
+    if (selectedTransactions.size === 0) {
+      setButtonText("No transactions selected");
+    } else if (selectedTransactions.size === 1) {
+      setButtonText("Import 1 transaction");
+    } else {
+      setButtonText("Import " + selectedTransactions.size + " transactions");
+    }
+  }
+
   const populateAvailableCategories = () => {
     if (!isReady && categories != null) {
       setCategoriesAvailable(categories
@@ -97,6 +109,7 @@ export default function ImportTransactionsScreen({ route, navigation }) {
     } else {
       selectedTransactions.delete(updatedTransaction.externalId);
     }
+    handleButtonTextChange();
   }
 
   const handleTransactionsCreation = async () => {
@@ -163,7 +176,7 @@ export default function ImportTransactionsScreen({ route, navigation }) {
   }
 
   return (
-  <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1 }}>
     <View style={[commonStyles.container]}>
       <View style={styles.card}>
         <View style={{ flex: 1 }}>
@@ -180,7 +193,7 @@ export default function ImportTransactionsScreen({ route, navigation }) {
           onChange={handleDateChange} />
       </View>
       <SectionList
-        style={[commonStyles.list, { marginBottom: 15 }]}
+        style={[commonStyles.list, { marginBottom: 8 }]}
         ItemSeparatorComponent={separator}
         sections={getGroupedDraftTransactionsByAccount(importingTransactions)}
         renderSectionHeader={({ section: { title: accountName } }) => (
@@ -195,11 +208,11 @@ export default function ImportTransactionsScreen({ route, navigation }) {
       />
 
       <TouchableOpacity
-        style={styles.button}>
-        {/* //</View>onPress={() => handleNextButtonClick()}> */}
-        <Text style={styles.buttonText}>Import transactions</Text>
+        style={styles.button}
+        onPress={() => handleImportButtonClick()}>
+        <Text style={styles.buttonText}>{buttonText}</Text>
       </TouchableOpacity>
     </View>
-  </SafeAreaView>
+    </SafeAreaView>
   );
 }
