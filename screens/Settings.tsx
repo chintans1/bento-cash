@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Alert, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import { ActivityIndicator, Alert, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { commonStyles } from "../styles/commonStyles";
 import { useParentContext } from "../context/app/appContextProvider";
 import InternalLunchMoneyClient from "../clients/lunchMoneyClient";
@@ -48,7 +48,14 @@ const settingsStyles = StyleSheet.create({
     color: brandingColours.shadedColour,
     fontWeight: "bold",
     fontSize: 18
-  }
+  },
+  refreshOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.2)'
+  },
 });
 
 export default function Settings({ navigation }) {
@@ -65,6 +72,8 @@ export default function Settings({ navigation }) {
   const [newLmApiKey, setNewLmApiKey] = useState<string>("");
   const [simpleFinToken, setSimpleFinToken] = useState<string>("");
   const [simpleFinTokenExists, setSimpleFinTokenExists] = useState<boolean>(false);
+
+  const [simpleFinInSetup, setSimpleFinInSetup] = useState(false);
 
   const lmApiKeyInputReference = useRef<TextInput>(null);
   const simpleFinTokenReference = useRef<TextInput>(null);
@@ -107,17 +116,24 @@ export default function Settings({ navigation }) {
   }
 
   const setupSimpleFinAuthentication = async (newSfToken: string) => {
-    const claimUrl = getClaimUrl(newSfToken);
-    const simpleFinAuthDetails = await storeSimpleFinAuth(claimUrl);
+    setSimpleFinInSetup(true);
+    try {
+      const claimUrl = getClaimUrl(newSfToken);
+      const simpleFinAuthDetails = await storeSimpleFinAuth(claimUrl);
 
-    Alert.alert("Verify",
-      simpleFinTokenExists ?
-        "Are you sure you want to override the existing SimpleFIN auth?" :
-        "Are you sure you want to set SimpleFIN auth?",
-      [
-        {text: "Cancel", style: "cancel"},
-        {text: "Submit", onPress: () => submitSimpleFinAuth(simpleFinAuthDetails)}
-      ]);
+      Alert.alert("Verify",
+        simpleFinTokenExists ?
+          "Are you sure you want to override the existing SimpleFIN auth?" :
+          "Are you sure you want to set SimpleFIN auth?",
+        [
+          {text: "Cancel", style: "cancel", onPress: () => setSimpleFinInSetup(false)},
+          {text: "Submit", onPress: () => submitSimpleFinAuth(simpleFinAuthDetails)}
+        ]);
+    } catch (error) {
+      console.error(`Error trying to utilize SimpleFin token ${error}`);
+      Alert.alert("Error parsing token", "Failed to parse given token, please ensure it is correct");
+      setSimpleFinInSetup(false);
+    }
   }
 
   const submitSimpleFinAuth = (simpleFinAuthDetails: SimpleFinAuthentication) => {
@@ -125,6 +141,7 @@ export default function Settings({ navigation }) {
     setSimpleFinToken("");
     setSimpleFinTokenExists(true);
     simpleFinTokenReference.current.clear();
+    setSimpleFinInSetup(false);
 
     Alert.alert("SimpleFIN auth has been saved.");
   }
@@ -211,6 +228,12 @@ export default function Settings({ navigation }) {
                     { opacity: simpleFinToken.length === 0 ? 0.3 : null },
                   ]}>Submit</Text>
             </TouchableOpacity>
+
+            {simpleFinInSetup && (
+              <View style={settingsStyles.refreshOverlay}>
+                <ActivityIndicator size="large" color={brandingColours.primaryColour} />
+              </View>
+      )}
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

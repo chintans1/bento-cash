@@ -11,7 +11,7 @@ import { AppAccount, AppDraftAccount } from "../../models/lunchmoney/appModels";
 import { useParentContext } from "../../context/app/appContextProvider";
 import InternalLunchMoneyClient from "../../clients/lunchMoneyClient";
 import { getData, storeData } from "../../utils/asyncStorage";
-import { getGroupedAccountsForImport, getGroupedDraftAccountsByInstitution } from "../../data/utils";
+import { getGroupedAccountsForImport } from "../../data/utils";
 import { AccountComponent } from "../../components/Account";
 
 const styles = StyleSheet.create({
@@ -152,6 +152,7 @@ export default function ImportAccountsScreen({ navigation }) {
   }
 
   const handleNextButtonClick = async () => {
+    // TODO: this should become a background task??
     await handleSyncingAccounts();
 
     if (noAccountsToImport) {
@@ -195,16 +196,6 @@ export default function ImportAccountsScreen({ navigation }) {
 
   useEffect(() => {
     fetchDataFromSimpleFin();
-    // navigation.setOptions({
-    //   headerRight: () => (
-    //     <Button
-    //       title="Next"
-    //       color={brandingColours.primaryColour}
-    //       onPress={() => handleNextButtonClick()}
-    //       disabled={!isReady || creatingAccounts || syncingAccounts}
-    //     />
-    //   ),
-    // });
   }, [navigation, importData]);
 
   // TODO: there are 3 loading screens here; loading all accounts, creating accounts in LM, syncing accounts in LM
@@ -218,11 +209,21 @@ export default function ImportAccountsScreen({ navigation }) {
 
   if (noAccountsToImport) {
     return (
-      <View style={{ flex: 1, justifyContent: "center" }}>
-        <Text style={{ textAlign: "center" }}>
-          No accounts found to import, press next to continue
-        </Text>
-      </View>
+      <SafeAreaView style={{ flex: 1 }}>
+        <View
+          style={[commonStyles.container, { flex: 1 }]}>
+          <View style={{ flex: 1, justifyContent: "center" }}>
+            <Text style={{ textAlign: "center" }}>
+              No accounts found to import, press the button below to continue
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => handleNextButtonClick()}>
+            <Text style={styles.buttonText}>Continue to transactions</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
     )
   }
 

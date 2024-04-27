@@ -48,5 +48,10 @@ export async function getAccountsData(
   if (response.status != 200) {
     throw new Error(`Could not fetch accounts data, got status ${response.status} with body ${await response.text()}`);
   }
-  return response.json();
+  const responseJson: AccountsResponse = await response.json();
+
+  if (responseJson.errors.length > 0) {
+    throw new Error(`Fetched errors during account data call, ${responseJson.errors}`);
+  }
+  return responseJson;
 }

@@ -60,7 +60,9 @@ const groupDraftAccountsByInstitution = (draftAccounts: AppDraftAccount[]): { [k
 export const getGroupedAccountsForImport = (importData: SimpleFinImportData): { title: string, data: ImportAccount[]}[] => {
   const groupedDraftAccounts = getGroupedDraftAccountsByInstitution(Array.from(importData.accountsToImport.values()));
 
-  groupedDraftAccounts.push({title: "Synced Accounts", data: Array.from(importData.syncedAccounts.values())});
+  if (importData.syncedAccounts.size > 0) {
+    groupedDraftAccounts.push({title: "Synced Accounts", data: Array.from(importData.syncedAccounts.values())});
+  }
 
   return groupedDraftAccounts;
 }
