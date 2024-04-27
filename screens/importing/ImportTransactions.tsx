@@ -186,7 +186,7 @@ export default function ImportTransactionsScreen({ route, navigation }) {
           accentColor={brandingColours.secondaryColour}
           textColor={brandingColours.darkTextColour}
           themeVariant="light"
-          style={{alignSelf: "flex-end"}}
+          style={{ alignSelf: "flex-end" }}
           mode="date"
           value={importDate}
           maximumDate={new Date()}
@@ -194,6 +194,7 @@ export default function ImportTransactionsScreen({ route, navigation }) {
       </View>
       <SectionList
         style={[commonStyles.list, { marginBottom: 8 }]}
+        contentContainerStyle={{ flexGrow: 1 }}
         ItemSeparatorComponent={separator}
         sections={getGroupedDraftTransactionsByAccount(importingTransactions)}
         renderSectionHeader={({ section: { title: accountName } }) => (
@@ -205,6 +206,11 @@ export default function ImportTransactionsScreen({ route, navigation }) {
           availableCategories={categoriesAvailable}
           lmAccount={lmAccounts?.get(item.lmAccountId)}
         />}
+        ListEmptyComponent={
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: "center" }}>
+            <Text style={{ textAlign: 'center', color: brandingColours.darkTextColour }}>No transactions found, try changing the date</Text>
+          </View>
+        }
       />
 
       <TouchableOpacity

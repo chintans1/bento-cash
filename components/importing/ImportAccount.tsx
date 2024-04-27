@@ -80,6 +80,23 @@ const accountStyles = StyleSheet.create({
   },
   amountPositive: {
     color: brandingColours.green
+  },
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10
+  },
+  dividerText: {
+    fontWeight: "bold",
+    color: brandingColours.grey,
+    fontSize: 10,
+    marginHorizontal: 5
+  },
+  divider: {
+    flex: 1,
+    backgroundColor: brandingColours.dividerColour,
+    height: StyleSheet.hairlineWidth,
   }
 });
 
@@ -127,11 +144,11 @@ export function ImportAccountComponent({ account, existingLmAccounts, setUpdated
     if (existingLmAccounts?.length > 0) {
       return (
         <View>
-          <View style={{
-            borderBottomColor: brandingColours.dividerColour,
-            borderBottomWidth: StyleSheet.hairlineWidth,
-            marginTop: 10
-          }} />
+          <View style={accountStyles.dividerContainer}>
+            <View style={accountStyles.divider} />
+            <Text style={accountStyles.dividerText}>OR</Text>
+            <View style={accountStyles.divider} />
+          </View>
           <View style={accountStyles.dropdownView}>
             <Dropdown
               disable={inputDisabled || selectedAccountType.length > 0}
