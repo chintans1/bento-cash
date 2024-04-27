@@ -56,7 +56,7 @@ export default function ImportAccountsScreen({ navigation }) {
 
   const [dropdownAccountsData, setDropdownAccountsData] = useState<{"label": string, "value": number}[]>(null);
 
-  const [buttonText, setButtonText] = useState<string>("No accounts to import");
+  const [buttonText, setButtonText] = useState<string>("No accounts selected");
 
   const getAccountMappings = async (): Promise<Map<string, string>> => {
     const existingAccountMappings = await getData(StorageKeys.ACCOUNT_MAPPING_KEY);
