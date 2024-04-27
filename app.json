@@ -19,7 +19,7 @@
       "config": {
         "usesNonExemptEncryption": false
       },
-      "buildNumber": "6",
+      "buildNumber": "7",
       "bundleIdentifier": "com.chintans98.lunchmoney.mobile"
     },
     "android": {
