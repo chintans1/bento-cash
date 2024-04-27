@@ -53,6 +53,7 @@ export default function ImportAccountsScreen({ navigation }) {
 
   const [syncingAccounts, setSyncingAccounts] = useState<boolean>(false);
   const [noAccountsToImport, setNoAccountsToImport] = useState<boolean>(false);
+  const [simpleFinAccountsFound, setSimpleFinAccountsFound] = useState<boolean>(false);
 
   const [dropdownAccountsData, setDropdownAccountsData] = useState<{"label": string, "value": number}[]>(null);
 
@@ -97,11 +98,18 @@ export default function ImportAccountsScreen({ navigation }) {
           return {"label": a.accountName, "value": a.id}
         }));
 
+      // There are no accounts to import, but that does not mean that we got no accounts in general
       if (fetchedImportData.accountsToImport.size === 0) {
-        // No accounts to import, lets pivot to syncing accounts
-        setSyncingAccounts(true);
-        setIsReady(true);
         setNoAccountsToImport(true);
+      }
+
+      // If total accounts found is > 0, we should show synced accounts list
+      if (fetchedImportData.totalAccounts > 0) {
+        setSimpleFinAccountsFound(true);
+        if (fetchedImportData.accountsToImport.size === 0) {
+          setButtonText("Continue to transactions");
+        }
+        setIsReady(true);
         return;
       }
       setIsReady(true);
@@ -151,6 +159,11 @@ export default function ImportAccountsScreen({ navigation }) {
     }
   }
 
+  const handleCancelOnProcess = () => {
+    // TODO: this should just reset all states, but for now I will just close popup
+    navigation.getParent()?.goBack();
+  }
+
   const handleNextButtonClick = async () => {
     // TODO: this should become a background task??
     await handleSyncingAccounts();
@@ -168,11 +181,11 @@ export default function ImportAccountsScreen({ navigation }) {
     }
 
     // TODO: if account being imported is an account map to existing LM account, maybe create is bad language
-    Alert.alert("Create these accounts",
-    `Do you want to create the following accounts?\n
+    Alert.alert("Process these accounts?",
+    `Do you want to process the following accounts you had chosen to import?\n
     ${Array.from(importableAccounts.values()).map(v => v.accountName).join("\n")}`, [
-      {text: "Cancel", style: "cancel"},
-      {text: "Create", onPress: async () => await handleAccountCreation()}
+      {text: "Cancel", style: "cancel", onPress: () => handleCancelOnProcess()},
+      {text: "Process", onPress: async () => await handleAccountCreation()}
     ]);
   }
 
@@ -207,7 +220,7 @@ export default function ImportAccountsScreen({ navigation }) {
     )
   }
 
-  if (noAccountsToImport) {
+  if (noAccountsToImport && !simpleFinAccountsFound) {
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <View
@@ -247,10 +260,6 @@ export default function ImportAccountsScreen({ navigation }) {
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={[commonStyles.container, { flex: 1 }]}>
-
-      {/* <View style={styles.card}>
-        <Text style={commonStyles.headerText}>Accounts to import: {importData.accountsToImport.size}</Text>
-      </View> */}
 
       <SectionList
         style={[commonStyles.list, { marginTop: 10, marginBottom: 0 }]}

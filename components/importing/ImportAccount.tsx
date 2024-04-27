@@ -9,7 +9,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 type ImportAccountProps = {
   account: ImportAccount,
   existingLmAccounts?: {"label": string, "value": number}[],
-  setUpdatedAccount: (account: AppDraftAccount) => void
+  setUpdatedAccount: (account: ImportAccount) => void
 }
 
 const data: {"label": string, "value": string}[] =
