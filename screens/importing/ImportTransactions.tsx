@@ -113,11 +113,12 @@ export default function ImportTransactionsScreen({ route, navigation }) {
   }
 
   const handleTransactionsCreation = async () => {
-    setCreatingTransactions(true);
     if (selectedTransactions.size === 0) {
-      Alert.alert("No transactions to import", null, [{text: "Ok", onPress: () => navigation.getParent()?.goBack()}]);
+      Alert.alert("No transactions were imported", null, [{text: "Ok", onPress: () => navigation.getParent()?.goBack()}]);
       return;
     }
+
+    setCreatingTransactions(true);
 
     const draftTransactions = getDraftTransactions(Array.from(selectedTransactions.values()));
     await lunchMoneyClient.createTransactions(draftTransactions);
@@ -129,9 +130,11 @@ export default function ImportTransactionsScreen({ route, navigation }) {
   }
 
   const handleImportButtonClick = () => {
-    Alert.alert(`Importing ${selectedTransactions.size} transactions`, "Do you want to continue?", [
+    Alert.alert(selectedTransactions.size === 0 ?
+      "No transactions selected" : `Importing ${selectedTransactions.size} transactions`,
+      "Do you want to continue?", [
       {text: "Cancel", style: "cancel"},
-      {text: "Import", onPress: () => handleTransactionsCreation()}
+      {text: selectedTransactions.size === 0 ? "Yes" : "Import", onPress: () => handleTransactionsCreation()}
     ])
   }
 
