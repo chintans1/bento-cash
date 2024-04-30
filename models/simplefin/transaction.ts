@@ -1,9 +1,9 @@
 export type SimpleFinTransaction = {
-  id:	string,
-  posted:	EpochTimeStamp,
-  amount: string,
-  payee?: string,
-  description: string,
-  pending?: boolean
-  extra: {}
-}
+  id: string;
+  posted: EpochTimeStamp;
+  amount: string;
+  payee?: string;
+  description: string;
+  pending?: boolean;
+  extra?: object;
+};

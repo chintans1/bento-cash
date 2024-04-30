@@ -1,30 +1,48 @@
-import { Asset, DraftTransaction, PlaidAccount, Transaction } from "lunch-money";
-import InternalLunchMoneyClient from "../clients/lunchMoneyClient";
-import { AppAccount, AppCategory, AppDraftTransaction, AppTransaction } from "../models/lunchmoney/appModels";
+import {
+  Asset,
+  DraftTransaction,
+  PlaidAccount,
+  Transaction,
+} from 'lunch-money';
+import InternalLunchMoneyClient from '../clients/lunchMoneyClient';
+import {
+  AppAccount,
+  AppCategory,
+  AppDraftTransaction,
+  AppTransaction,
+} from '../models/lunchmoney/appModels';
 
-const negativeCreditTypes: String[] = ["loan", "credit", "other liability"];
+const negativeCreditTypes: string[] = ['loan', 'credit', 'other liability'];
 
 const formatBalance = (account: Asset | PlaidAccount): string => {
   if ('type' in account && negativeCreditTypes.includes(account.type)) {
     // For credit accounts, negative balance is positive, positive is negative
     return (parseFloat(account.balance) * -1).toString();
-  } else if ('type_name' in account && negativeCreditTypes.includes(account.type_name)) {
+  }
+  if (
+    'type_name' in account &&
+    negativeCreditTypes.includes(account.type_name)
+  ) {
     return (parseFloat(account.balance) * -1).toString();
   }
 
   return account.balance;
-}
+};
 
 const formatAccountName = (account: Asset | PlaidAccount): string => {
-  const accountNameToUse = 'display_name' in account && account.display_name?.length > 0
-    ? account.display_name : account.name;
+  const accountNameToUse =
+    'display_name' in account && account.display_name?.length > 0
+      ? account.display_name
+      : account.name;
   let formattedAccountName: string = accountNameToUse;
 
-  if (accountNameToUse.startsWith(account.institution_name + " ")) {
-    formattedAccountName = accountNameToUse.substring(account.institution_name.length).trim();
+  if (accountNameToUse.startsWith(`${account.institution_name} `)) {
+    formattedAccountName = accountNameToUse
+      .substring(account.institution_name.length)
+      .trim();
   }
   return formattedAccountName?.length > 0 ? formattedAccountName : account.name;
-}
+};
 
 const formatFullAccountName = (account: Asset | PlaidAccount): string => {
   if ('display_name' in account && account.display_name?.length > 0) {
@@ -32,20 +50,24 @@ const formatFullAccountName = (account: Asset | PlaidAccount): string => {
   }
 
   if (account.institution_name?.length > 0) {
-    return account.institution_name + " " + account.name;
+    return `${account.institution_name} ${account.name}`;
   }
   return account.name;
-}
+};
 
 export const getTransactionsForApp = async (
   lmClient: InternalLunchMoneyClient,
   accounts: Map<number, AppAccount>,
-  categories: Map<number, AppCategory>) => {
+  categories: Map<number, AppCategory>,
+) => {
   const lmTransactions: Transaction[] = await lmClient.getAllTransactions();
   const appTransactions: AppTransaction[] = [];
 
   lmTransactions.forEach(transaction => {
-    const assetId: number = transaction.asset_id != null ? transaction.asset_id : transaction.plaid_account_id;
+    const assetId: number =
+      transaction.asset_id != null
+        ? transaction.asset_id
+        : transaction.plaid_account_id;
     appTransactions.push({
       id: transaction.id,
       date: transaction.date,
@@ -54,73 +76,76 @@ export const getTransactionsForApp = async (
       currency: transaction.currency,
       notes: transaction.notes,
 
-      assetId: assetId,
+      assetId,
       assetName: assetId != null ? accounts.get(assetId)?.fullName : undefined,
 
       categoryId: transaction.category_id,
       categoryName: categories.get(transaction.category_id)?.name,
 
-      status: transaction.status
+      status: transaction.status,
     });
   });
 
   return appTransactions;
-}
+};
 
 export const getAccountsMap = async (lmClient: InternalLunchMoneyClient) => {
   const manualAccounts = await lmClient.getClient().getAssets();
   const plaidAccounts = await lmClient.getClient().getPlaidAccounts();
   const accountsMap = new Map<number, AppAccount>();
 
-  for (const account of manualAccounts) {
+  manualAccounts.forEach(account => {
     accountsMap.set(account.id, {
       id: account.id,
       accountName: formatAccountName(account),
-      institutionName: account.institution_name || "Unknown",
+      institutionName: account.institution_name || 'Unknown',
       fullName: formatFullAccountName(account),
       type: account.type_name,
-      state: "open",
+      state: 'open',
       balance: formatBalance(account),
-      currency: account.currency
+      currency: account.currency,
     });
-  }
+  });
 
-  for (const account of plaidAccounts) {
+  plaidAccounts.forEach(account => {
     accountsMap.set(account.id, {
       id: account.id,
       accountName: formatAccountName(account),
-      institutionName: account.institution_name || "Unknown",
+      institutionName: account.institution_name || 'Unknown',
       fullName: formatFullAccountName(account),
       type: account.type,
-      state: "open",
+      state: 'open',
       balance: formatBalance(account),
-      currency: account.currency
+      currency: account.currency,
     });
-  }
+  });
 
   return accountsMap;
-}
+};
 
 export const getCategoriesMap = async (lmClient: InternalLunchMoneyClient) => {
   const categories = await lmClient.getClient().getCategories();
   const categoriesMap = new Map<number, AppCategory>();
 
-  for (const category of categories) {
+  categories.forEach(category => {
     categoriesMap.set(category.id, {
       id: category.id,
       name: category.name,
       isIncome: category.is_income,
       isGroup: category.is_group,
-      groupId: category.group_id
+      groupId: category.group_id,
     });
-  }
+  });
 
   return categoriesMap;
-}
+};
 
-export const getDraftTransactions = (appDraftTransactions: AppDraftTransaction[]): DraftTransaction[] => {
+export const getDraftTransactions = (
+  appDraftTransactions: AppDraftTransaction[],
+): DraftTransaction[] => {
   const draftTransactions: DraftTransaction[] = [];
-  for (const transaction of appDraftTransactions) {
+
+  appDraftTransactions.forEach(transaction => {
     draftTransactions.push({
       date: transaction.date,
       category_id: transaction.categoryId,
@@ -130,8 +155,8 @@ export const getDraftTransactions = (appDraftTransactions: AppDraftTransaction[]
       notes: transaction.notes,
       asset_id: transaction.lmAccountId,
       status: transaction.status,
-      external_id: transaction.externalId
-    })
-  }
+      external_id: transaction.externalId,
+    });
+  });
   return draftTransactions;
-}
+};

@@ -1,5 +1,5 @@
 export type SimpleFinOrganization = {
-  domain?: string,
-  "sfin-url": string,
-  name?: string
-}
+  domain?: string;
+  'sfin-url': string;
+  name?: string;
+};

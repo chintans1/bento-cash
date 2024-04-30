@@ -11,11 +11,27 @@ export type AppTransaction = {
   assetName?: string;
   categoryName?: string;
 
-  status: "cleared" | "uncleared" | "recurring" | "recurring_suggested" | "pending";
-}
+  status:
+    | 'cleared'
+    | 'uncleared'
+    | 'recurring'
+    | 'recurring_suggested'
+    | 'pending';
+};
 
-export const accountTypes = ["employee compensation", "cash", "vehicle", "loan", "cryptocurrency", "investment", "other liability", "other asset", "credit", "real estate"];
-export type AccountType = typeof accountTypes[number];
+export const accountTypes = [
+  'employee compensation',
+  'cash',
+  'vehicle',
+  'loan',
+  'cryptocurrency',
+  'investment',
+  'other liability',
+  'other asset',
+  'credit',
+  'real estate',
+];
+export type AccountType = (typeof accountTypes)[number];
 
 export type ImportAccount = AppAccount | AppDraftAccount;
 
@@ -28,7 +44,7 @@ export type AppAccount = {
   state: string;
   balance: string;
   currency: string;
-}
+};
 
 export type AppDraftAccount = {
   lmAccountId?: number;
@@ -39,7 +55,7 @@ export type AppDraftAccount = {
   balance: string;
   currency: string;
   importable?: boolean;
-}
+};
 
 export type AppCategory = {
   id: number;
@@ -47,27 +63,27 @@ export type AppCategory = {
   isIncome: boolean;
   isGroup: boolean;
   groupId?: number;
-}
+};
 
 export type AppLunchMoneyInfo = {
-  userId:	number;
+  userId: number;
   userName: string;
   userEmail: string;
   budgetName: string;
   apiKeyLabel?: string;
-}
+};
 
 export type AppDraftTransaction = {
   date: string;
-	payee: string;
-	amount: string;
-	currency: string;
-	notes?: string;
-  status: "cleared" | "uncleared";
+  payee: string;
+  amount: string;
+  currency: string;
+  notes?: string;
+  status: 'cleared' | 'uncleared';
   externalId: string;
 
   // User could decide
-	categoryId?: number;
+  categoryId?: number;
   categoryName?: string;
 
   lmAccountId?: number;
@@ -75,4 +91,4 @@ export type AppDraftTransaction = {
   externalAccountName: string;
 
   importable?: boolean;
-}
+};

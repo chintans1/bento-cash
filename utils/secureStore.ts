@@ -5,7 +5,7 @@ export async function save(key: string, value: string) {
 }
 
 export async function getValueFor(key: string): Promise<string> {
-  return await SecureStore.getItemAsync(key);
+  return SecureStore.getItemAsync(key);
 }
 
 export async function doesKeyExist(key: string) {

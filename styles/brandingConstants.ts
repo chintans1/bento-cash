@@ -1,32 +1,27 @@
-const primaryColour = "#171717"; //"#FCA311";
-const secondaryColour = "#219EBC"; // "#0B1215"; // "#14213D";
+class BrandingColours {
+  static primaryColour = '#171717'; // "#FCA311";
 
-const backgroundColour = "#E5E5E5";
-const shadedColour = "white";
+  static secondaryColour = '#219EBC'; // "#0B1215"; // "#14213D";
 
-const dividerColour = "#EFEFEF";
+  static backgroundColour = '#E5E5E5';
 
-const black = "#171717";
-const red = "#D90429";
-const green = "#38B000";
-const grey = "#B8B8B8";
+  static shadedColour = 'white';
 
+  static dividerColour = '#EFEFEF';
 
-const lightTextColour = "white";
-const darkTextColour = "#171717";
-const header = darkTextColour;
+  static black = '#171717';
 
-export const brandingColours = {
-  primaryColour,
-  secondaryColour,
-  backgroundColour,
-  shadedColour,
-  dividerColour,
-  header,
-  black,
-  red,
-  green,
-  grey,
-  lightTextColour,
-  darkTextColour
+  static red = '#D90429';
+
+  static green = '#38B000';
+
+  static grey = '#B8B8B8';
+
+  static lightTextColour = 'white';
+
+  static darkTextColour = '#171717';
+
+  static header = BrandingColours.darkTextColour;
 }
+
+export default BrandingColours;

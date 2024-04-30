@@ -1,32 +1,32 @@
-import { StyleSheet } from "react-native";
-import { brandingColours } from "./brandingConstants";
+import { StyleSheet } from 'react-native';
+import BrandingColours from './brandingConstants';
 
 const base = {
-  color: brandingColours.secondaryColour
-}
+  color: BrandingColours.secondaryColour,
+};
 
-export const commonStyles = StyleSheet.create({
+export default StyleSheet.create({
   container: {
     ...base,
-    backgroundColor: brandingColours.backgroundColour,
+    backgroundColor: BrandingColours.backgroundColour,
     paddingHorizontal: 10,
-    height: '100%'
+    height: '100%',
   },
   rowView: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   list: {
-    backgroundColor: brandingColours.shadedColour,
+    backgroundColor: BrandingColours.shadedColour,
     borderRadius: 8,
     marginBottom: 10,
   },
   card: {
     flex: 1,
-    flexDirection: "row",
-    justifyContent: "flex-start",
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
 
-    backgroundColor: brandingColours.shadedColour,
+    backgroundColor: BrandingColours.shadedColour,
 
     // marginHorizontal: 5,
     marginVertical: 3,
@@ -35,10 +35,10 @@ export const commonStyles = StyleSheet.create({
   },
   columnCard: {
     flex: 1,
-    flexDirection: "column",
-    justifyContent: "flex-start",
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
 
-    backgroundColor: brandingColours.shadedColour,
+    backgroundColor: BrandingColours.shadedColour,
     borderRadius: 8,
 
     // marginHorizontal: 5,
@@ -48,25 +48,25 @@ export const commonStyles = StyleSheet.create({
   },
   textBase: {
     ...base,
-    display: "flex"
+    display: 'flex',
   },
   headerText: {
     ...base,
     fontSize: 18,
-    display: "flex",
-    color: brandingColours.darkTextColour
+    display: 'flex',
+    color: BrandingColours.darkTextColour,
   },
   headerTextBold: {
     ...base,
     fontSize: 24,
     fontWeight: 'bold',
-    color: brandingColours.darkTextColour
+    color: BrandingColours.darkTextColour,
   },
   sectionHeader: {
-    backgroundColor: brandingColours.secondaryColour,
-    color: brandingColours.lightTextColour,
-    fontWeight: "bold",
+    backgroundColor: BrandingColours.secondaryColour,
+    color: BrandingColours.lightTextColour,
+    fontWeight: 'bold',
     fontSize: 12,
     padding: 10,
-  }
+  },
 });

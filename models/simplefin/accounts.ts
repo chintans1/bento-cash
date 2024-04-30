@@ -1,6 +1,6 @@
-import { SimpleFinAccount } from "./account"
+import { SimpleFinAccount } from './account';
 
 export type AccountsResponse = {
-  errors: string[],
-  accounts: SimpleFinAccount[]
-}
+  errors: string[];
+  accounts: SimpleFinAccount[];
+};
