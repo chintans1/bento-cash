@@ -1,28 +1,26 @@
-import { StyleSheet, Text, View } from "react-native"
-import { brandingColours } from "../styles/brandingConstants";
-import { AppCategory } from "../models/lunchmoney/appModels";
+import { StyleSheet, Text, View } from 'react-native';
+import BrandingColours from '../styles/brandingConstants';
 
 type CategoryProps = {
-  categoryName: string,
-  category?: AppCategory
-}
+  categoryName: string;
+};
 
 const categoryStyles = StyleSheet.create({
   category: {
-    backgroundColor: brandingColours.backgroundColour,
+    backgroundColor: BrandingColours.backgroundColour,
     padding: 5,
     borderRadius: 5,
-    marginHorizontal: 10
-   },
+    marginHorizontal: 10,
+  },
 
-   categoryText: {
-    fontWeight: "bold",
-    color: brandingColours.secondaryColour,
+  categoryText: {
+    fontWeight: 'bold',
+    color: BrandingColours.secondaryColour,
     fontSize: 8,
-   }
+  },
 });
 
-export function CategoryComponent({ categoryName, category }: CategoryProps) {
+function CategoryComponent({ categoryName }: CategoryProps) {
   if (!categoryName) {
     return null;
   }
@@ -31,5 +29,7 @@ export function CategoryComponent({ categoryName, category }: CategoryProps) {
     <View style={categoryStyles.category}>
       <Text style={categoryStyles.categoryText}>{categoryName}</Text>
     </View>
-  )
+  );
 }
+
+export default CategoryComponent;

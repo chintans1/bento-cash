@@ -12,7 +12,7 @@ import {
 } from '../../data/transformLunchMoney';
 import { save } from '../../utils/secureStore';
 import { SecureStorageKeys } from '../../models/enums/storageKeys';
-import { accessClient } from '../../clients/accessClient';
+import accessClient from '../../clients/accessClient';
 
 export const defaultAppState = {
   lmApiKey: '',

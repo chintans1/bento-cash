@@ -1,44 +1,59 @@
-import { useEffect, useState } from "react";
-import { AppState, ParentContext, defaultAppState, updateLmToken } from "./appContextProvider";
-import { getValueFor } from "../../utils/secureStore";
-import { SecureStorageKeys } from "../../models/enums/storageKeys";
-import Initialization from "../../screens/Initialization";
-import { ActivityIndicator, View } from "react-native";
-import { brandingColours } from "../../styles/brandingConstants";
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ActivityIndicator, View } from 'react-native';
+import {
+  AppState,
+  ParentContext,
+  defaultAppState,
+  updateLmToken,
+} from './appContextProvider';
+import { getValueFor } from '../../utils/secureStore';
+import { SecureStorageKeys } from '../../models/enums/storageKeys';
+import Initialization from '../../screens/Initialization';
+import BrandingColours from '../../styles/brandingConstants';
 
-export const AppProvider = ({ children } ) => {
+function AppProvider({ children }) {
   const [appState, setAppState] = useState<AppState>(defaultAppState);
   const [isReady, setIsReady] = useState(false);
 
-  const updateAppForNewToken = (newLmApiToken: string) => {
+  const updateAppForNewToken = useCallback((newLmApiToken: string) => {
     updateLmToken(newLmApiToken).then(newerAppState => {
       setAppState(newerAppState);
       setIsReady(true);
     });
-  };
-
-  const initializeState = async () => {
-    const lmValue = await getValueFor(SecureStorageKeys.LUNCH_MONEY_KEY);
-    updateAppForNewToken(lmValue === null ? "" : lmValue);
-  }
+  }, []);
 
   useEffect(() => {
+    const initializeState = async () => {
+      const lmValue = await getValueFor(SecureStorageKeys.LUNCH_MONEY_KEY);
+      updateAppForNewToken(lmValue === null ? '' : lmValue);
+    };
+
     if (!isReady) {
       initializeState();
     }
-  }, [isReady]);
+  }, [isReady, updateAppForNewToken]);
+
+  const contextValue = useMemo(
+    () => ({
+      appState,
+      updateLunchMoneyToken: updateAppForNewToken,
+    }),
+    [appState, updateAppForNewToken],
+  );
 
   if (!isReady) {
     return (
-      <View style={{ flex: 1, justifyContent: "center" }}>
-        <ActivityIndicator size="large" color={brandingColours.primaryColour} />
+      <View style={{ flex: 1, justifyContent: 'center' }}>
+        <ActivityIndicator size="large" color={BrandingColours.primaryColour} />
       </View>
-    )
+    );
   }
 
   return (
-    <ParentContext.Provider value={{ appState: appState, updateLunchMoneyToken: updateAppForNewToken }}>
+    <ParentContext.Provider value={contextValue}>
       {appState.lmApiKey.length === 0 ? <Initialization /> : children}
     </ParentContext.Provider>
   );
-};
+}
+
+export default AppProvider;

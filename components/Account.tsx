@@ -1,80 +1,97 @@
-import { View, Text, StyleSheet } from "react-native";
-import { commonStyles } from "../styles/commonStyles";
-import { brandingColours } from "../styles/brandingConstants";
-import { AppAccount } from "../models/lunchmoney/appModels";
+import { View, Text, StyleSheet } from 'react-native';
+import commonStyles from '../styles/commonStyles';
+import BrandingColours from '../styles/brandingConstants';
+import { AppAccount } from '../models/lunchmoney/appModels';
 
 type AccountProps = {
-  account: AppAccount,
-  showInstitution?: boolean
-}
+  account: AppAccount;
+  showInstitution?: boolean;
+};
 
 // borderStyle: "dotted", borderColor: "#000000", borderWidth: 1
 
 const transactionStyles = StyleSheet.create({
   card: {
     ...commonStyles.card,
-    alignItems: "center",
+    alignItems: 'center',
     paddingHorizontal: 10,
   },
   leftSection: {
     flex: 3.5,
-    flexDirection: "column"
+    flexDirection: 'column',
   },
   rightSection: {
     flex: 1,
-    alignItems: "flex-end",
-    flexDirection: "column"
+    alignItems: 'flex-end',
+    flexDirection: 'column',
   },
   institutionName: {
     ...commonStyles.textBase,
-    color: brandingColours.grey,
-    fontSize: 10
+    color: BrandingColours.grey,
+    fontSize: 10,
   },
   accountName: {
-    flexWrap: "wrap",
+    flexWrap: 'wrap',
     flexShrink: 1,
-    color: brandingColours.darkTextColour,
+    color: BrandingColours.darkTextColour,
     fontSize: 16,
-    fontWeight: "bold"
+    fontWeight: 'bold',
   },
   amount: {
     fontSize: 12,
-    fontWeight: "bold"
+    fontWeight: 'bold',
   },
   amountNegative: {
-    color: brandingColours.red
+    color: BrandingColours.red,
   },
   amountPositive: {
-    color: brandingColours.green
-  }
+    color: BrandingColours.green,
+  },
 });
 
-export function AccountComponent({ account, showInstitution }: AccountProps) {
+function AccountComponent({ account, showInstitution }: AccountProps) {
   const accountBalance = parseFloat(account.balance);
-  const balanceString = accountBalance >= 0 ?
-    `$${accountBalance.toFixed(2)}` : `-$${Math.abs(accountBalance).toFixed(2)}`;
+  const balanceString =
+    accountBalance >= 0
+      ? `$${accountBalance.toFixed(2)}`
+      : `-$${Math.abs(accountBalance).toFixed(2)}`;
 
   return (
     <View style={transactionStyles.card}>
       <View style={transactionStyles.leftSection}>
-        <Text adjustsFontSizeToFit={true} numberOfLines={1} style={transactionStyles.accountName}>
-          { account.accountName }
+        <Text
+          adjustsFontSizeToFit
+          numberOfLines={1}
+          style={transactionStyles.accountName}
+        >
+          {account.accountName}
         </Text>
-        {showInstitution ?
-          <Text adjustsFontSizeToFit={true} numberOfLines={1} style={transactionStyles.institutionName}>
+        {showInstitution ? (
+          <Text
+            adjustsFontSizeToFit
+            numberOfLines={1}
+            style={transactionStyles.institutionName}
+          >
             {account.institutionName}
           </Text>
-        : null}
+        ) : null}
       </View>
       <View style={transactionStyles.rightSection}>
         <Text
-          adjustsFontSizeToFit={true}
+          adjustsFontSizeToFit
           numberOfLines={1}
           style={[
             transactionStyles.amount,
-            accountBalance >= 0 ? transactionStyles.amountPositive : transactionStyles.amountNegative
-          ]}>{balanceString}</Text>
+            accountBalance >= 0
+              ? transactionStyles.amountPositive
+              : transactionStyles.amountNegative,
+          ]}
+        >
+          {balanceString}
+        </Text>
       </View>
     </View>
   );
 }
+
+export default AccountComponent;

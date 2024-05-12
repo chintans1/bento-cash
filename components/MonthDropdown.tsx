@@ -1,42 +1,38 @@
-import { NavigationState } from "@react-navigation/native";
-import { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const dropdownStyles = StyleSheet.create({
   textWrap: {
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   text: {
     display: 'flex',
     alignItems: 'center',
     color: '#fff',
     fontSize: 16,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   iconWrap: {
     marginTop: 2,
-    marginLeft: 3
-  }
+    marginLeft: 3,
+  },
 });
 
-export type MonthDropdownProps = {
-  title: string,
-  navigation: NavigationState
-}
+type MonthDropdownProps = {
+  title: string;
+};
 
-export function MonthDropdown({ title, navigation }: MonthDropdownProps) {
+function MonthDropdown({ title }: MonthDropdownProps) {
   const [isDropdownVisible, setIsDropdownVisible] = useState<boolean>(false);
 
   const toggleDropdownVisibility = () => {
     setIsDropdownVisible(!isDropdownVisible);
-  }
+  };
 
   return (
-    <TouchableOpacity
-      activeOpacity={0.7}
-      onPress={toggleDropdownVisibility}>
+    <TouchableOpacity activeOpacity={0.7} onPress={toggleDropdownVisibility}>
       <View style={dropdownStyles.textWrap}>
         <Text style={dropdownStyles.text}>{title}</Text>
         <View style={dropdownStyles.iconWrap}>
@@ -50,3 +46,5 @@ export function MonthDropdown({ title, navigation }: MonthDropdownProps) {
     </TouchableOpacity>
   );
 }
+
+export default MonthDropdown;

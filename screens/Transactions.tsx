@@ -1,11 +1,11 @@
 import { SectionList, StyleSheet, Text, View } from 'react-native';
-import { commonStyles } from '../styles/commonStyles';
 import React from 'react';
-import { TransactionComponent } from '../components/Transaction';
-import { useParentContext } from '../context/app/appContextProvider';
-import { brandingColours } from '../styles/brandingConstants';
-import { getGroupedTransactionsByDate } from '../data/utils';
 import { format, isToday, isTomorrow, isYesterday, parseISO } from 'date-fns';
+import commonStyles from '../styles/commonStyles';
+import TransactionComponent from '../components/Transaction';
+import { useParentContext } from '../context/app/appContextProvider';
+import BrandingColours from '../styles/brandingConstants';
+import { getGroupedTransactionsByDate } from '../data/utils';
 
 const renderNoStateMessage = () => {
   return (
@@ -13,35 +13,38 @@ const renderNoStateMessage = () => {
       <Text style={commonStyles.textBase}>No recent transactions</Text>
     </View>
   );
-}
+};
 
 const formatDate = (dateString: string): string => {
   const date = parseISO(dateString);
 
   if (isToday(date)) {
-    return "Today";
-  } else if (isYesterday(date)) {
-    return "Yesterday";
-  } else if (isTomorrow(date)) {
-    return "Tomorrow";
-  } else {
-    return format(date, 'MMMM d, yyyy');
+    return 'Today';
   }
-}
+  if (isYesterday(date)) {
+    return 'Yesterday';
+  }
+  if (isTomorrow(date)) {
+    return 'Tomorrow';
+  }
+  return format(date, 'MMMM d, yyyy');
+};
 
-export default function Transactions({ route, navigation }) {
-  const { transactions } = useParentContext()?.appState;
+export default function Transactions() {
+  const { transactions } = useParentContext()?.appState ?? {};
   const groupedTransactions = getGroupedTransactionsByDate(transactions);
 
   const separator = () => {
     return (
-      <View style={{
-        borderBottomColor: brandingColours.dividerColour,
-        borderBottomWidth: StyleSheet.hairlineWidth,
-        marginHorizontal: 10
-      }} />
-    )
-  }
+      <View
+        style={{
+          borderBottomColor: BrandingColours.dividerColour,
+          borderBottomWidth: StyleSheet.hairlineWidth,
+          marginHorizontal: 10,
+        }}
+      />
+    );
+  };
 
   return (
     <View style={commonStyles.container}>
@@ -56,5 +59,5 @@ export default function Transactions({ route, navigation }) {
         ListEmptyComponent={renderNoStateMessage()}
       />
     </View>
-  )
+  );
 }
