@@ -9,8 +9,6 @@ import {
   AppDraftTransaction,
 } from '../../models/lunchmoney/appModels';
 
-// TODO: allow importing a transaction without category chosen
-
 type ImportTransactionProps = {
   transaction: AppDraftTransaction;
   availableCategories?: { label: string; value: AppCategory }[];
@@ -101,12 +99,6 @@ function ImportTransactionComponent({
 
   const handleCategorySelection = (category: AppCategory) => {
     setSelectedCategory(category);
-    // updateTransaction({
-    //   ...transaction,
-    //   categoryId: category.id,
-    //   categoryName: category.name,
-    //   importable: checkboxClicked
-    // });
   };
 
   const handleCheckboxClick = (checked: boolean) => {

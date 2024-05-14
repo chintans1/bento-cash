@@ -10,7 +10,6 @@ export default function SettingsStackScreen() {
       screenOptions={{
         headerShown: false,
         presentation: 'modal',
-        // headerStyle: { backgroundColor: 'tomato' },
       }}
     >
       <SettingsStack.Screen

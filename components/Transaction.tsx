@@ -8,8 +8,6 @@ type TransactionProps = {
   transaction: AppTransaction;
 };
 
-// borderStyle: "dotted", borderColor: "#000000", borderWidth: 1
-
 const transactionStyles = StyleSheet.create({
   card: {
     ...commonStyles.card,

@@ -32,11 +32,6 @@ function parseTransaction(
     externalAccountId: account.id,
     externalAccountName: account.name,
     lmAccountId: account.lunchMoneyAccountId || null,
-
-    // User could decide
-    // categoryId?: number,
-    // categoryName?: string,
-    // externalAccountId: string,
   };
 }
 

@@ -39,7 +39,6 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: BrandingColours.secondaryColour,
     marginTop: 10,
-    // marginBottom: 25,
     height: 40,
     borderColor: '#8ECAE6',
     borderRadius: 10,
@@ -241,7 +240,6 @@ export default function ImportAccountsScreen({ navigation }) {
       return;
     }
 
-    // TODO: if account being imported is an account map to existing LM account, maybe create is bad language
     Alert.alert(
       'Process these accounts?',
       `Do you want to process the following accounts you had chosen to import?\n

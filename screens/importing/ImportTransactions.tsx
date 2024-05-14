@@ -40,8 +40,6 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: BrandingColours.secondaryColour,
-    // marginTop: 10,
-    // marginBottom: 25,
     height: 40,
     borderColor: '#8ECAE6',
     borderRadius: 10,

@@ -15,7 +15,7 @@ const bottomTabIcons: Record<TabRoute, string> = {
 };
 
 interface TabBarIconProps {
-  routeName: TabRoute; // Define TabRoute if not already defined
+  routeName: TabRoute;
   color: string;
   size: number;
 }

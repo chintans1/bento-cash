@@ -28,7 +28,6 @@ export default StyleSheet.create({
 
     backgroundColor: BrandingColours.shadedColour,
 
-    // marginHorizontal: 5,
     marginVertical: 3,
     paddingVertical: 10,
     paddingHorizontal: 10,
@@ -41,7 +40,6 @@ export default StyleSheet.create({
     backgroundColor: BrandingColours.shadedColour,
     borderRadius: 8,
 
-    // marginHorizontal: 5,
     marginVertical: 3,
     paddingVertical: 10,
     paddingHorizontal: 15,

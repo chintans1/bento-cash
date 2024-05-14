@@ -39,10 +39,8 @@ export const ParentContext: Context<ParentAppState> = createContext({
 });
 
 export const useParentContext = () => {
-  // get the context
   const context = useContext(ParentContext);
 
-  // if `undefined`, throw an error
   if (context === undefined) {
     throw new Error(
       'Parent Context is not available or being used outside of its provider',

@@ -36,6 +36,7 @@ function MonthDropdown({ title }: MonthDropdownProps) {
       <View style={dropdownStyles.textWrap}>
         <Text style={dropdownStyles.text}>{title}</Text>
         <View style={dropdownStyles.iconWrap}>
+          {/* TODO */}
           {/* <IonIcons
             name={isWalletDropdownVisible ? 'ios-arrow-up' : 'ios-arrow-down'}
             color={'rgba(255, 255, 255, 0.7)'}

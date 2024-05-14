@@ -30,7 +30,6 @@ const settingsStyles = StyleSheet.create({
   card: {
     ...commonStyles.columnCard,
     justifyContent: 'space-around',
-    // flex: 0
   },
   textInput: {
     backgroundColor: BrandingColours.shadedColour,
@@ -49,15 +48,6 @@ const settingsStyles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
-
-    // shadowColor: "#023047",
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 0,
-    // },
-    // shadowOpacity: 0.29,
-    // shadowRadius: 4.65,
-    // elevation: 7,
   },
   buttonText: {
     color: BrandingColours.shadedColour,
