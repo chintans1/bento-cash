@@ -1,5 +1,6 @@
 import { Asset, DraftTransaction, LunchMoney, Transaction } from 'lunch-money';
 import { AppAccount, AppDraftAccount } from '../models/lunchmoney/appModels';
+import { formatBalance } from '../data/formatBalance';
 
 // TODO: handle response format
 export class InternalLunchMoneyClient {
@@ -28,7 +29,6 @@ export class InternalLunchMoneyClient {
   }
 
   async getAllTransactions() {
-    // : Transaction[] {
     const today = new Date();
     const thirtyDaysAgo = new Date(new Date().setDate(today.getDate() - 30));
 
@@ -70,6 +70,7 @@ export class InternalLunchMoneyClient {
   }
 
   async updateAccountBalance(lmAccount: AppAccount) {
+    formatBalance(lmAccount);
     return this.lunchMoneyClient.updateAsset({
       id: lmAccount.id,
       balance: lmAccount.balance,
@@ -77,6 +78,7 @@ export class InternalLunchMoneyClient {
   }
 
   async updateDraftAccountBalance(lmAccount: AppDraftAccount) {
+    formatBalance(lmAccount);
     if (lmAccount.lmAccountId === null) {
       throw Error('No account ID found for this account');
     }

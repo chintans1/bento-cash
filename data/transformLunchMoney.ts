@@ -11,23 +11,7 @@ import {
   AppDraftTransaction,
   AppTransaction,
 } from '../models/lunchmoney/appModels';
-
-const negativeCreditTypes: string[] = ['loan', 'credit', 'other liability'];
-
-const formatBalance = (account: Asset | PlaidAccount): string => {
-  if ('type' in account && negativeCreditTypes.includes(account.type)) {
-    // For credit accounts, negative balance is positive, positive is negative
-    return (parseFloat(account.balance) * -1).toString();
-  }
-  if (
-    'type_name' in account &&
-    negativeCreditTypes.includes(account.type_name)
-  ) {
-    return (parseFloat(account.balance) * -1).toString();
-  }
-
-  return account.balance;
-};
+import { formatBalance } from './formatBalance';
 
 const formatAccountName = (account: Asset | PlaidAccount): string => {
   const accountNameToUse =

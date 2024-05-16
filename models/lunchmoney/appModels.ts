@@ -40,7 +40,7 @@ export type AppAccount = {
   accountName: string;
   institutionName: string;
   fullName: string;
-  type: string;
+  type: AccountType;
   state: string;
   balance: string;
   currency: string;
@@ -51,7 +51,7 @@ export type AppDraftAccount = {
   externalAccountId: string;
   accountName: string;
   institutionName?: string;
-  type?: string;
+  type?: AccountType;
   balance: string;
   currency: string;
   importable?: boolean;

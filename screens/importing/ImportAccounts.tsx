@@ -21,7 +21,11 @@ import { StorageKeys } from '../../models/enums/storageKeys';
 import BrandingColours from '../../styles/brandingConstants';
 import commonStyles from '../../styles/commonStyles';
 import ImportAccountComponent from '../../components/importing/ImportAccount';
-import { AppAccount, AppDraftAccount } from '../../models/lunchmoney/appModels';
+import {
+  AccountType,
+  AppAccount,
+  AppDraftAccount,
+} from '../../models/lunchmoney/appModels';
 import { useParentContext } from '../../context/app/appContextProvider';
 import InternalLunchMoneyClient from '../../clients/lunchMoneyClient';
 import { getData, storeData } from '../../utils/asyncStorage';
@@ -104,8 +108,8 @@ export default function ImportAccountsScreen({ navigation }) {
   };
 
   const fetchDataFromSimpleFin = useCallback(async () => {
-    console.log('only fetch data from SF once');
     if (!isReady) {
+      console.log('only fetch data from SF once');
       const lastImportDate = await getLastImportDate();
       const fetchedAccountsResponse = await getAccountsData(
         await getSimpleFinAuth(),
@@ -166,13 +170,19 @@ export default function ImportAccountsScreen({ navigation }) {
 
   const handleAccountCreation = async () => {
     setCreatingAccounts(true);
+
     const existingAccountMappings = await getAccountMappings();
     importableAccounts.forEach((accountToCreate, id) => {
       let { lmAccountId } = accountToCreate;
 
-      if (accountToCreate.lmAccountId !== null) {
+      if (lmAccountId !== null) {
+        let accountType: AccountType | undefined;
+        if (lmAccounts.has(lmAccountId)) {
+          accountType = lmAccounts.get(lmAccountId).type;
+        }
+
         lunchMoneyClient
-          .updateDraftAccountBalance(accountToCreate)
+          .updateDraftAccountBalance({ ...accountToCreate, type: accountType })
           .then(() => {
             existingAccountMappings.set(id, lmAccountId.toString());
           })
@@ -191,6 +201,7 @@ export default function ImportAccountsScreen({ navigation }) {
           );
       }
     });
+
     await storeData(
       StorageKeys.ACCOUNT_MAPPING_KEY,
       Array.from(existingAccountMappings.entries()),
