@@ -123,7 +123,6 @@ export default function ImportAccountsScreen({ navigation }) {
 
       setDropdownAccountsData(
         Array.from(lmAccounts.values()).map(a => {
-          console.log('how many times is this triggering');
           return { label: a.accountName, value: a.id };
         }),
       );
