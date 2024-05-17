@@ -31,6 +31,7 @@ import InternalLunchMoneyClient from '../../clients/lunchMoneyClient';
 import { getData, storeData } from '../../utils/asyncStorage';
 import { getGroupedAccountsForImport } from '../../data/utils';
 import AccountComponent from '../../components/Account';
+import { AccountsResponse } from '../../models/simplefin/accounts';
 
 const styles = StyleSheet.create({
   card: {
@@ -111,10 +112,17 @@ export default function ImportAccountsScreen({ navigation }) {
     if (!isReady) {
       console.log('only fetch data from SF once');
       const lastImportDate = await getLastImportDate();
-      const fetchedAccountsResponse = await getAccountsData(
-        await getSimpleFinAuth(),
-        lastImportDate,
-      );
+      let fetchedAccountsResponse: AccountsResponse;
+      try {
+        fetchedAccountsResponse = await getAccountsData(
+          await getSimpleFinAuth(),
+          lastImportDate,
+        );
+      } catch (err) {
+        Alert.alert('An error occurred', `${err}`, [
+          { text: 'Ok', onPress: () => navigation.getParent()?.goBack() },
+        ]);
+      }
       const fetchedAccountMappings = await getAccountMappings();
 
       const fetchedImportData = getImportData(
@@ -147,7 +155,7 @@ export default function ImportAccountsScreen({ navigation }) {
       }
       setIsReady(true);
     }
-  }, [isReady, lmAccounts]);
+  }, [isReady, lmAccounts, navigation]);
 
   const moveToTransactions = () => {
     navigation.navigate('ImportTransactions', {
@@ -172,36 +180,39 @@ export default function ImportAccountsScreen({ navigation }) {
     setCreatingAccounts(true);
 
     const existingAccountMappings = await getAccountMappings();
-    importableAccounts.forEach((accountToCreate, id) => {
+    importableAccounts.forEach(async (accountToCreate, id) => {
       let { lmAccountId } = accountToCreate;
 
+      /* eslint-disable no-await-in-loop */
       if (lmAccountId !== null) {
         let accountType: AccountType | undefined;
         if (lmAccounts.has(lmAccountId)) {
           accountType = lmAccounts.get(lmAccountId).type;
         }
 
-        lunchMoneyClient
-          .updateDraftAccountBalance({ ...accountToCreate, type: accountType })
-          .then(() => {
-            existingAccountMappings.set(id, lmAccountId.toString());
-          })
-          .catch(error =>
-            console.log(`failed to sync account balance: ${error}`),
-          );
+        try {
+          await lunchMoneyClient.updateDraftAccountBalance({
+            ...accountToCreate,
+            type: accountType,
+          });
+          existingAccountMappings.set(id, lmAccountId.toString());
+        } catch (err) {
+          console.error(`Failed to sync account balance: ${err}`);
+        }
       } else {
-        lunchMoneyClient
-          .createAccount(accountToCreate)
-          .then(createdAccount => {
-            lmAccountId = createdAccount.id;
-            existingAccountMappings.set(id, lmAccountId.toString());
-          })
-          .catch(error =>
-            console.log(`failed to create account in import flow: ${error}`),
-          );
+        try {
+          const createdAccount =
+            await lunchMoneyClient.createAccount(accountToCreate);
+          lmAccountId = createdAccount.id;
+          existingAccountMappings.set(id, lmAccountId.toString());
+        } catch (err) {
+          console.error(`Failed to create account in import flow: ${err}`);
+        }
       }
+      /* eslint-enable no-await-in-loop */
     });
 
+    console.log(existingAccountMappings.values());
     await storeData(
       StorageKeys.ACCOUNT_MAPPING_KEY,
       Array.from(existingAccountMappings.entries()),
