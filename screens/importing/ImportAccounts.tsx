@@ -180,39 +180,47 @@ export default function ImportAccountsScreen({ navigation }) {
     setCreatingAccounts(true);
 
     const existingAccountMappings = await getAccountMappings();
+    const promises: Promise<void>[] = [];
+
     importableAccounts.forEach(async (accountToCreate, id) => {
       let { lmAccountId } = accountToCreate;
 
-      /* eslint-disable no-await-in-loop */
       if (lmAccountId !== null) {
         let accountType: AccountType | undefined;
         if (lmAccounts.has(lmAccountId)) {
           accountType = lmAccounts.get(lmAccountId).type;
         }
 
-        try {
-          await lunchMoneyClient.updateDraftAccountBalance({
+        const updatePromise = lunchMoneyClient
+          .updateDraftAccountBalance({
             ...accountToCreate,
             type: accountType,
-          });
-          existingAccountMappings.set(id, lmAccountId.toString());
-        } catch (err) {
-          console.error(`Failed to sync account balance: ${err}`);
-        }
+          })
+          .then(() => {
+            existingAccountMappings.set(id, lmAccountId.toString());
+          })
+          .catch(err =>
+            console.error(`Failed to sync account balance: ${err}`),
+          );
+
+        promises.push(updatePromise);
       } else {
-        try {
-          const createdAccount =
-            await lunchMoneyClient.createAccount(accountToCreate);
-          lmAccountId = createdAccount.id;
-          existingAccountMappings.set(id, lmAccountId.toString());
-        } catch (err) {
-          console.error(`Failed to create account in import flow: ${err}`);
-        }
+        const createPromise = lunchMoneyClient
+          .createAccount(accountToCreate)
+          .then(createdAccount => {
+            lmAccountId = createdAccount.id;
+            existingAccountMappings.set(id, lmAccountId.toString());
+          })
+          .catch(err =>
+            console.error(`Failed to create account in import flow: ${err}`),
+          );
+
+        promises.push(createPromise);
       }
-      /* eslint-enable no-await-in-loop */
     });
 
-    console.log(existingAccountMappings.values());
+    await Promise.all(promises);
+
     await storeData(
       StorageKeys.ACCOUNT_MAPPING_KEY,
       Array.from(existingAccountMappings.entries()),
