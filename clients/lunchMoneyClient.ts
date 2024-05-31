@@ -80,7 +80,7 @@ export class InternalLunchMoneyClient {
   async updateDraftAccountBalance(lmAccount: AppDraftAccount) {
     formatBalance(lmAccount);
     if (lmAccount.lmAccountId === null) {
-      throw Error('No account ID found for this account');
+      throw new Error('No account ID found for this account');
     }
 
     return this.lunchMoneyClient.updateAsset({
