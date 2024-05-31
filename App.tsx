@@ -13,6 +13,7 @@ import AppProvider from './context/app/AppProvider';
 
 // https://github.com/expo/expo/issues/28618#issuecomment-2099225578
 import 'react-native-reanimated';
+import ErrorBoundary from './context/app/ErrorBoundary';
 
 const Tab = createBottomTabNavigator();
 
@@ -24,36 +25,39 @@ const renderTabIcon = (routeName: string, color: string, size: number) => {
 
 export default function App() {
   return (
-    <AppProvider>
-      <SafeAreaProvider>
-        <StatusBar animated />
-        <NavigationContainer>
-          <Tab.Navigator
-            initialRouteName="Transactions"
-            screenOptions={({ route }) => ({
-              headerTitleAlign: 'left',
-              headerShadowVisible: false,
-              headerStyle: {
-                backgroundColor: BrandingColours.backgroundColour,
-                borderColor: BrandingColours.backgroundColour,
-              },
-              headerTitleStyle: {
-                fontSize: 28,
-                fontWeight: 'bold',
-                color: BrandingColours.header,
-              },
-              tabBarActiveTintColor: BrandingColours.secondaryColour,
-              tabBarIcon: ({ color, size }) =>
-                renderTabIcon(route.name, color, size),
-            })}
-          >
-            <Tab.Screen name="Transactions" component={Transactions} />
-            <Tab.Screen name="Accounts" component={Accounts} />
-            <Tab.Screen name="Charts" component={Charts} />
-            <Tab.Screen name="Settings" component={SettingsStackScreen} />
-          </Tab.Navigator>
-        </NavigationContainer>
-      </SafeAreaProvider>
-    </AppProvider>
+    <ErrorBoundary>
+      <AppProvider>
+        <SafeAreaProvider>
+          <StatusBar animated />
+          {/* <Toast /> */}
+          <NavigationContainer>
+            <Tab.Navigator
+              initialRouteName="Transactions"
+              screenOptions={({ route }) => ({
+                headerTitleAlign: 'left',
+                headerShadowVisible: false,
+                headerStyle: {
+                  backgroundColor: BrandingColours.backgroundColour,
+                  borderColor: BrandingColours.backgroundColour,
+                },
+                headerTitleStyle: {
+                  fontSize: 28,
+                  fontWeight: 'bold',
+                  color: BrandingColours.header,
+                },
+                tabBarActiveTintColor: BrandingColours.secondaryColour,
+                tabBarIcon: ({ color, size }) =>
+                  renderTabIcon(route.name, color, size),
+              })}
+            >
+              <Tab.Screen name="Transactions" component={Transactions} />
+              <Tab.Screen name="Accounts" component={Accounts} />
+              <Tab.Screen name="Charts" component={Charts} />
+              <Tab.Screen name="Settings" component={SettingsStackScreen} />
+            </Tab.Navigator>
+          </NavigationContainer>
+        </SafeAreaProvider>
+      </AppProvider>
+    </ErrorBoundary>
   );
 }
