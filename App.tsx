@@ -30,7 +30,6 @@ export default function App() {
       <AppProvider>
         <SafeAreaProvider>
           <StatusBar animated />
-          <Toast />
           <NavigationContainer>
             <Tab.Navigator
               initialRouteName="Transactions"
@@ -57,6 +56,7 @@ export default function App() {
               <Tab.Screen name="Settings" component={SettingsStackScreen} />
             </Tab.Navigator>
           </NavigationContainer>
+          <Toast />
         </SafeAreaProvider>
       </AppProvider>
     </ErrorBoundary>

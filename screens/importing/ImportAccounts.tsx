@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import Toast from 'react-native-toast-message';
 import {
   SimpleFinImportData,
   getImportData,
@@ -306,6 +307,7 @@ export default function ImportAccountsScreen({ navigation }) {
   if (!isReady) {
     return (
       <View style={{ flex: 1, justifyContent: 'center' }}>
+        <Toast />
         <ActivityIndicator size="large" color={BrandingColours.primaryColour} />
       </View>
     );
@@ -314,6 +316,7 @@ export default function ImportAccountsScreen({ navigation }) {
   if (noAccountsToImport && !simpleFinAccountsFound) {
     return (
       <SafeAreaView style={{ flex: 1 }}>
+        <Toast />
         <View style={[commonStyles.container, { flex: 1 }]}>
           <View style={{ flex: 1, justifyContent: 'center' }}>
             <Text style={{ textAlign: 'center' }}>
@@ -334,6 +337,7 @@ export default function ImportAccountsScreen({ navigation }) {
   if (creatingAccounts || syncingAccounts) {
     return (
       <View style={{ flex: 1, justifyContent: 'center' }}>
+        <Toast />
         <ActivityIndicator size="large" color={BrandingColours.primaryColour} />
         <Text style={{ textAlign: 'center' }}>
           {creatingAccounts
@@ -381,6 +385,7 @@ export default function ImportAccountsScreen({ navigation }) {
         >
           <Text style={styles.buttonText}>{buttonText}</Text>
         </TouchableOpacity>
+        <Toast />
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

@@ -3,6 +3,7 @@ import { AccountsResponse } from '../models/simplefin/accounts';
 import { SimpleFinAuthentication } from '../models/simplefin/authentication';
 import getDateForSimpleFin from '../utils/dateUtils';
 import { storeAuthenticationDetails } from '../utils/simpleFinAuth';
+import { ErrorType, handleError } from '../utils/errorHandler';
 
 export function getClaimUrl(setupToken: string): string {
   return base64.decode(setupToken);
@@ -19,9 +20,10 @@ export async function storeSimpleFinAuth(
   });
 
   if (response.status !== 200) {
-    throw new Error(`Could not fetch access URL,
-      got status ${response.status} with body ${await response.text()}\n
-      Ensure your credentials are not compromised!`);
+    handleError({
+      errorType: ErrorType.SIMPLEFIN_API_ERROR,
+      message: `Ensure your SimpleFIN token is unused. Could not get access URL, got status ${response.status} with body ${await response.text()}.`,
+    });
   }
 
   return response.text().then(fullAccessUrl => {
@@ -52,16 +54,19 @@ export async function getAccountsData(
   );
 
   if (response.status !== 200) {
-    throw new Error(
-      `Could not fetch accounts data, got status ${response.status} with body ${await response.text()}`,
-    );
+    handleError({
+      errorType: ErrorType.SIMPLEFIN_API_ERROR,
+      message: `Could not fetch accounts data, got status ${response.status} with body ${await response.text()}`,
+    });
   }
+
   const responseJson: AccountsResponse = await response.json();
 
   if (responseJson.errors.length > 0) {
-    throw new Error(
-      `Fetched errors during account data call, ${responseJson.errors}`,
-    );
+    handleError({
+      errorType: ErrorType.SIMPLEFIN_API_ERROR,
+      message: `Error during account data fetch, ${responseJson.errors}`,
+    });
   }
   return responseJson;
 }

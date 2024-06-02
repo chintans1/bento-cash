@@ -12,6 +12,7 @@ import { useCallback, useEffect, useState } from 'react';
 import DateTimePicker, {
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
+import Toast from 'react-native-toast-message';
 import {
   AppCategory,
   AppDraftTransaction,
@@ -198,6 +199,7 @@ export default function ImportTransactionsScreen({ route, navigation }) {
   if (!isReady) {
     return (
       <View style={{ flex: 1, justifyContent: 'center' }}>
+        <Toast />
         <ActivityIndicator size="large" color={BrandingColours.primaryColour} />
       </View>
     );
@@ -206,6 +208,7 @@ export default function ImportTransactionsScreen({ route, navigation }) {
   if (isFetchingTransactions) {
     return (
       <View style={{ flex: 1, justifyContent: 'center' }}>
+        <Toast />
         <ActivityIndicator size="large" color={BrandingColours.primaryColour} />
         <Text style={{ textAlign: 'center' }}>Fetching transactions...</Text>
       </View>
@@ -215,6 +218,7 @@ export default function ImportTransactionsScreen({ route, navigation }) {
   if (creatingTransactions) {
     return (
       <View style={{ flex: 1, justifyContent: 'center' }}>
+        <Toast />
         <ActivityIndicator size="large" color={BrandingColours.primaryColour} />
         <Text style={{ textAlign: 'center' }}>Importing transactions...</Text>
       </View>
@@ -224,6 +228,7 @@ export default function ImportTransactionsScreen({ route, navigation }) {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={[commonStyles.container]}>
+        <Toast />
         <View style={styles.card}>
           <View style={{ flex: 1 }}>
             <Text style={{ color: BrandingColours.darkTextColour }}>
