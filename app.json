@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Bento Cash",
-    "slug": "bento-cash",
+    "slug": "LM-Mobile",
     "version": "0.0.4",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -19,7 +19,7 @@
       "config": {
         "usesNonExemptEncryption": false
       },
-      "buildNumber": "8",
+      "buildNumber": "9",
       "bundleIdentifier": "com.chintans98.lunchmoney.mobile"
     },
     "android": {
