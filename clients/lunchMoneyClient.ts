@@ -46,6 +46,7 @@ export class InternalLunchMoneyClient {
     );
   }
 
+  // TODO: difference between this and accessClient?
   async getLunchMoneyInfo() {
     const response = await this.lunchMoneyClient.get('/v1/me');
 
@@ -80,6 +81,7 @@ export class InternalLunchMoneyClient {
   async updateDraftAccountBalance(lmAccount: AppDraftAccount) {
     formatBalance(lmAccount);
     if (lmAccount.lmAccountId === null) {
+      // TODO: toast here?
       throw new Error('No account ID found for this account');
     }
 

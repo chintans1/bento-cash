@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
+import Toast from 'react-native-toast-message';
 import {
   AppState,
   ParentContext,
@@ -45,6 +46,7 @@ function AppProvider({ children }) {
     return (
       <View style={{ flex: 1, justifyContent: 'center' }}>
         <ActivityIndicator size="large" color={BrandingColours.primaryColour} />
+        <Toast />
       </View>
     );
   }

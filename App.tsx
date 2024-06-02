@@ -3,6 +3,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Toast from 'react-native-toast-message';
 import Transactions from './screens/Transactions';
 import Charts from './screens/Charts';
 import BrandingColours from './styles/brandingConstants';
@@ -29,7 +30,7 @@ export default function App() {
       <AppProvider>
         <SafeAreaProvider>
           <StatusBar animated />
-          {/* <Toast /> */}
+          <Toast />
           <NavigationContainer>
             <Tab.Navigator
               initialRouteName="Transactions"

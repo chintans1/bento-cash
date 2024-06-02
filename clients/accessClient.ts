@@ -1,4 +1,9 @@
 import { AppLunchMoneyInfo } from '../models/lunchmoney/appModels';
+import {
+  ErrorType,
+  handleError,
+  handleGenericMessage,
+} from '../utils/errorHandler';
 
 const isTokenValid = async (token: string): Promise<boolean> => {
   try {
@@ -12,13 +17,20 @@ const isTokenValid = async (token: string): Promise<boolean> => {
     });
 
     if (response.status !== 200) {
-      console.log('Token was not valid, returning false');
+      handleGenericMessage(
+        'Token was invalid',
+        'Please enter a valid Lunch Money token.',
+      );
       return false;
     }
+
     console.log('Token was good and valid');
     return true;
   } catch (error) {
-    console.error('An error occurred:', error);
+    handleError({
+      errorType: ErrorType.LUNCH_MONEY_API_ERROR,
+      message: error,
+    });
     return false;
   }
 };
@@ -43,7 +55,10 @@ const getTokenInfo = async (token: string): Promise<AppLunchMoneyInfo> => {
       apiKeyLabel: responseJson.api_key_label || 'unknown',
     };
   } catch (error) {
-    console.error('An error occurred:', error);
+    handleError({
+      errorType: ErrorType.LUNCH_MONEY_API_ERROR,
+      message: error,
+    });
     return null;
   }
 };
