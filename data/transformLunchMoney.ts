@@ -52,9 +52,11 @@ export const getTransactionsForApp = async (
       transaction.asset_id != null
         ? transaction.asset_id
         : transaction.plaid_account_id;
-    const splitTransaction: boolean = transaction.group_id !== null;
+    const groupTransaction: boolean = transaction.group_id !== null;
+    const splitTransaction: boolean | unknown =
+      'has_children' in transaction ? transaction.has_children : false;
 
-    if (!splitTransaction) {
+    if (!splitTransaction && !groupTransaction) {
       appTransactions.push({
         id: transaction.id,
         date: transaction.date,
@@ -70,7 +72,8 @@ export const getTransactionsForApp = async (
         categoryId: transaction.category_id,
         categoryName: categories.get(transaction.category_id)?.name,
 
-        isSplit: transaction.is_group,
+        isGrouped: transaction.is_group,
+        isSplit: transaction.parent_id !== null,
 
         status: transaction.status,
       });

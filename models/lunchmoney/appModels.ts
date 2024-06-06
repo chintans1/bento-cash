@@ -11,6 +11,7 @@ export type AppTransaction = {
   assetName?: string;
   categoryName?: string;
 
+  isGrouped: boolean;
   isSplit: boolean;
 
   status:

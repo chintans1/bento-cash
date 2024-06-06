@@ -204,8 +204,13 @@ export default function Settings({ navigation }) {
       >
         <ScrollView>
           <View style={settingsStyles.card}>
-            <Text style={commonStyles.headerTextBold}>
-              Budget Name: {userInfo ? userInfo?.budgetName : 'unknown'}
+            <Text
+              style={[commonStyles.headerTextBold, { fontWeight: 'normal' }]}
+            >
+              Budget Name:{' '}
+              <Text style={commonStyles.headerTextBold}>
+                {userInfo ? userInfo?.budgetName : 'unknown'}
+              </Text>
             </Text>
             <TouchableOpacity
               disabled={!simpleFinTokenExists}

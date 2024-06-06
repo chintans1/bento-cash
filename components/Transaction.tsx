@@ -1,4 +1,5 @@
 import { View, Text, StyleSheet } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import commonStyles from '../styles/commonStyles';
 import BrandingColours from '../styles/brandingConstants';
 import { AppTransaction } from '../models/lunchmoney/appModels';
@@ -52,8 +53,8 @@ const transactionStyles = StyleSheet.create({
 });
 
 const getAssetName = (transaction: AppTransaction) => {
-  if (transaction.isSplit) {
-    return 'Split transaction';
+  if (transaction.isGrouped) {
+    return 'Grouped transaction';
   }
 
   return transaction.assetName ? transaction.assetName : 'unknown account';
@@ -66,7 +67,7 @@ function TransactionComponent({ transaction }: TransactionProps) {
   return (
     <View style={transactionStyles.card}>
       <View style={transactionStyles.leftSection}>
-        <View style={{ flexDirection: 'row' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Text
             numberOfLines={1}
             ellipsizeMode="tail"
@@ -74,9 +75,20 @@ function TransactionComponent({ transaction }: TransactionProps) {
           >
             {transaction.payee}
           </Text>
+
+          {transaction.isSplit ? (
+            <MaterialIcons
+              style={{ marginLeft: 5 }}
+              name="call-split"
+              size={16}
+              color={BrandingColours.secondaryColour}
+            />
+          ) : null}
+
           {transaction.status === 'pending' ? (
             <CategoryComponent categoryName="pending" />
           ) : null}
+
           <CategoryComponent categoryName={transaction.categoryName} />
         </View>
         <View style={{ flexDirection: 'row' }}>

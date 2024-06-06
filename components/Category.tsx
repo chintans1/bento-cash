@@ -10,12 +10,12 @@ const categoryStyles = StyleSheet.create({
     backgroundColor: BrandingColours.backgroundColour,
     padding: 5,
     borderRadius: 5,
-    marginHorizontal: 10,
+    marginHorizontal: 5,
   },
 
   categoryText: {
     fontWeight: 'bold',
-    color: BrandingColours.secondaryColour,
+    color: BrandingColours.darkTextColour,
     fontSize: 8,
   },
 });
