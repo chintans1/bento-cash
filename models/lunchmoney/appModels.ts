@@ -11,6 +11,8 @@ export type AppTransaction = {
   assetName?: string;
   categoryName?: string;
 
+  isSplit: boolean;
+
   status:
     | 'cleared'
     | 'uncleared'

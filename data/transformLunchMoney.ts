@@ -52,22 +52,29 @@ export const getTransactionsForApp = async (
       transaction.asset_id != null
         ? transaction.asset_id
         : transaction.plaid_account_id;
-    appTransactions.push({
-      id: transaction.id,
-      date: transaction.date,
-      payee: transaction.payee,
-      amount: transaction.amount,
-      currency: transaction.currency,
-      notes: transaction.notes,
+    const splitTransaction: boolean = transaction.group_id !== null;
 
-      assetId,
-      assetName: assetId != null ? accounts.get(assetId)?.fullName : undefined,
+    if (!splitTransaction) {
+      appTransactions.push({
+        id: transaction.id,
+        date: transaction.date,
+        payee: transaction.payee,
+        amount: transaction.amount,
+        currency: transaction.currency,
+        notes: transaction.notes,
 
-      categoryId: transaction.category_id,
-      categoryName: categories.get(transaction.category_id)?.name,
+        assetId,
+        assetName:
+          assetId != null ? accounts.get(assetId)?.fullName : undefined,
 
-      status: transaction.status,
-    });
+        categoryId: transaction.category_id,
+        categoryName: categories.get(transaction.category_id)?.name,
+
+        isSplit: transaction.is_group,
+
+        status: transaction.status,
+      });
+    }
   });
 
   return appTransactions;

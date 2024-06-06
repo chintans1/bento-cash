@@ -50,6 +50,14 @@ const transactionStyles = StyleSheet.create({
   },
 });
 
+const getAssetName = (transaction: AppTransaction) => {
+  if (transaction.isSplit) {
+    return 'Split transaction';
+  }
+
+  return transaction.assetName ? transaction.assetName : 'unknown account';
+};
+
 function TransactionComponent({ transaction }: TransactionProps) {
   const transactionAmount = parseFloat(transaction.amount);
   const isCreditTransaction = transactionAmount >= 0;
@@ -75,7 +83,7 @@ function TransactionComponent({ transaction }: TransactionProps) {
         </View>
         <View style={{ flexDirection: 'row' }}>
           <Text style={transactionStyles.account}>
-            {transaction.assetName ? transaction.assetName : 'unknown account'}
+            {getAssetName(transaction)}
           </Text>
         </View>
       </View>
