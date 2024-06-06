@@ -9,6 +9,7 @@ import {
   accountTypes,
   ImportAccount,
 } from '../../models/lunchmoney/appModels';
+import { formatAmountString } from '../../data/formatBalance';
 
 type ImportAccountProps = {
   account: ImportAccount;
@@ -164,7 +165,7 @@ function ImportAccountComponent({
           </View>
           <View style={accountStyles.dropdownView}>
             <Dropdown
-              disable={inputDisabled || selectedAccountType.length > 0}
+              disable={inputDisabled}
               style={[accountStyles.dropdown, { flex: 1 }]}
               placeholder="choose from existing account..."
               itemTextStyle={accountStyles.dropdownText}
@@ -197,10 +198,7 @@ function ImportAccountComponent({
   // "institution_name": lmAccount.institutionName
 
   const accountBalance = parseFloat(account.balance);
-  const balanceString =
-    accountBalance >= 0
-      ? `$${accountBalance.toFixed(2)}`
-      : `-$${Math.abs(accountBalance).toFixed(2)}`;
+  const balanceString = formatAmountString(accountBalance);
 
   return (
     <View style={accountStyles.card}>
@@ -231,7 +229,7 @@ function ImportAccountComponent({
         </View>
         <View style={accountStyles.dropdownView}>
           <Dropdown
-            disable={inputDisabled || selectedSyncAccount > 0}
+            disable={inputDisabled}
             style={accountStyles.dropdown}
             placeholder="choose account type..."
             itemTextStyle={accountStyles.dropdownText}

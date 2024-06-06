@@ -4,6 +4,7 @@ import { useParentContext } from '../context/app/appContextProvider';
 import AccountComponent from '../components/Account';
 import BrandingColours from '../styles/brandingConstants';
 import { getGroupedAccountsByInstitution } from '../data/utils';
+import { formatAmountString } from '../data/formatBalance';
 
 const separator = () => {
   return (
@@ -36,6 +37,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     padding: 10,
   },
+  amountNegative: {
+    color: BrandingColours.red,
+  },
+  amountPositive: {
+    color: BrandingColours.green,
+  },
 });
 
 export default function Accounts() {
@@ -45,10 +52,7 @@ export default function Accounts() {
   const netWorth = accounts
     .map(account => parseFloat(account.balance))
     .reduce((partialNw, balance) => partialNw + balance, 0);
-  const netWorthString =
-    netWorth >= 0
-      ? `$${Math.abs(netWorth).toFixed(2)}`
-      : `-$${Math.abs(netWorth).toFixed(2)}`;
+  const netWorthString = formatAmountString(netWorth);
 
   return (
     <View style={[commonStyles.container, { flex: 1 }]}>
@@ -63,7 +67,15 @@ export default function Accounts() {
           Overview
         </Text>
         <Text style={{ color: BrandingColours.secondaryColour, fontSize: 16 }}>
-          Net worth: {netWorthString}
+          Net worth:{' '}
+          <Text
+            style={[
+              netWorth >= 0 ? styles.amountPositive : styles.amountNegative,
+              { fontWeight: 'bold' },
+            ]}
+          >
+            {netWorthString}
+          </Text>
         </Text>
       </View>
 

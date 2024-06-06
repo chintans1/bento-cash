@@ -8,6 +8,7 @@ import {
   AppCategory,
   AppDraftTransaction,
 } from '../../models/lunchmoney/appModels';
+import { formatAmountString } from '../../data/formatBalance';
 
 type ImportTransactionProps = {
   transaction: AppDraftTransaction;
@@ -92,10 +93,7 @@ function ImportTransactionComponent({
   const [selectedCategory, setSelectedCategory] = useState<AppCategory>(null);
 
   const parsedAmount: number = parseFloat(transaction.amount);
-  const isCreditTransaction = parsedAmount >= 0;
-  const transactionAmountString = isCreditTransaction
-    ? `$${parsedAmount.toFixed(2)}`
-    : `-$${Math.abs(parsedAmount).toFixed(2)}`;
+  const transactionAmountString = formatAmountString(parsedAmount);
 
   const handleCategorySelection = (category: AppCategory) => {
     setSelectedCategory(category);
@@ -132,7 +130,7 @@ function ImportTransactionComponent({
           <Text
             style={[
               transactionStyles.amount,
-              isCreditTransaction
+              parsedAmount >= 0
                 ? transactionStyles.amountPositive
                 : transactionStyles.amountNegative,
             ]}

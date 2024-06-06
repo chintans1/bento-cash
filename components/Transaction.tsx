@@ -3,6 +3,7 @@ import commonStyles from '../styles/commonStyles';
 import BrandingColours from '../styles/brandingConstants';
 import { AppTransaction } from '../models/lunchmoney/appModels';
 import CategoryComponent from './Category';
+import { formatAmountString } from '../data/formatBalance';
 
 type TransactionProps = {
   transaction: AppTransaction;
@@ -60,10 +61,7 @@ const getAssetName = (transaction: AppTransaction) => {
 
 function TransactionComponent({ transaction }: TransactionProps) {
   const transactionAmount = parseFloat(transaction.amount);
-  const isCreditTransaction = transactionAmount >= 0;
-  const transactionAmountString = isCreditTransaction
-    ? `$${transactionAmount.toFixed(2)}`
-    : `-$${Math.abs(transactionAmount).toFixed(2)}`;
+  const transactionAmountString = formatAmountString(transactionAmount);
 
   return (
     <View style={transactionStyles.card}>
@@ -91,7 +89,7 @@ function TransactionComponent({ transaction }: TransactionProps) {
         <Text
           style={[
             transactionStyles.amount,
-            isCreditTransaction
+            transactionAmount >= 0
               ? transactionStyles.amountPositive
               : transactionStyles.amountNegative,
           ]}

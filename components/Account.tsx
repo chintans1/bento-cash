@@ -2,6 +2,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import commonStyles from '../styles/commonStyles';
 import BrandingColours from '../styles/brandingConstants';
 import { AppAccount } from '../models/lunchmoney/appModels';
+import { formatAmountString } from '../data/formatBalance';
 
 type AccountProps = {
   account: AppAccount;
@@ -49,10 +50,7 @@ const transactionStyles = StyleSheet.create({
 
 function AccountComponent({ account, showInstitution }: AccountProps) {
   const accountBalance = parseFloat(account.balance);
-  const balanceString =
-    accountBalance >= 0
-      ? `$${accountBalance.toFixed(2)}`
-      : `-$${Math.abs(accountBalance).toFixed(2)}`;
+  const balanceString = formatAmountString(accountBalance);
 
   return (
     <View style={transactionStyles.card}>
