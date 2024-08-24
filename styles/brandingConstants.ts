@@ -1,15 +1,19 @@
 class BrandingColours {
-  static primaryColour = '#171717'; // "#FCA311";
+  static primaryColour = "#1B1B1B"; //'#171717'; // "#FCA311";
 
-  static secondaryColour = '#219EBC'; // "#0B1215"; // "#14213D";
+  static secondaryColour = "#2A77F1"; //'#219EBC'; // "#0B1215"; // "#14213D";
 
-  static backgroundColour = '#E5E5E5';
+  static backgroundColour = '#FAFAFA'; // '#E5E5E5';
 
-  static shadedColour = 'white';
+  static shadedColour = "#FEFEFE";
+
+  static cardColour = "#FFFFFF";
+
+  static borderColour = "#737373";
 
   static dividerColour = '#EFEFEF';
 
-  static black = '#171717';
+  static black = "#1B1B1B"; // '#171717';
 
   static red = '#D90429';
 
@@ -17,9 +21,11 @@ class BrandingColours {
 
   static grey = '#B8B8B8';
 
-  static lightTextColour = 'white';
+  static lightTextColour = '#FEFEFE';
 
-  static darkTextColour = '#171717';
+  static darkTextAccentColor = "#2E2E2E";
+
+  static darkTextColour = "#1B1B1B"; //"#2E2E2E" // '#171717';
 
   static header = BrandingColours.darkTextColour;
 }

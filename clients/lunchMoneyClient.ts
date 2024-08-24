@@ -50,6 +50,7 @@ export class InternalLunchMoneyClient {
   async getLunchMoneyInfo() {
     const response = await this.lunchMoneyClient.get('/v1/me');
 
+    console.log(response);
     return {
       userId: response.user_id,
       userName: response.user_name,

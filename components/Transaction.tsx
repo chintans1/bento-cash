@@ -13,6 +13,8 @@ type TransactionProps = {
 const transactionStyles = StyleSheet.create({
   card: {
     ...commonStyles.card,
+    borderWidth: 0,
+    backgroundColor: BrandingColours.backgroundColour,
   },
   leftSection: {
     flex: 3.5,

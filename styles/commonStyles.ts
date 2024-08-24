@@ -17,7 +17,7 @@ export default StyleSheet.create({
     alignItems: 'center',
   },
   list: {
-    backgroundColor: BrandingColours.shadedColour,
+    // backgroundColor: BrandingColours.cardColour,
     borderRadius: 8,
     marginBottom: 10,
   },
@@ -26,7 +26,7 @@ export default StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start',
 
-    backgroundColor: BrandingColours.shadedColour,
+    backgroundColor: BrandingColours.cardColour,
 
     marginVertical: 3,
     paddingVertical: 10,
@@ -37,7 +37,7 @@ export default StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'flex-start',
 
-    backgroundColor: BrandingColours.shadedColour,
+    backgroundColor: BrandingColours.cardColour,
     borderRadius: 8,
 
     marginVertical: 3,
@@ -61,8 +61,7 @@ export default StyleSheet.create({
     color: BrandingColours.darkTextColour,
   },
   sectionHeader: {
-    backgroundColor: BrandingColours.secondaryColour,
-    color: BrandingColours.lightTextColour,
+    color: BrandingColours.darkTextColour,
     fontWeight: 'bold',
     fontSize: 12,
     padding: 10,
