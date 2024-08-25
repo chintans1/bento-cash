@@ -44,7 +44,7 @@ export type AppAccount = {
   institutionName: string;
   fullName: string;
   type: AccountType;
-  state: string;
+  state: 'open' | 'closed';
   balance: string;
   currency: string;
 };

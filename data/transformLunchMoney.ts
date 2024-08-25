@@ -89,13 +89,14 @@ export const getAccountsMap = async (lmClient: InternalLunchMoneyClient) => {
   const accountsMap = new Map<number, AppAccount>();
 
   manualAccounts.forEach(account => {
+    const state = account.closed_on ? 'closed' : 'open';
     accountsMap.set(account.id, {
       id: account.id,
       accountName: formatAccountName(account),
       institutionName: account.institution_name || 'Unknown',
       fullName: formatFullAccountName(account),
       type: account.type_name,
-      state: 'open',
+      state,
       balance: formatBalance(account),
       currency: account.currency,
     });
@@ -108,7 +109,7 @@ export const getAccountsMap = async (lmClient: InternalLunchMoneyClient) => {
       institutionName: account.institution_name || 'Unknown',
       fullName: formatFullAccountName(account),
       type: account.type,
-      state: 'open',
+      state: account.status === 'inactive' ? 'closed' : 'open',
       balance: formatBalance(account),
       currency: account.currency,
     });

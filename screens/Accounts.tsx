@@ -85,9 +85,13 @@ export default function AccountsScreen() {
   const { accounts: accountsMap } = useParentContext().appState;
 
   const accounts: AppAccount[] = useMemo(
-    () => Array.from(accountsMap.values()),
+    () =>
+      Array.from(accountsMap.values()).filter(
+        account => account.state === 'open',
+      ),
     [accountsMap],
   );
+
   const netWorth = useMemo(() => {
     return accounts
       .map(account => parseFloat(account.balance))
