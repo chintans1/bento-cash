@@ -1,6 +1,7 @@
 import { FontAwesome6 } from '@expo/vector-icons';
 
 enum TabRoute {
+  Dashboard = 'Dashboard',
   Transactions = 'Transactions',
   Accounts = 'Accounts',
   Charts = 'Charts',
@@ -8,6 +9,7 @@ enum TabRoute {
 }
 
 const bottomTabIcons: Record<TabRoute, string> = {
+  [TabRoute.Dashboard]: 'house',
   [TabRoute.Transactions]: 'money-bills',
   [TabRoute.Accounts]: 'piggy-bank',
   [TabRoute.Charts]: 'chart-line',
