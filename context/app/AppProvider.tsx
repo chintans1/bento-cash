@@ -10,7 +10,7 @@ import {
 import { getValueFor } from '../../utils/secureStore';
 import { SecureStorageKeys } from '../../models/enums/storageKeys';
 import Initialization from '../../screens/Initialization';
-import BrandingColours from '../../styles/brandingConstants';
+import { BrandingColours } from '../../styles/brandingConstants';
 
 function AppProvider({ children }) {
   const [appState, setAppState] = useState<AppState>(defaultAppState);

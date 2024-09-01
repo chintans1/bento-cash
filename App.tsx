@@ -6,7 +6,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Toast from 'react-native-toast-message';
 import Transactions from './screens/Transactions';
 import Charts from './screens/Charts';
-import BrandingColours from './styles/brandingConstants';
+import { NewBrandingColours } from './styles/brandingConstants';
 import Accounts from './screens/Accounts';
 import SettingsStackScreen from './screens/SettingsStackScreen';
 import TabBarIcon, { getTabRoute } from './components/icons/TabBarIcon';
@@ -15,6 +15,7 @@ import AppProvider from './context/app/AppProvider';
 // https://github.com/expo/expo/issues/28618#issuecomment-2099225578
 import 'react-native-reanimated';
 import ErrorBoundary from './context/app/ErrorBoundary';
+import Dashboard from './screens/Dashboard';
 
 const Tab = createBottomTabNavigator();
 
@@ -37,19 +38,20 @@ export default function App() {
                 headerTitleAlign: 'left',
                 headerShadowVisible: false,
                 headerStyle: {
-                  backgroundColor: BrandingColours.backgroundColour,
-                  borderColor: BrandingColours.backgroundColour,
+                  backgroundColor: NewBrandingColours.neutral.background,
+                  borderColor: NewBrandingColours.neutral.background,
                 },
                 headerTitleStyle: {
                   fontSize: 28,
                   fontWeight: 'bold',
-                  color: BrandingColours.header,
+                  color: NewBrandingColours.text.primary,
                 },
-                tabBarActiveTintColor: BrandingColours.secondaryColour,
+                tabBarActiveTintColor: NewBrandingColours.primary.main,
                 tabBarIcon: ({ color, size }) =>
                   renderTabIcon(route.name, color, size),
               })}
             >
+              <Tab.Screen name="Dashboard" component={Dashboard} />
               <Tab.Screen name="Transactions" component={Transactions} />
               <Tab.Screen name="Accounts" component={Accounts} />
               <Tab.Screen name="Charts" component={Charts} />
