@@ -1,92 +1,122 @@
-import { View, Text, StyleSheet } from 'react-native';
-import commonStyles from '../styles/commonStyles';
-import BrandingColours from '../styles/brandingConstants';
-import { AppAccount } from '../models/lunchmoney/appModels';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/Feather';
+import { NewBrandingColours } from '../styles/brandingConstants';
+import { AccountType, AppAccount } from '../models/lunchmoney/appModels';
 import { formatAmountString } from '../data/formatBalance';
 
 type AccountProps = {
   account: AppAccount;
-  showInstitution?: boolean;
+  // showInstitution?: boolean;
 };
 
-const transactionStyles = StyleSheet.create({
-  card: {
-    ...commonStyles.card,
+const styles = StyleSheet.create({
+  accountItem: {
+    flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 10,
+    backgroundColor: NewBrandingColours.neutral.white,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 8,
+    shadowColor: NewBrandingColours.neutral.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  leftSection: {
-    flex: 3.5,
-    flexDirection: 'column',
+  accountIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
   },
-  rightSection: {
+  accountDetails: {
     flex: 1,
-    alignItems: 'flex-end',
-    flexDirection: 'column',
-  },
-  institutionName: {
-    ...commonStyles.textBase,
-    color: BrandingColours.grey,
-    fontSize: 10,
   },
   accountName: {
-    flexWrap: 'wrap',
-    flexShrink: 1,
-    color: BrandingColours.darkTextColour,
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '600',
+    color: NewBrandingColours.text.primary,
   },
-  amount: {
-    fontSize: 12,
-    fontWeight: 'bold',
+  accountType: {
+    fontSize: 14,
+    color: NewBrandingColours.text.muted,
   },
-  amountNegative: {
-    color: BrandingColours.red,
+  accountBalance: {
+    alignItems: 'flex-end',
   },
-  amountPositive: {
-    color: BrandingColours.green,
+  balanceAmount: {
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
 
-function AccountComponent({ account, showInstitution }: AccountProps) {
+const getAccountIcon = (type: AccountType): string => {
+  switch (type.toLowerCase()) {
+    case 'employee compensation':
+      return 'trending-up';
+    case 'cash':
+      return 'credit-card';
+    case 'vehicle':
+      return 'box';
+    case 'loan':
+      return 'box';
+    case 'cryptocurrency':
+      return 'cloud';
+    case 'investment':
+      return 'trending-up';
+    case 'other liability':
+      return 'shopping-cart';
+    case 'other asset':
+      return 'dollar-sign';
+    case 'credit':
+      return 'shopping-cart';
+    case 'real estate':
+      return 'home';
+    default:
+      return 'box';
+  }
+};
+
+function AccountComponent({ account }: AccountProps) {
   const accountBalance = parseFloat(account.balance);
   const balanceString = formatAmountString(accountBalance);
 
   return (
-    <View style={transactionStyles.card}>
-      <View style={transactionStyles.leftSection}>
-        <Text
-          adjustsFontSizeToFit
-          numberOfLines={1}
-          style={transactionStyles.accountName}
-        >
-          {account.accountName}
-        </Text>
-        {showInstitution ? (
-          <Text
-            adjustsFontSizeToFit
-            numberOfLines={1}
-            style={transactionStyles.institutionName}
-          >
-            {account.institutionName}
-          </Text>
-        ) : null}
+    <TouchableOpacity style={styles.accountItem}>
+      <View
+        style={[
+          styles.accountIcon,
+          { backgroundColor: NewBrandingColours.primary.main },
+        ]}
+      >
+        <Icon
+          name={getAccountIcon(account.type)}
+          size={24}
+          color={NewBrandingColours.neutral.white}
+        />
       </View>
-      <View style={transactionStyles.rightSection}>
+      <View style={styles.accountDetails}>
+        <Text style={styles.accountName}>{account.accountName}</Text>
+        <Text style={styles.accountType}>{account.type}</Text>
+      </View>
+      <View style={styles.accountBalance}>
         <Text
-          adjustsFontSizeToFit
-          numberOfLines={1}
           style={[
-            transactionStyles.amount,
-            accountBalance >= 0
-              ? transactionStyles.amountPositive
-              : transactionStyles.amountNegative,
+            styles.balanceAmount,
+            {
+              color:
+                accountBalance >= 0
+                  ? NewBrandingColours.secondary.main
+                  : NewBrandingColours.accent.red,
+            },
           ]}
         >
           {balanceString}
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
