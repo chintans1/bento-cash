@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import {
-  ScrollView,
   View,
   Text,
   TouchableOpacity,
@@ -9,44 +8,32 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { useParentContext } from '../context/app/appContextProvider';
-import { AppTransaction } from '../models/lunchmoney/appModels';
-import { formatAmountString } from '../data/formatBalance';
-import {
-  AccountSummary,
-  AccountSummaryType,
-} from '../models/bento/accountSummary';
+import { AccountSummary } from '../models/bento/accountSummary';
 import { getAccountsSummary } from '../data/transformAccounts';
 import { NewBrandingColours } from '../styles/brandingConstants';
+import commonStyles from '../styles/commonStyles';
+import AccountSummaryItem from '../components/summary/AccountSummaryItem';
+import TransactionSummaryItem from '../components/summary/TransactionSummaryItem';
+
+// header: {
+//   flexDirection: 'row',
+//   justifyContent: 'space-between',
+//   alignItems: 'center',
+//   padding: 40,
+//   backgroundColor: NewBrandingColours.neutral.white,
+//   // borderBottomWidth: 1,
+//   // borderBottomColor: '#E2E8F0',
+// },
+// headerTitle: {
+//   fontSize: 20,
+//   fontWeight: '600',
+//   color: NewBrandingColours.text.primary,
+// },
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: NewBrandingColours.neutral.background,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    backgroundColor: NewBrandingColours.neutral.white,
-    // borderBottomWidth: 1,
-    // borderBottomColor: '#E2E8F0',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: NewBrandingColours.text.primary,
-  },
   balanceCard: {
-    margin: 16,
-    padding: 16,
+    ...commonStyles.card,
     backgroundColor: NewBrandingColours.primary.main,
-    borderRadius: 12,
-    // shadowColor: '#000',
-    // shadowOffset: { width: 0, height: 1 },
-    // shadowOpacity: 0.1,
-    // shadowRadius: 2,
-    // elevation: 2,
   },
   balanceTitle: {
     fontSize: 16,
@@ -71,119 +58,25 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   sectionCard: {
-    margin: 16,
-    backgroundColor: NewBrandingColours.neutral.white,
-    borderRadius: 12,
-    // shadowColor: '#000',
-    // shadowOffset: { width: 0, height: 1 },
-    // shadowOpacity: 0.1,
-    // shadowRadius: 2,
-    // elevation: 2,
+    ...commonStyles.card,
+    padding: 0,
+    marginTop: 16,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
     color: NewBrandingColours.text.primary,
     padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: NewBrandingColours.neutral.lightGray,
   },
-  accountItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: NewBrandingColours.neutral.lightGray,
-  },
-  accountInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  accountIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  accountName: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: NewBrandingColours.text.primary,
-  },
-  accountBalance: {
-    fontSize: 14,
-    color: NewBrandingColours.text.muted,
-  },
-  accountChange: {
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  addAccountButton: {
+
+  // Common view more button style
+  viewMoreButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
-    // borderTopWidth: 1,
-    // borderTopColor: '#E2E8F0',
   },
-  addAccountText: {
-    marginLeft: 8,
-    fontSize: 16,
-    fontWeight: '600',
-    color: NewBrandingColours.primary.main,
-  },
-  transactionItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: NewBrandingColours.neutral.lightGray,
-  },
-  transactionInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  transactionIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: NewBrandingColours.accent.orange,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  transactionName: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: NewBrandingColours.text.primary,
-  },
-  transactionDate: {
-    fontSize: 14,
-    color: NewBrandingColours.text.muted,
-  },
-  transactionAmount: {
-    fontSize: 16,
-    fontWeight: '600',
-    textAlign: 'right',
-  },
-  transactionCategory: {
-    fontSize: 14,
-    color: NewBrandingColours.text.muted,
-    textAlign: 'right',
-  },
-  viewAllButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 16,
-    // borderTopWidth: 1,
-    // borderTopColor: '#E2E8F0',
-  },
-  viewAllText: {
+  viewMoreText: {
     marginRight: 4,
     fontSize: 16,
     fontWeight: '600',
@@ -191,109 +84,11 @@ const styles = StyleSheet.create({
   },
 });
 
-type IconInfo = {
-  iconColour: string;
-  iconName: string;
-};
+type SectionType = 'balance' | 'accounts' | 'transactions';
 
-const getIcon = (accountType: AccountSummaryType): IconInfo => {
-  switch (accountType) {
-    case 'checking':
-      return {
-        iconName: 'briefcase',
-        iconColour: NewBrandingColours.secondary.main,
-      };
-    case 'investment':
-      return {
-        iconName: 'dollar-sign',
-        iconColour: NewBrandingColours.accent.purple,
-      };
-    case 'debt':
-      return {
-        iconName: 'credit-card',
-        iconColour: NewBrandingColours.accent.red,
-      };
-    case 'unknown':
-    default:
-      return { iconName: 'box', iconColour: NewBrandingColours.neutral.gray };
-  }
-};
-
-const renderAccount = (account: AccountSummary) => {
-  const iconInfo: IconInfo = getIcon(account.type);
-
-  return (
-    <View style={styles.accountItem}>
-      <View style={styles.accountInfo}>
-        <View
-          style={[styles.accountIcon, { backgroundColor: iconInfo.iconColour }]}
-        >
-          <Icon
-            name={iconInfo.iconName}
-            size={20}
-            color={NewBrandingColours.neutral.white}
-          />
-        </View>
-        <View>
-          <Text style={styles.accountName}>{account.name}</Text>
-          <Text style={styles.accountBalance}>
-            {formatAmountString(account.balance)}
-          </Text>
-        </View>
-      </View>
-      <Text
-        style={[
-          styles.accountChange,
-          {
-            color: '+2.3'?.startsWith('+')
-              ? NewBrandingColours.secondary.main
-              : NewBrandingColours.accent.red,
-          },
-        ]}
-      >
-        +2.3%
-      </Text>
-    </View>
-  );
-};
-
-const renderTransaction = (transaction: AppTransaction) => {
-  const { payee, date, amount, categoryName } = transaction;
-
-  return (
-    <View style={styles.transactionItem}>
-      <View style={styles.transactionInfo}>
-        <View style={styles.transactionIcon}>
-          <Icon
-            name="pie-chart"
-            size={20}
-            color={NewBrandingColours.neutral.white}
-          />
-        </View>
-        <View>
-          <Text style={styles.transactionName}>{payee}</Text>
-          <Text style={styles.transactionDate}>{date}</Text>
-        </View>
-      </View>
-      <View>
-        <Text
-          style={[
-            styles.transactionAmount,
-            {
-              color:
-                parseFloat(amount) >= 0
-                  ? NewBrandingColours.secondary.main
-                  : NewBrandingColours.accent.red,
-            },
-          ]}
-        >
-          {formatAmountString(amount)}
-        </Text>
-        <Text style={styles.transactionCategory}>{categoryName}</Text>
-      </View>
-    </View>
-  );
-};
+interface SectionItem {
+  type: SectionType;
+}
 
 export default function Dashboard({ navigation }) {
   // TODO: gather networth
@@ -307,62 +102,87 @@ export default function Dashboard({ navigation }) {
     [accountsMap],
   );
 
+  const viewMoreButton = (
+    viewText: string,
+    navigationPath: string,
+  ): JSX.Element => {
+    return (
+      <TouchableOpacity
+        style={styles.viewMoreButton}
+        onPress={() => navigation.navigate(navigationPath)}
+      >
+        <Text style={styles.viewMoreText}>{viewText}</Text>
+        <Icon
+          name="chevron-right"
+          size={20}
+          color={NewBrandingColours.primary.main}
+        />
+      </TouchableOpacity>
+    );
+  };
+
+  const renderSection = (section: SectionItem) => {
+    switch (section.type) {
+      case 'balance':
+        return (
+          <View style={styles.balanceCard}>
+            <Text style={styles.balanceTitle}>Net Worth</Text>
+            <Text style={styles.balanceAmount}>$12,750.32</Text>
+            <View style={styles.balanceChange}>
+              <Icon
+                name="arrow-up-right"
+                size={16}
+                color={NewBrandingColours.secondary.main}
+              />
+              <Text style={styles.balanceChangeText}>
+                +2.5% from last month
+              </Text>
+            </View>
+          </View>
+        );
+      case 'accounts':
+        return (
+          <View style={styles.sectionCard}>
+            <Text style={styles.sectionTitle}>Accounts Summary</Text>
+            <FlatList
+              data={accounts}
+              renderItem={({ item }) => (
+                <AccountSummaryItem accountSummary={item} />
+              )}
+              // TODO: need to support empty component here
+            />
+            {viewMoreButton('View Accounts', 'Accounts')}
+          </View>
+        );
+      case 'transactions':
+        return (
+          <View style={[styles.sectionCard, { marginBottom: 16 }]}>
+            <Text style={styles.sectionTitle}>Recent Transactions</Text>
+            <FlatList
+              data={recentTransactions}
+              renderItem={({ item }) => (
+                <TransactionSummaryItem transaction={item} />
+              )}
+            />
+            {viewMoreButton('View All Transactions', 'Transactions')}
+          </View>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const sections: SectionItem[] = [
+    { type: 'balance' },
+    { type: 'accounts' },
+    { type: 'transactions' },
+  ];
+
   return (
-    <ScrollView style={styles.container}>
-      {/* <View style={styles.header}>
-        <TouchableOpacity>
-          <Icon name="bell" size={24} color="#4A5568" />
-        </TouchableOpacity>
-      </View> */}
-
-      <View style={styles.balanceCard}>
-        <Text style={styles.balanceTitle}>Total Balance</Text>
-        <Text style={styles.balanceAmount}>$12,750.32</Text>
-        <View style={styles.balanceChange}>
-          <Icon
-            name="arrow-up-right"
-            size={16}
-            color={NewBrandingColours.secondary.main}
-          />
-          <Text style={styles.balanceChangeText}>+2.5% from last month</Text>
-        </View>
-      </View>
-
-      <View style={styles.sectionCard}>
-        <Text style={styles.sectionTitle}>Accounts Summary</Text>
-        <FlatList
-          data={accounts}
-          renderItem={({ item }) => renderAccount(item)}
-          // TODO: need to support empty component here
-        />
-        <TouchableOpacity
-          style={styles.addAccountButton}
-          onPress={() => navigation.navigate('ChooseImportMethod')}
-        >
-          <Text style={styles.addAccountText}>View Accounts</Text>
-          <Icon
-            name="chevron-right"
-            size={20}
-            color={NewBrandingColours.primary.main}
-          />
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.sectionCard}>
-        <Text style={styles.sectionTitle}>Recent Transactions</Text>
-        <FlatList
-          data={recentTransactions}
-          renderItem={({ item }) => renderTransaction(item)}
-        />
-        <TouchableOpacity style={styles.viewAllButton}>
-          <Text style={styles.viewAllText}>View All Transactions</Text>
-          <Icon
-            name="chevron-right"
-            size={16}
-            color={NewBrandingColours.primary.main}
-          />
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+    <FlatList
+      data={sections}
+      renderItem={({ item }) => renderSection(item)}
+      keyExtractor={item => item.type}
+    />
   );
 }
