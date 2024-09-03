@@ -32,10 +32,11 @@ const styles = StyleSheet.create({
   sortContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
     marginHorizontal: 16,
     borderRadius: 8,
-    backgroundColor: NewBrandingColours.neutral.white,
+    backgroundColor: NewBrandingColours.neutral.lightGray,
   },
   sortLabel: {
     fontSize: 16,

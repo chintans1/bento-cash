@@ -6,7 +6,6 @@ import { formatAmountString } from '../data/formatBalance';
 
 type AccountProps = {
   account: AppAccount;
-  // showInstitution?: boolean;
 };
 
 const styles = StyleSheet.create({
@@ -84,7 +83,7 @@ function AccountComponent({ account }: AccountProps) {
   const balanceString = formatAmountString(accountBalance);
 
   return (
-    <TouchableOpacity style={styles.accountItem}>
+    <TouchableOpacity disabled style={styles.accountItem}>
       <View
         style={[
           styles.accountIcon,

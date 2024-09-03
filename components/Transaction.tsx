@@ -164,7 +164,7 @@ function TransactionComponent({ transaction }: TransactionProps) {
   const transactionAmountString = formatAmountString(transactionAmount);
 
   return (
-    <TouchableOpacity style={styles.transactionItem}>
+    <TouchableOpacity disabled style={styles.transactionItem}>
       <View style={styles.transactionMain}>
         <View
           style={[
