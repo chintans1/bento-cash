@@ -13,11 +13,11 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import commonStyles from '../styles/commonStyles';
+import commonStyles from '../styles/oldCommonStyles';
 import { useParentContext } from '../context/app/appContextProvider';
 import InternalLunchMoneyClient from '../clients/lunchMoneyClient';
 import { AppLunchMoneyInfo } from '../models/lunchmoney/appModels';
-import BrandingColours from '../styles/brandingConstants';
+import { BrandingColours } from '../styles/brandingConstants';
 import { getClaimUrl, storeSimpleFinAuth } from '../clients/simplefinClient';
 import {
   isAuthPresent,

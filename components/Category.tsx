@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
-import BrandingColours from '../styles/brandingConstants';
+import { BrandingColours } from '../styles/brandingConstants';
 
 type CategoryProps = {
   categoryName: string;

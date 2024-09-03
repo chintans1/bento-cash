@@ -2,8 +2,8 @@ import { View, Text, StyleSheet } from 'react-native';
 import { useState } from 'react';
 import { Dropdown } from 'react-native-element-dropdown';
 import Checkbox from 'expo-checkbox';
-import commonStyles from '../../styles/commonStyles';
-import BrandingColours from '../../styles/brandingConstants';
+import commonStyles from '../../styles/oldCommonStyles';
+import { BrandingColours } from '../../styles/brandingConstants';
 import {
   AppCategory,
   AppDraftTransaction,

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
-import commonStyles from '../../styles/commonStyles';
+import commonStyles from '../../styles/oldCommonStyles';
 
 class ErrorBoundary extends Component {
   constructor(props) {

@@ -8,8 +8,8 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { useParentContext } from '../context/app/appContextProvider';
-import BrandingColours from '../styles/brandingConstants';
-import commonStyles from '../styles/commonStyles';
+import { BrandingColours } from '../styles/brandingConstants';
+import commonStyles from '../styles/oldCommonStyles';
 import accessClient from '../clients/accessClient';
 
 const styles = StyleSheet.create({

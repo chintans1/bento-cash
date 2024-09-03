@@ -1,5 +1,5 @@
 import { Text, View } from 'react-native';
-import commonStyles from '../styles/commonStyles';
+import commonStyles from '../styles/oldCommonStyles';
 
 export default function Charts() {
   return (

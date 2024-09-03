@@ -33,6 +33,9 @@ export const formatBalance = (
   return account.balance;
 };
 
-export const formatAmountString = (amount: number): string => {
+export const formatAmountString = (amount: number | string): string => {
+  if (typeof amount === 'string') {
+    amount = parseFloat(amount); // Convert string to number
+  }
   return formatter.format(amount);
 };
