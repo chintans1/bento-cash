@@ -34,8 +34,11 @@ export const formatBalance = (
 };
 
 export const formatAmountString = (amount: number | string): string => {
+  let amountToFormat: number;
   if (typeof amount === 'string') {
-    amount = parseFloat(amount); // Convert string to number
+    amountToFormat = parseFloat(amount); // Convert string to number
+  } else {
+    amountToFormat = amount;
   }
-  return formatter.format(amount);
+  return formatter.format(amountToFormat);
 };
