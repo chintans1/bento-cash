@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Settings from './Settings';
-import SimpleFinImportStackScreen from './SimpleFinImportStackScreen';
+import SimpleFinImportStackScreen from './ImportStackScreen';
 
 const SettingsStack = createNativeStackNavigator();
 
@@ -9,7 +9,7 @@ export default function SettingsStackScreen() {
     <SettingsStack.Navigator
       screenOptions={{
         headerShown: false,
-        presentation: 'modal',
+        //presentation: 'modal',
       }}
     >
       <SettingsStack.Screen
@@ -24,6 +24,7 @@ export default function SettingsStackScreen() {
         options={{
           title: 'Importing data from SimpleFIN',
           headerShown: false,
+          presentation: 'transparentModal'
         }}
         component={SimpleFinImportStackScreen}
       />
