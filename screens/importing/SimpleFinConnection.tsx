@@ -85,8 +85,14 @@ export default function SimpleFinConnectionScreen({ navigation }) {
     }
 
     navigation.replace('AccountSelection', {
-      importData,
+      importData: {
+        ...importData,
+        accountsToImport: Array.from(importData.accountsToImport.entries()),
+        syncedAccounts: Array.from(importData.syncedAccounts.entries()),
+      },
     });
+
+
   }, [navigation, lmAccounts]);
 
   useEffect(() => {
