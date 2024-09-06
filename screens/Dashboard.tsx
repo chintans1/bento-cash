@@ -154,7 +154,7 @@ export default function Dashboard({ navigation }) {
             {viewMoreButton('View Accounts', 'Accounts')}
           </View>
         );
-        // TODO: need to be rendering it closer to Transactions screen
+      // TODO: need to be rendering it closer to Transactions screen
       case 'transactions':
         return (
           <View style={[styles.sectionCard, { marginBottom: 16 }]}>

@@ -1,7 +1,14 @@
-import { FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import commonStyles from "../../styles/commonStyles";
-import { NewBrandingColours } from "../../styles/brandingConstants";
-import Icon from "react-native-vector-icons/Feather";
+import {
+  FlatList,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import Icon from 'react-native-vector-icons/Feather';
+import commonStyles from '../../styles/commonStyles';
+import { NewBrandingColours } from '../../styles/brandingConstants';
 
 const styles = StyleSheet.create({
   container: {
@@ -69,25 +76,57 @@ const styles = StyleSheet.create({
 export default function ImportMethodSelectionScreen({ navigation }) {
   // TODO: have another class to fetch supported import methods, use type safety
   const importMethods = [
-    { id: 'simplefin', name: 'SimpleFIN', icon: 'cloud', color: NewBrandingColours.primary.main, navigateScreen: 'SimpleFinConnection' },
-    { id: 'apple-card', name: 'Apple Card', icon: 'smartphone', color: NewBrandingColours.accent.purple, disabled: true },
+    {
+      id: 'simplefin',
+      name: 'SimpleFIN',
+      icon: 'cloud',
+      color: NewBrandingColours.primary.main,
+      navigateScreen: 'SimpleFinConnection',
+    },
+    {
+      id: 'apple-card',
+      name: 'Apple Card',
+      icon: 'smartphone',
+      color: NewBrandingColours.accent.purple,
+      disabled: true,
+    },
   ];
-
 
   const renderImportMethod = ({ item }) => (
     <TouchableOpacity
-      style={[styles.importMethodItem, item.disabled && styles.importMethodItemDisabled]}
+      style={[
+        styles.importMethodItem,
+        item.disabled && styles.importMethodItemDisabled,
+      ]}
       onPress={() => !item.disabled && navigation.navigate(item.navigateScreen)}
     >
       <View style={[styles.iconContainer, { backgroundColor: item.color }]}>
-        <Icon name={item.icon} size={32} color={NewBrandingColours.neutral.white} />
+        <Icon
+          name={item.icon}
+          size={32}
+          color={NewBrandingColours.neutral.white}
+        />
       </View>
       <View style={styles.textContainer}>
-        <Text style={[styles.importMethodText, item.disabled && styles.importMethodTextDisabled]}>{item.name}</Text>
-        {item.disabled && <Text style={styles.comingSoonText}>Coming Soon</Text>}
+        <Text
+          style={[
+            styles.importMethodText,
+            item.disabled && styles.importMethodTextDisabled,
+          ]}
+        >
+          {item.name}
+        </Text>
+        {item.disabled && (
+          <Text style={styles.comingSoonText}>Coming Soon</Text>
+        )}
       </View>
       {!item.disabled && (
-        <Icon name="chevron-right" size={24} color={NewBrandingColours.neutral.gray} style={styles.chevron} />
+        <Icon
+          name="chevron-right"
+          size={24}
+          color={NewBrandingColours.neutral.gray}
+          style={styles.chevron}
+        />
       )}
     </TouchableOpacity>
   );
@@ -106,4 +145,3 @@ export default function ImportMethodSelectionScreen({ navigation }) {
     </SafeAreaView>
   );
 }
-

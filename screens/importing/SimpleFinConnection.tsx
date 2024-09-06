@@ -1,12 +1,24 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, Alert, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { NewBrandingColours } from "../../styles/brandingConstants";
-import commonStyles from "../../styles/commonStyles";
-import { getLastImportDate } from "../../clients/storageClient";
-import { AccountsResponse } from "../../models/simplefin/accounts";
-import { getAccountsData } from "../../clients/simplefinClient";
-import { getSimpleFinAuth } from "../../utils/simpleFinAuth";
-import { SimpleFinAuthentication } from "../../models/simplefin/authentication";
+import { useCallback, useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  Alert,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import { NewBrandingColours } from '../../styles/brandingConstants';
+import commonStyles from '../../styles/commonStyles';
+import { getLastImportDate } from '../../clients/storageClient';
+import { getAccountsData } from '../../clients/simplefinClient';
+import { getSimpleFinAuth } from '../../utils/simpleFinAuth';
+import { SimpleFinAuthentication } from '../../models/simplefin/authentication';
+import {
+  getImportData,
+  SimpleFinImportData,
+} from '../../data/transformSimpleFin';
+import { useParentContext } from '../../context/app/appContextProvider';
+import { getAccountMappings } from '../../utils/accountMappings';
 
 const styles = StyleSheet.create({
   container: {
@@ -31,29 +43,39 @@ const styles = StyleSheet.create({
   },
 });
 
+// TODO: nobody can go back to this screen, it should go back to the import selection
 
 export default function SimpleFinConnectionScreen({ navigation }) {
-  const [isSimpleFinSetup, setIsSimpleFinSetup] = useState(false);
+  const { accounts: lmAccounts } = useParentContext().appState;
   const [isLoading, setIsLoading] = useState(true);
 
   // We need to see if there is a SimpleFin token present, then make sure we're able to fetch financial data
   // through getSimpleFinData, we will pass it through to the next screen "ImportAccounts"
   const fetchDataFromSimpleFin = useCallback(async () => {
-    console.log("this should only run once");
+    console.log('this should only run once');
     const simpleFinAuth: SimpleFinAuthentication = await getSimpleFinAuth();
 
+    // TODO: need to handle errors better for UX
     if (!simpleFinAuth) {
-      setIsSimpleFinSetup(false);
+      setIsLoading(false);
       return;
     }
 
     const lastImportDate = await getLastImportDate();
-    let fetchedAccountsResponse: AccountsResponse;
+    let importData: SimpleFinImportData;
 
     try {
-      fetchedAccountsResponse = await getAccountsData(
+      const fetchedAccountsResponse = await getAccountsData(
         await getSimpleFinAuth(),
         lastImportDate,
+      );
+
+      const fetchedAccountMappings = await getAccountMappings();
+
+      importData = getImportData(
+        fetchedAccountMappings,
+        lmAccounts,
+        fetchedAccountsResponse,
       );
     } catch (err) {
       Alert.alert('An error occurred', `${err}`, [
@@ -62,20 +84,38 @@ export default function SimpleFinConnectionScreen({ navigation }) {
       setIsLoading(false);
     }
 
-    navigation.navigate("AccountSelection", { accountsResponse: fetchedAccountsResponse });
-  }, []);
+    navigation.replace('AccountSelection', {
+      importData,
+    });
+  }, [navigation, lmAccounts]);
 
   useEffect(() => {
     fetchDataFromSimpleFin();
-  }, []);
+  }, [fetchDataFromSimpleFin]);
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
         {isLoading ? (
-              <ActivityIndicator size="large" color={NewBrandingColours.neutral.black} />
-            ) : (
-          <Text style={styles.tokenPrompt}>Your SimpleFIN setup is not correct. Please check in Settings.</Text>
+          <View>
+            <ActivityIndicator
+              size="large"
+              color={NewBrandingColours.neutral.black}
+            />
+            <Text
+              style={{
+                color: NewBrandingColours.text.muted,
+                fontSize: 14,
+                paddingTop: 8,
+              }}
+            >
+              Fetching accounts data...
+            </Text>
+          </View>
+        ) : (
+          <Text style={styles.tokenPrompt}>
+            Your SimpleFIN setup is not correct. Please check in Settings.
+          </Text>
         )}
       </View>
     </SafeAreaView>
