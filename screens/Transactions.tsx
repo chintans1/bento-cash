@@ -74,7 +74,7 @@ export default function TransactionsScreen() {
 
   const sortedTransactions = [...transactions].sort((a, b) => {
     if (sortBy === 'date') {
-      return 1;
+      return a.date > b.date ? -1 : 1;
     }
     return Math.abs(parseFloat(b.amount)) - Math.abs(parseFloat(a.amount));
   });

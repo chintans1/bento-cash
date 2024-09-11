@@ -154,7 +154,7 @@ export default function AccountsScreen() {
         ListHeaderComponent={renderListHeaderComponent}
         sections={groupedAccounts}
         renderItem={({ item: account }) => (
-          <AccountComponent account={account} showInstitution={false} />
+          <AccountComponent account={account} />
         )}
         renderSectionHeader={renderSectionHeader}
         keyExtractor={item => item.id.toString()}
