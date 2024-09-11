@@ -9,7 +9,6 @@ export default function SettingsStackScreen() {
     <SettingsStack.Navigator
       screenOptions={{
         headerShown: false,
-        //presentation: 'modal',
       }}
     >
       <SettingsStack.Screen
@@ -24,7 +23,7 @@ export default function SettingsStackScreen() {
         options={{
           title: 'Importing data from SimpleFIN',
           headerShown: false,
-          presentation: 'transparentModal'
+          presentation: 'transparentModal',
         }}
         component={SimpleFinImportStackScreen}
       />
