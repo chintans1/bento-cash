@@ -13,17 +13,26 @@ const styles = StyleSheet.create({
   transactionItem: {
     ...commonStyles.listItem,
   },
+
   transactionInfoContainer: {
     ...commonStyles.listItemInfo,
+    flex: 1,
   },
   transactionIcon: {
     ...commonStyles.listItemIcon,
+  },
+  transactionDetails: {
+    flex: 1,
   },
   transactionName: {
     ...commonStyles.listItemName,
   },
   transactionDate: {
     ...commonStyles.listItemMemo,
+  },
+
+  transactionAmountContainer: {
+    alignItems: 'flex-end',
   },
   transactionAmount: {
     fontSize: 16,
@@ -50,12 +59,12 @@ function TransactionSummaryItem({ transaction }: TransactionSummaryProps) {
             color={NewBrandingColours.neutral.white}
           />
         </View>
-        <View>
+        <View style={styles.transactionDetails}>
           <Text style={styles.transactionName}>{payee}</Text>
           <Text style={styles.transactionDate}>{date}</Text>
         </View>
       </View>
-      <View>
+      <View style={styles.transactionAmountContainer}>
         <Text
           style={[
             styles.transactionAmount,
