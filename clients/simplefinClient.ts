@@ -44,6 +44,7 @@ export async function getAccountsData(
   simpleFinAuth: SimpleFinAuthentication,
   startDate: Date,
 ): Promise<AccountsResponse> {
+  const start = performance.now();
   const response = await fetch(
     `${simpleFinAuth.baseUrl}/accounts?start-date=${getDateForSimpleFin(startDate)}`,
     {
@@ -52,6 +53,8 @@ export async function getAccountsData(
       },
     },
   );
+  const mid = performance.now();
+  console.log(`${mid - start} ms from start to mid`);
 
   if (response.status !== 200) {
     handleError({
@@ -61,6 +64,8 @@ export async function getAccountsData(
   }
 
   const responseJson: AccountsResponse = await response.json();
+  const end = performance.now();
+  console.log(`${end - start} ms from start to end`);
 
   if (responseJson.errors.length > 0) {
     handleError({

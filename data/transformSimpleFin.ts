@@ -15,6 +15,14 @@ export type SimpleFinImportData = {
   lastImportDate?: Date;
 };
 
+export type SerializableSimpleFinImportData = {
+  transactionsToImport: AppDraftTransaction[];
+  accountsToImport: AppDraftAccount[];
+  syncedAccounts: AppAccount[];
+  totalAccounts: number;
+  lastImportDate?: Date;
+};
+
 function parseTransaction(
   account: SimpleFinAccount,
   transaction: SimpleFinTransaction,
@@ -93,6 +101,24 @@ export const getImportData = (
     accountsToImport: unmatchedAccounts,
     syncedAccounts,
     totalAccounts: accountsResponse.accounts.length,
+  };
+};
+
+export const getSerializableImportData = (
+  accountMappings: Map<string, string>,
+  lmAccounts: Map<number, AppAccount>,
+  accountsResponse: AccountsResponse,
+): SerializableSimpleFinImportData => {
+  const importData = getImportData(
+    accountMappings,
+    lmAccounts,
+    accountsResponse,
+  );
+
+  return {
+    ...importData,
+    accountsToImport: Array.from(importData.accountsToImport.values()),
+    syncedAccounts: Array.from(importData.syncedAccounts.values()),
   };
 };
 

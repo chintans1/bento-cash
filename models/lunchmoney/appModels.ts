@@ -50,7 +50,7 @@ export type AppAccount = {
 };
 
 export type AppDraftAccount = {
-  lmAccountId?: number;
+  lmAccount?: AppAccount;
   externalAccountId: string;
   accountName: string;
   institutionName?: string;

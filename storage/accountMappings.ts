@@ -1,5 +1,5 @@
 import { StorageKeys } from '../models/enums/storageKeys';
-import { getData, storeData } from './asyncStorage';
+import { getData, storeData } from '../utils/asyncStorage';
 
 export const getAccountMappings = async (): Promise<Map<string, string>> => {
   const existingAccountMappings = await getData(

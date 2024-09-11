@@ -64,7 +64,7 @@ export class InternalLunchMoneyClient {
     console.log(`Trying to create account ${lmAccount.accountName}`);
     return this.lunchMoneyClient.post('/v1/assets', {
       name: lmAccount.accountName,
-      type_name: lmAccount.type,
+      type_name: lmAccount.type || 'cash', // TODO: need to remove
       balance: lmAccount.balance,
       currency: lmAccount.currency.toLowerCase(),
       institution_name: lmAccount.institutionName,
@@ -79,16 +79,16 @@ export class InternalLunchMoneyClient {
     });
   }
 
-  async updateDraftAccountBalance(lmAccount: AppDraftAccount) {
-    formatBalance(lmAccount);
-    if (lmAccount.lmAccountId === null) {
+  async updateDraftAccountBalance(draftAccount: AppDraftAccount) {
+    formatBalance(draftAccount);
+    if (draftAccount.lmAccount === null) {
       // TODO: toast here?
-      throw new Error('No account ID found for this account');
+      throw new Error('No Lunch Money account found for this account');
     }
 
     return this.lunchMoneyClient.updateAsset({
-      id: lmAccount.lmAccountId,
-      balance: lmAccount.balance,
+      id: draftAccount.lmAccount.id,
+      balance: draftAccount.balance,
     });
   }
 }
