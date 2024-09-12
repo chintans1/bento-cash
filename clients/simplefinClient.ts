@@ -12,32 +12,36 @@ export function getClaimUrl(setupToken: string): string {
 export async function storeSimpleFinAuth(
   claimUrl: string,
 ): Promise<SimpleFinAuthentication> {
-  const response = await fetch(claimUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Length': '0',
-    },
-  });
-
-  if (response.status !== 200) {
-    handleError({
-      errorType: ErrorType.SIMPLEFIN_API_ERROR,
-      message: `Ensure your SimpleFIN token is unused. Could not get access URL, got status ${response.status} with body ${await response.text()}.`,
+  try {
+    const response = await fetch(claimUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Length': '0',
+      },
     });
+
+    if (response.status !== 200) {
+      handleError({
+        errorType: ErrorType.SIMPLEFIN_API_ERROR,
+        message: `Ensure your SimpleFIN token is unused. Could not get access URL, got status ${response.status} with body ${await response.text()}.`,
+      });
+    }
+
+    return response.text().then(fullAccessUrl => {
+      const [scheme, schemelessUrl] = fullAccessUrl.split('//');
+      const [auth, url] = schemelessUrl.split('@');
+
+      const authDetails = {
+        baseUrl: `${scheme}//${url}`,
+        username: auth.split(':')[0],
+        password: auth.split(':')[1],
+      };
+      storeAuthenticationDetails(authDetails);
+      return authDetails;
+    });
+  } catch (error) {
+    throw Error('SimpleFIN token is incorrect', error);
   }
-
-  return response.text().then(fullAccessUrl => {
-    const [scheme, schemelessUrl] = fullAccessUrl.split('//');
-    const [auth, url] = schemelessUrl.split('@');
-
-    const authDetails = {
-      baseUrl: `${scheme}//${url}`,
-      username: auth.split(':')[0],
-      password: auth.split(':')[1],
-    };
-    storeAuthenticationDetails(authDetails);
-    return authDetails;
-  });
 }
 
 export async function getAccountsData(

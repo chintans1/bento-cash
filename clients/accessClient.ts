@@ -52,6 +52,7 @@ const getTokenInfo = async (token: string): Promise<AppLunchMoneyInfo> => {
       userName: responseJson.user_name,
       userEmail: responseJson.user_email,
       budgetName: responseJson.budget_name,
+      primaryCurrency: responseJson.primary_currency,
       apiKeyLabel: responseJson.api_key_label || 'unknown',
     };
   } catch (error) {

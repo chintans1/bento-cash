@@ -56,6 +56,7 @@ export class InternalLunchMoneyClient {
       userName: response.user_name,
       userEmail: response.user_email,
       budgetName: response.budget_name,
+      primaryCurrency: response.primary_currency.toUpperCase(),
       apiKeyLabel: response.api_key_label || 'unknown',
     };
   }
