@@ -35,6 +35,16 @@ const styles = StyleSheet.create({
     ...commonStyles.content,
     flex: 0,
   },
+
+  headerTitle: {
+    ...commonStyles.headerText,
+    paddingStart: 16,
+    paddingTop: 4,
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: NewBrandingColours.text.primary,
+  },
+
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -254,6 +264,7 @@ export default function Settings({ navigation }) {
         style={styles.container}
       >
         <SafeAreaView>
+          <Text style={styles.headerTitle}>Settings</Text>
           <View style={styles.content}>
             <ScrollView>
               <View style={styles.section}>
@@ -354,112 +365,4 @@ export default function Settings({ navigation }) {
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   );
-  //   <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-  //     <KeyboardAvoidingView
-  //       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-  //       keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
-  //       style={[{ flex: 1 }, commonStyles.container]}
-  //     >
-  //       <ScrollView>
-  //         <View style={settingsStyles.card}>
-  //           <Text
-  //             style={[commonStyles.headerTextBold, { fontWeight: 'normal' }]}
-  //           >
-  //             Budget Name:{' '}
-  //             <Text style={commonStyles.headerTextBold}>
-  //               {userInfo ? userInfo?.budgetName : 'unknown'}
-  //             </Text>
-  //           </Text>
-  //           <TouchableOpacity
-  //             disabled={!simpleFinTokenExists}
-  //             style={settingsStyles.button}
-  //             onPress={() => navigation.navigate('SimpleFinImport')}
-  //           >
-  //             <Text
-  //               style={[
-  //                 settingsStyles.buttonText,
-  //                 { opacity: !simpleFinTokenExists ? 0.3 : null },
-  //               ]}
-  //             >
-  //               Fetch data via SimpleFIN
-  //             </Text>
-  //           </TouchableOpacity>
-  //         </View>
-
-  //         <View style={settingsStyles.card}>
-  //           <Text style={commonStyles.headerText}>
-  //             Update Lunch Money API Token
-  //           </Text>
-  //           <TextInput
-  //             ref={lmApiKeyInputReference}
-  //             style={settingsStyles.textInput}
-  //             secureTextEntry
-  //             autoComplete="off"
-  //             autoCorrect={false}
-  //             placeholder={
-  //               lmApiKey.length > 0
-  //                 ? 'exists already, update if you need.'
-  //                 : 'enter your API token here.'
-  //             }
-  //             onEndEditing={event => setNewLmApiKey(event.nativeEvent.text)}
-  //           />
-  //           <TouchableOpacity
-  //             style={settingsStyles.button}
-  //             disabled={newLmApiKey.length === 0}
-  //             onPress={() => verifyNewLmTokenAlert(newLmApiKey)}
-  //           >
-  //             <Text
-  //               style={[
-  //                 settingsStyles.buttonText,
-  //                 { opacity: newLmApiKey.length === 0 ? 0.3 : null },
-  //               ]}
-  //             >
-  //               Submit
-  //             </Text>
-  //           </TouchableOpacity>
-  //         </View>
-
-  //         <View style={settingsStyles.card}>
-  //           <Text style={commonStyles.headerText}>Simplefin Setup Token</Text>
-  //           <TextInput
-  //             ref={simpleFinTokenReference}
-  //             style={settingsStyles.textInput}
-  //             autoComplete="off"
-  //             autoCapitalize="none"
-  //             autoCorrect={false}
-  //             placeholder={
-  //               simpleFinTokenExists
-  //                 ? 'exists already, update if you need.'
-  //                 : 'enter your simpleFIN setup token here.'
-  //             }
-  //             onEndEditing={event => setSimpleFinToken(event.nativeEvent.text)}
-  //           />
-  //           <TouchableOpacity
-  //             style={settingsStyles.button}
-  //             disabled={simpleFinToken.length === 0}
-  //             onPress={() => setupSimpleFinAuthentication(simpleFinToken)}
-  //           >
-  //             <Text
-  //               style={[
-  //                 settingsStyles.buttonText,
-  //                 { opacity: simpleFinToken.length === 0 ? 0.3 : null },
-  //               ]}
-  //             >
-  //               Submit
-  //             </Text>
-  //           </TouchableOpacity>
-
-  //           {simpleFinInSetup && (
-  //             <View style={settingsStyles.refreshOverlay}>
-  //               <ActivityIndicator
-  //                 size="large"
-  //                 color={BrandingColours.primaryColour}
-  //               />
-  //             </View>
-  //           )}
-  //         </View>
-  //       </ScrollView>
-  //     </KeyboardAvoidingView>
-  //   </TouchableWithoutFeedback>
-  // );
 }

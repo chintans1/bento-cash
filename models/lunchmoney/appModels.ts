@@ -73,6 +73,7 @@ export type AppLunchMoneyInfo = {
   userName: string;
   userEmail: string;
   budgetName: string;
+  primaryCurrency: string;
   apiKeyLabel?: string;
 };
 

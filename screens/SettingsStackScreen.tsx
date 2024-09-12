@@ -23,7 +23,7 @@ export default function SettingsStackScreen() {
         options={{
           title: 'Importing data from SimpleFIN',
           headerShown: false,
-          presentation: 'transparentModal',
+          // presentation: 'transparentModal',
         }}
         component={SimpleFinImportStackScreen}
       />

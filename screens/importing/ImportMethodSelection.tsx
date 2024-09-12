@@ -7,8 +7,10 @@ import {
   View,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import commonStyles from '../../styles/commonStyles';
 import { NewBrandingColours } from '../../styles/brandingConstants';
+import { ImportStackParamList } from '../ImportStackScreen';
 
 const styles = StyleSheet.create({
   container: {
@@ -17,12 +19,23 @@ const styles = StyleSheet.create({
   content: {
     ...commonStyles.content,
   },
+
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
   headerTitle: {
     ...commonStyles.headerText,
     fontSize: 28,
     color: NewBrandingColours.text.primary,
-    marginBottom: 4,
+    flex: 1,
   },
+  backButton: {
+    // padding: 8,
+    marginRight: 8,
+  },
+
   importMethodList: {
     paddingTop: 8,
   },
@@ -73,7 +86,18 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function ImportMethodSelectionScreen({ navigation }) {
+type ImportMethodSelectionNavigationProp = NativeStackNavigationProp<
+  ImportStackParamList,
+  'ImportMethodSelection'
+>;
+
+interface ImportMethodSelectionProps {
+  navigation: ImportMethodSelectionNavigationProp;
+}
+
+export default function ImportMethodSelectionScreen({
+  navigation,
+}: ImportMethodSelectionProps) {
   // TODO: have another class to fetch supported import methods, use type safety
   const importMethods = [
     {
@@ -134,7 +158,19 @@ export default function ImportMethodSelectionScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.headerTitle}>Select Import Method</Text>
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
+            <Icon
+              name="arrow-left"
+              size={24}
+              color={NewBrandingColours.text.primary}
+            />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Select Import Method</Text>
+        </View>
         <FlatList
           data={importMethods}
           renderItem={renderImportMethod}
