@@ -139,7 +139,7 @@ export default function Dashboard({ navigation }) {
           <View style={styles.balanceCard}>
             <Text style={styles.balanceTitle}>Net Worth</Text>
             <Text style={styles.balanceAmount}>{netWorthString}</Text>
-            <View style={styles.balanceChange}>
+            {/* <View style={styles.balanceChange}>
               <Icon
                 name="arrow-up-right"
                 size={16}
@@ -148,7 +148,7 @@ export default function Dashboard({ navigation }) {
               <Text style={styles.balanceChangeText}>
                 +2.5% from last month
               </Text>
-            </View>
+            </View> */}
           </View>
         );
       case 'accounts':
@@ -158,7 +158,7 @@ export default function Dashboard({ navigation }) {
             <FlatList
               data={accounts}
               renderItem={({ item }) => (
-                <AccountSummaryItem accountSummary={item} />
+                <AccountSummaryItem accountSummary={item} showTrend={false} />
               )}
               // TODO: need to support empty component here
             />

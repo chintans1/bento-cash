@@ -10,6 +10,7 @@ import {
 
 type AccountSummaryItemProps = {
   accountSummary: AccountSummary;
+  showTrend: boolean;
 };
 
 const styles = StyleSheet.create({
@@ -62,7 +63,10 @@ const getIcon = (accountType: AccountSummaryType): IconInfo => {
   }
 };
 
-function AccountSummaryItem({ accountSummary }: AccountSummaryItemProps) {
+function AccountSummaryItem({
+  accountSummary,
+  showTrend,
+}: AccountSummaryItemProps) {
   const { name, type, balance } = accountSummary;
   const iconInfo: IconInfo = getIcon(type);
 
@@ -86,18 +90,20 @@ function AccountSummaryItem({ accountSummary }: AccountSummaryItemProps) {
         </View>
       </View>
       {/* TODO: use changeMonthOverMonth forreal} */}
-      <Text
-        style={[
-          styles.accountChange,
-          {
-            color: '+2.3'?.startsWith('+')
-              ? NewBrandingColours.secondary.main
-              : NewBrandingColours.accent.red,
-          },
-        ]}
-      >
-        +2.3%
-      </Text>
+      {showTrend ? (
+        <Text
+          style={[
+            styles.accountChange,
+            {
+              color: '+2.3'?.startsWith('+')
+                ? NewBrandingColours.secondary.main
+                : NewBrandingColours.accent.red,
+            },
+          ]}
+        >
+          +2.3%
+        </Text>
+      ) : null}
     </View>
   );
 }

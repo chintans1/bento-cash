@@ -33,7 +33,7 @@ export default function App() {
           <StatusBar animated />
           <NavigationContainer>
             <Tab.Navigator
-              initialRouteName="Transactions"
+              initialRouteName="Dashboard"
               screenOptions={({ route }) => ({
                 headerTitleAlign: 'left',
                 headerShadowVisible: false,
@@ -55,7 +55,13 @@ export default function App() {
               <Tab.Screen name="Transactions" component={Transactions} />
               <Tab.Screen name="Accounts" component={Accounts} />
               <Tab.Screen name="Charts" component={Charts} />
-              <Tab.Screen name="Settings" component={SettingsStackScreen} />
+              <Tab.Screen
+                name="Settings"
+                component={SettingsStackScreen}
+                options={{
+                  headerShown: false,
+                }}
+              />
             </Tab.Navigator>
           </NavigationContainer>
           <Toast />

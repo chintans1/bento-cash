@@ -38,29 +38,31 @@ export const getAccountsSummary = (
   const allAccounts = Array.from(accountsMap.values());
 
   const accountSummaries: Record<AccountSummaryType, AccountSummary> =
-    allAccounts.reduce(
-      (acc, account) => {
-        const accountType = getTypeOfAccount(account);
+    allAccounts
+      .filter(account => account.state === 'open')
+      .reduce(
+        (acc, account) => {
+          const accountType = getTypeOfAccount(account);
 
-        if (!acc[accountType]) {
+          if (!acc[accountType]) {
+            acc[accountType] = {
+              name: accountType.charAt(0).toUpperCase() + accountType.slice(1),
+              balance: 0,
+              currency: 'USD',
+              changeMonthOverMonth: '0%',
+              type: accountType,
+            };
+          }
+
           acc[accountType] = {
-            name: accountType.charAt(0).toUpperCase() + accountType.slice(1),
-            balance: 0,
-            currency: 'USD',
-            changeMonthOverMonth: '0%',
-            type: accountType,
+            ...acc[accountType],
+            balance: acc[accountType].balance + parseFloat(account.balance),
           };
-        }
 
-        acc[accountType] = {
-          ...acc[accountType],
-          balance: acc[accountType].balance + parseFloat(account.balance),
-        };
-
-        return acc;
-      },
-      {} as Record<AccountSummaryType, AccountSummary>,
-    );
+          return acc;
+        },
+        {} as Record<AccountSummaryType, AccountSummary>,
+      );
 
   // Return the account summaries in the specified order
   return orderedAccountTypes
