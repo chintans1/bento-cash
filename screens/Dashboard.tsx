@@ -14,6 +14,7 @@ import { NewBrandingColours } from '../styles/brandingConstants';
 import commonStyles from '../styles/commonStyles';
 import AccountSummaryItem from '../components/summary/AccountSummaryItem';
 import TransactionSummaryItem from '../components/summary/TransactionSummaryItem';
+import { formatAmountString } from '../data/formatBalance';
 
 // header: {
 //   flexDirection: 'row',
@@ -102,6 +103,16 @@ export default function Dashboard({ navigation }) {
     [accountsMap],
   );
 
+  const netWorth = useMemo(() => {
+    return accounts
+      .map(account => account.balance)
+      .reduce((partialNw, balance) => partialNw + balance, 0);
+  }, [accounts]);
+  const netWorthString = useMemo(
+    () => formatAmountString(netWorth),
+    [netWorth],
+  );
+
   const viewMoreButton = (
     viewText: string,
     navigationPath: string,
@@ -127,7 +138,7 @@ export default function Dashboard({ navigation }) {
         return (
           <View style={styles.balanceCard}>
             <Text style={styles.balanceTitle}>Net Worth</Text>
-            <Text style={styles.balanceAmount}>$12,750.32</Text>
+            <Text style={styles.balanceAmount}>{netWorthString}</Text>
             <View style={styles.balanceChange}>
               <Icon
                 name="arrow-up-right"
