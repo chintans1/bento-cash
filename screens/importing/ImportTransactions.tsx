@@ -293,30 +293,74 @@
 // }
 
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Modal } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  Modal,
+} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
 const sampleTransactions = [
-  { id: '1', name: 'Groceries', amount: -50.75, date: '2024-06-01', account: 'Checking Account', category: 'Food', status: 'pending' },
-  { id: '2', name: 'Salary', amount: 2500.00, date: '2024-06-03', account: 'Checking Account', category: 'Income', status: 'pending' },
-  { id: '3', name: 'Electric Bill', amount: -75.60, date: '2024-06-05', account: 'Savings Account', category: 'Utilities', status: 'pending' },
+  {
+    id: '1',
+    name: 'Groceries',
+    amount: -50.75,
+    date: '2024-06-01',
+    account: 'Checking Account',
+    category: 'Food',
+    status: 'pending',
+  },
+  {
+    id: '2',
+    name: 'Salary',
+    amount: 2500.0,
+    date: '2024-06-03',
+    account: 'Checking Account',
+    category: 'Income',
+    status: 'pending',
+  },
+  {
+    id: '3',
+    name: 'Electric Bill',
+    amount: -75.6,
+    date: '2024-06-05',
+    account: 'Savings Account',
+    category: 'Utilities',
+    status: 'pending',
+  },
 ];
 
-const categories = ['Food', 'Income', 'Utilities', 'Entertainment', 'Transportation'];
+const categories = [
+  'Food',
+  'Income',
+  'Utilities',
+  'Entertainment',
+  'Transportation',
+];
 
 const TransactionsImportScreen: React.FC = () => {
-  const [selectedTransactions, setSelectedTransactions] = useState<string[]>([]);
-  const [transactionCategories, setTransactionCategories] = useState<{ [key: string]: string }>({});
+  const [selectedTransactions, setSelectedTransactions] = useState<string[]>(
+    [],
+  );
+  const [transactionCategories, setTransactionCategories] = useState<{
+    [key: string]: string;
+  }>({});
 
   const handleTransactionSelection = (transactionId: string) => {
     const updatedSelection = selectedTransactions.includes(transactionId)
-      ? selectedTransactions.filter((id) => id !== transactionId)
+      ? selectedTransactions.filter(id => id !== transactionId)
       : [...selectedTransactions, transactionId];
     setSelectedTransactions(updatedSelection);
   };
 
-  const handlePickerChange = (transactionId: string, selectedCategory: string) => {
-    setTransactionCategories((prevCategories) => ({
+  const handlePickerChange = (
+    transactionId: string,
+    selectedCategory: string,
+  ) => {
+    setTransactionCategories(prevCategories => ({
       ...prevCategories,
       [transactionId]: selectedCategory,
     }));
@@ -327,11 +371,21 @@ const TransactionsImportScreen: React.FC = () => {
   };
 
   const renderTransaction = ({ item }) => (
-    <View style={[styles.transactionCard, selectedTransactions.includes(item.id) && styles.selectedTransaction]}>
+    <View
+      style={[
+        styles.transactionCard,
+        selectedTransactions.includes(item.id) && styles.selectedTransaction,
+      ]}
+    >
       <TouchableOpacity onPress={() => handleTransactionSelection(item.id)}>
         <View style={styles.transactionInfo}>
           <Text style={styles.transactionName}>{item.name}</Text>
-          <Text style={[styles.transactionAmount, item.amount > 0 ? styles.credit : styles.debit]}>
+          <Text
+            style={[
+              styles.transactionAmount,
+              item.amount > 0 ? styles.credit : styles.debit,
+            ]}
+          >
             ${item.amount.toFixed(2)}
           </Text>
         </View>
@@ -340,9 +394,9 @@ const TransactionsImportScreen: React.FC = () => {
         <View style={styles.pickerContainer}>
           <Picker
             selectedValue={transactionCategories[item.id] || 'Uncategorized'}
-            onValueChange={(itemValue) => handlePickerChange(item.id, itemValue)}
+            onValueChange={itemValue => handlePickerChange(item.id, itemValue)}
           >
-            {categories.map((category) => (
+            {categories.map(category => (
               <Picker.Item key={category} label={category} value={category} />
             ))}
           </Picker>
@@ -357,9 +411,12 @@ const TransactionsImportScreen: React.FC = () => {
       <FlatList
         data={sampleTransactions}
         renderItem={renderTransaction}
-        keyExtractor={(item) => item.id}
+        keyExtractor={item => item.id}
       />
-      <TouchableOpacity style={styles.importButton} onPress={handleImportTransactions}>
+      <TouchableOpacity
+        style={styles.importButton}
+        onPress={handleImportTransactions}
+      >
         <Text style={styles.buttonText}>Import Selected</Text>
       </TouchableOpacity>
     </View>
@@ -439,4 +496,3 @@ const styles = StyleSheet.create({
 });
 
 export default TransactionsImportScreen;
-

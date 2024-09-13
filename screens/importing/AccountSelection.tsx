@@ -1,15 +1,22 @@
-import { useEffect, useState } from "react";
-import { ActivityIndicator, SafeAreaView, SectionList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import Icon from "react-native-vector-icons/Feather";
-import { NewBrandingColours } from "../../styles/brandingConstants";
-import commonStyles from "../../styles/commonStyles";
-import { SimpleFinImportData } from "../../data/transformSimpleFin";
-
+import { useEffect, useMemo, useState } from 'react';
 import {
-  AppAccount,
-  AppDraftAccount,
-} from '../../models/lunchmoney/appModels';
-import { formatAmountString } from "../../data/formatBalance";
+  ActivityIndicator,
+  SafeAreaView,
+  SectionList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import Icon from 'react-native-vector-icons/Feather';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RouteProp } from '@react-navigation/native';
+import { NewBrandingColours } from '../../styles/brandingConstants';
+import commonStyles from '../../styles/commonStyles';
+
+import { AppAccount, AppDraftAccount } from '../../models/lunchmoney/appModels';
+import { formatAmountString } from '../../data/formatBalance';
+import { ImportStackParamList } from '../ImportStackScreen';
 
 const styles = StyleSheet.create({
   container: {
@@ -40,7 +47,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: NewBrandingColours.text.secondary,
   },
-
 
   accountItem: {
     flexDirection: 'row',
@@ -110,16 +116,35 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function AccountSelectionScreen({ route, navigation }) {
+type AccountSelectionNavigationProp = NativeStackNavigationProp<
+  ImportStackParamList,
+  'AccountSelection'
+>;
+type AccountSelectionRouteProp = RouteProp<
+  ImportStackParamList,
+  'AccountSelection'
+>;
+
+interface AccountSelectionProps {
+  route: AccountSelectionRouteProp;
+  navigation: AccountSelectionNavigationProp;
+}
+
+export default function AccountSelectionScreen({
+  route,
+  navigation,
+}: AccountSelectionProps) {
   const [accounts, setAccounts] = useState([]);
-  const [selectedNewAccounts, setSelectedNewAccounts] = useState({});
-  const [selectedExistingAccounts, setSelectedExistingAccounts] = useState({});
+  const [selectedNewAccounts, setSelectedNewAccounts] = useState<
+    Record<string, AppDraftAccount>
+  >({});
+  const [selectedExistingAccounts, setSelectedExistingAccounts] = useState<
+    Record<number, AppAccount>
+  >({});
   const [isLoading, setIsLoading] = useState(true);
 
-  const { importData } : { importData: SimpleFinImportData } = route.params;
-
-  const accountsToImport = new Map(importData.accountsToImport);
-  const syncedAccounts = new Map(importData.syncedAccounts);
+  const { accountsToImport, syncedAccounts, transactionsToImport } =
+    route.params;
 
   useEffect(() => {
     // Simulated API call to fetch accounts
@@ -134,13 +159,11 @@ export default function AccountSelectionScreen({ route, navigation }) {
     //   { id: '8', name: 'Checking Account', bankName: 'Wells Fargo', balance: 3000, isNew: false },
     // ];
 
-    const syncedAccountsArray = Array.from(syncedAccounts.values());
-    const accountsToImportArray = Array.from(accountsToImport.values());
-    const allAccounts = [...syncedAccountsArray, ...accountsToImportArray];
+    const allAccounts = [...accountsToImport, ...syncedAccounts];
 
     setAccounts(allAccounts);
     setIsLoading(false);
-  }, [accountsToImport, syncedAccounts]);
+  }, [accountsToImport, syncedAccounts]); // TODO: LINT ERROR
 
   const toggleAccountSelection = (account: AppAccount | AppDraftAccount) => {
     if ('id' in account && account.id) {
@@ -180,9 +203,14 @@ export default function AccountSelectionScreen({ route, navigation }) {
         </Text>
       </View>
       <View style={styles.selectionContainer}>
-        {selectedNewAccounts[item.externalAccountId] || selectedExistingAccounts[item.id] ? (
+        {selectedNewAccounts[item.externalAccountId] ||
+        selectedExistingAccounts[item.id] ? (
           <View style={styles.selectedIcon}>
-            <Icon name="check" size={24} color={NewBrandingColours.neutral.white} />
+            <Icon
+              name="check"
+              size={24}
+              color={NewBrandingColours.neutral.white}
+            />
           </View>
         ) : (
           <View style={styles.unselectedIcon} />
@@ -198,8 +226,14 @@ export default function AccountSelectionScreen({ route, navigation }) {
   );
 
   const sections = [
-    { title: 'New Accounts', data: accounts.filter(account => !('id' in account)) },
-    { title: 'Existing Accounts', data: accounts.filter(account => 'id' in account && account.id) },
+    {
+      title: 'New Accounts',
+      data: accounts.filter(account => !('id' in account)),
+    },
+    {
+      title: 'Existing Accounts',
+      data: accounts.filter(account => 'id' in account && account.id),
+    },
   ];
 
   return (
@@ -207,14 +241,19 @@ export default function AccountSelectionScreen({ route, navigation }) {
       <View style={styles.content}>
         <Text style={styles.headerTitle}>Select Accounts</Text>
         {isLoading ? (
-          <ActivityIndicator size="large" color={NewBrandingColours.neutral.black} />
+          <ActivityIndicator
+            size="large"
+            color={NewBrandingColours.neutral.black}
+          />
         ) : (
           <>
             <SectionList
               sections={sections}
               renderItem={renderAccount}
               renderSectionHeader={renderSectionHeader}
-              keyExtractor={item => item.id ? item.id : item.externalAccountId}
+              keyExtractor={item =>
+                item.id ? item.id : item.externalAccountId
+              }
               contentContainerStyle={styles.accountList}
               stickySectionHeadersEnabled={false}
             />
@@ -222,7 +261,12 @@ export default function AccountSelectionScreen({ route, navigation }) {
               style={styles.continueButton}
               onPress={() =>
                 navigation.navigate('ImportSyncConfirmation', {
-                  selectedNewAccounts, selectedExistingAccounts
+                  ...route.params,
+                  selectedNewAccounts: Object.values(selectedNewAccounts),
+                  selectedExistingAccounts: Object.values(
+                    selectedExistingAccounts,
+                  ),
+                  transactionsToImport,
                 })
               }
             >

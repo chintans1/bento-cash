@@ -7,18 +7,22 @@ import {
   Text,
   View,
 } from 'react-native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { NewBrandingColours } from '../../styles/brandingConstants';
 import commonStyles from '../../styles/commonStyles';
-import { getLastImportDate } from '../../clients/storageClient';
+import { getLastImportDate } from '../../storage/importDate';
 import { getAccountsData } from '../../clients/simplefinClient';
 import { getSimpleFinAuth } from '../../utils/simpleFinAuth';
 import { SimpleFinAuthentication } from '../../models/simplefin/authentication';
 import {
   getImportData,
+  getSerializableImportData,
+  SerializableSimpleFinImportData,
   SimpleFinImportData,
 } from '../../data/transformSimpleFin';
 import { useParentContext } from '../../context/app/appContextProvider';
-import { getAccountMappings } from '../../utils/accountMappings';
+import { getAccountMappings } from '../../storage/accountMappings';
+import { ImportStackParamList } from '../ImportStackScreen';
 
 const styles = StyleSheet.create({
   container: {
@@ -43,9 +47,20 @@ const styles = StyleSheet.create({
   },
 });
 
+type SimpleFinConnectionNavigationProp = NativeStackNavigationProp<
+  ImportStackParamList,
+  'SimpleFinConnection'
+>;
+
+interface SimpleFinConnectionProps {
+  navigation: SimpleFinConnectionNavigationProp;
+}
+
 // TODO: nobody can go back to this screen, it should go back to the import selection
 
-export default function SimpleFinConnectionScreen({ navigation }) {
+export default function SimpleFinConnectionScreen({
+  navigation,
+}: SimpleFinConnectionProps) {
   const { accounts: lmAccounts } = useParentContext().appState;
   const [isLoading, setIsLoading] = useState(true);
 
@@ -62,7 +77,7 @@ export default function SimpleFinConnectionScreen({ navigation }) {
     }
 
     const lastImportDate = await getLastImportDate();
-    let importData: SimpleFinImportData;
+    let importData: SerializableSimpleFinImportData;
 
     try {
       const fetchedAccountsResponse = await getAccountsData(
@@ -72,7 +87,7 @@ export default function SimpleFinConnectionScreen({ navigation }) {
 
       const fetchedAccountMappings = await getAccountMappings();
 
-      importData = getImportData(
+      importData = getSerializableImportData(
         fetchedAccountMappings,
         lmAccounts,
         fetchedAccountsResponse,
@@ -85,14 +100,10 @@ export default function SimpleFinConnectionScreen({ navigation }) {
     }
 
     navigation.replace('AccountSelection', {
-      importData: {
-        ...importData,
-        accountsToImport: Array.from(importData.accountsToImport.entries()),
-        syncedAccounts: Array.from(importData.syncedAccounts.entries()),
-      },
+      accountsToImport: importData.accountsToImport,
+      syncedAccounts: importData.syncedAccounts,
+      transactionsToImport: importData.transactionsToImport,
     });
-
-
   }, [navigation, lmAccounts]);
 
   useEffect(() => {
