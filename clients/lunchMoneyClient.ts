@@ -65,7 +65,7 @@ export class InternalLunchMoneyClient {
     console.log(`Trying to create account ${lmAccount.accountName}`);
     return this.lunchMoneyClient.post('/v1/assets', {
       name: lmAccount.accountName,
-      type_name: lmAccount.type || 'cash', // TODO: need to remove
+      type_name: lmAccount.type || 'cash',
       balance: lmAccount.balance,
       currency: lmAccount.currency.toLowerCase(),
       institution_name: lmAccount.institutionName,
