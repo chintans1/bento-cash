@@ -1,69 +1,65 @@
-import { StyleSheet } from 'react-native';
-import BrandingColours from './brandingConstants';
-
-const base = {
-  color: BrandingColours.secondaryColour,
-};
+import { StatusBar, StyleSheet } from 'react-native';
+import { NewBrandingColours } from './brandingConstants';
 
 export default StyleSheet.create({
   container: {
-    ...base,
-    backgroundColor: BrandingColours.backgroundColour,
-    paddingHorizontal: 10,
-    height: '100%',
+    flex: 1,
+    backgroundColor: NewBrandingColours.neutral.background,
+    paddingTop: StatusBar.currentHeight,
   },
-  rowView: {
+  content: {
+    flex: 1,
+    padding: 16,
+  },
+
+  // Common text styles
+  headerText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: NewBrandingColours.text.primary,
+  },
+
+  card: {
+    marginHorizontal: 16,
+    padding: 16,
+    backgroundColor: NewBrandingColours.neutral.white,
+    borderRadius: 8,
+    // shadowColor: '#000',
+    // shadowOffset: { width: 0, height: 1 },
+    // shadowOpacity: 0.1,
+    // shadowRadius: 2,
+    // elevation: 2,
+  },
+
+  // Common list styles
+  listItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: NewBrandingColours.neutral.lightGray,
+  },
+  listItemInfo: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  list: {
-    // backgroundColor: BrandingColours.cardColour,
-    borderRadius: 8,
-    marginBottom: 10,
+  listItemIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: NewBrandingColours.accent.orange,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
   },
-  card: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-
-    backgroundColor: BrandingColours.cardColour,
-
-    marginVertical: 3,
-    paddingVertical: 10,
-    paddingHorizontal: 10,
+  listItemName: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: NewBrandingColours.text.primary,
   },
-  columnCard: {
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-
-    backgroundColor: BrandingColours.cardColour,
-    borderRadius: 8,
-
-    marginVertical: 3,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-  },
-  textBase: {
-    ...base,
-    display: 'flex',
-  },
-  headerText: {
-    ...base,
-    fontSize: 18,
-    display: 'flex',
-    color: BrandingColours.darkTextColour,
-  },
-  headerTextBold: {
-    ...base,
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: BrandingColours.darkTextColour,
-  },
-  sectionHeader: {
-    color: BrandingColours.darkTextColour,
-    fontWeight: 'bold',
-    fontSize: 12,
-    padding: 10,
+  listItemMemo: {
+    fontSize: 14,
+    color: NewBrandingColours.text.muted,
   },
 });
