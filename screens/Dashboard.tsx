@@ -15,21 +15,7 @@ import commonStyles from '../styles/commonStyles';
 import AccountSummaryItem from '../components/summary/AccountSummaryItem';
 import TransactionSummaryItem from '../components/summary/TransactionSummaryItem';
 import { formatAmountString } from '../data/formatBalance';
-
-// header: {
-//   flexDirection: 'row',
-//   justifyContent: 'space-between',
-//   alignItems: 'center',
-//   padding: 40,
-//   backgroundColor: NewBrandingColours.neutral.white,
-//   // borderBottomWidth: 1,
-//   // borderBottomColor: '#E2E8F0',
-// },
-// headerTitle: {
-//   fontSize: 20,
-//   fontWeight: '600',
-//   color: NewBrandingColours.text.primary,
-// },
+import renderNoStateMessage from '../components/EmptyListComponent';
 
 const styles = StyleSheet.create({
   balanceCard: {
@@ -160,7 +146,7 @@ export default function Dashboard({ navigation }) {
               renderItem={({ item }) => (
                 <AccountSummaryItem accountSummary={item} showTrend={false} />
               )}
-              // TODO: need to support empty component here
+              ListEmptyComponent={renderNoStateMessage('No accounts found')}
             />
             {viewMoreButton('View Accounts', 'Accounts')}
           </View>
@@ -175,6 +161,7 @@ export default function Dashboard({ navigation }) {
               renderItem={({ item }) => (
                 <TransactionSummaryItem transaction={item} />
               )}
+              ListEmptyComponent={renderNoStateMessage('No transactions found')}
             />
             {viewMoreButton('View All Transactions', 'Transactions')}
           </View>

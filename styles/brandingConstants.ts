@@ -1,4 +1,5 @@
 class BrandingColours {
+  // TODO: get rid of this
   static primaryColour = '#1B1B1B'; // '#171717'; // "#FCA311";
 
   static secondaryColour = '#2A77F1'; // '#219EBC'; // "#0B1215"; // "#14213D";

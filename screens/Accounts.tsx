@@ -12,6 +12,7 @@ import { formatAmountString } from '../data/formatBalance';
 import { AppAccount } from '../models/lunchmoney/appModels';
 import { NewBrandingColours } from '../styles/brandingConstants';
 import AccountComponent from '../components/Account';
+import renderNoStateMessage from '../components/EmptyListComponent';
 
 interface GroupedAccounts {
   institution: string;
@@ -56,6 +57,7 @@ const styles = StyleSheet.create({
     color: NewBrandingColours.neutral.white,
   },
   accountList: {
+    flexGrow: 1,
     paddingHorizontal: 16,
   },
   sectionHeader: {
@@ -160,6 +162,7 @@ export default function AccountsScreen() {
         keyExtractor={item => item.id.toString()}
         contentContainerStyle={styles.accountList}
         stickySectionHeadersEnabled={false}
+        ListEmptyComponent={renderNoStateMessage('No accounts found')}
       />
     </SafeAreaView>
   );

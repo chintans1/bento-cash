@@ -10,6 +10,7 @@ import { useParentContext } from '../context/app/appContextProvider';
 import { NewBrandingColours } from '../styles/brandingConstants';
 import TransactionComponent from '../components/Transaction';
 import commonStyles from '../styles/commonStyles';
+import renderNoStateMessage from '../components/EmptyListComponent';
 
 const styles = StyleSheet.create({
   container: {
@@ -64,6 +65,7 @@ const styles = StyleSheet.create({
     color: NewBrandingColours.neutral.white,
   },
   transactionList: {
+    flexGrow: 1,
     paddingHorizontal: 16,
   },
 });
@@ -124,6 +126,7 @@ export default function TransactionsScreen() {
         renderItem={({ item }) => <TransactionComponent transaction={item} />}
         keyExtractor={item => item.id.toString()}
         contentContainerStyle={styles.transactionList}
+        ListEmptyComponent={renderNoStateMessage('No recent transactions')}
       />
     </View>
   );

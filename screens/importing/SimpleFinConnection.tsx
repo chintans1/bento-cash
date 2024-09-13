@@ -15,10 +15,8 @@ import { getAccountsData } from '../../clients/simplefinClient';
 import { getSimpleFinAuth } from '../../utils/simpleFinAuth';
 import { SimpleFinAuthentication } from '../../models/simplefin/authentication';
 import {
-  getImportData,
   getSerializableImportData,
   SerializableSimpleFinImportData,
-  SimpleFinImportData,
 } from '../../data/transformSimpleFin';
 import { useParentContext } from '../../context/app/appContextProvider';
 import { getAccountMappings } from '../../storage/accountMappings';
@@ -55,8 +53,6 @@ type SimpleFinConnectionNavigationProp = NativeStackNavigationProp<
 interface SimpleFinConnectionProps {
   navigation: SimpleFinConnectionNavigationProp;
 }
-
-// TODO: nobody can go back to this screen, it should go back to the import selection
 
 export default function SimpleFinConnectionScreen({
   navigation,

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   SafeAreaView,
@@ -17,6 +17,7 @@ import commonStyles from '../../styles/commonStyles';
 import { AppAccount, AppDraftAccount } from '../../models/lunchmoney/appModels';
 import { formatAmountString } from '../../data/formatBalance';
 import { ImportStackParamList } from '../ImportStackScreen';
+import renderNoStateMessage from '../../components/EmptyListComponent';
 
 const styles = StyleSheet.create({
   container: {
@@ -33,6 +34,7 @@ const styles = StyleSheet.create({
   },
 
   accountList: {
+    flexGrow: 1,
     paddingTop: 8,
   },
   sectionHeader: {
@@ -147,23 +149,11 @@ export default function AccountSelectionScreen({
     route.params;
 
   useEffect(() => {
-    // Simulated API call to fetch accounts
-    // const fetchedAccounts = [
-    //   { id: '1', name: 'Checking Account', bankName: 'Bank of America', balance: 5000, isNew: true },
-    //   { id: '2', name: 'Savings Account', bankName: 'Bank of America', balance: 10000, isNew: true },
-    //   { id: '3', name: 'Credit Card', bankName: 'Chase', balance: -1500, isNew: true },
-    //   { id: '4', name: 'Investment Account', bankName: 'Vanguard', balance: 50000, isNew: false },
-    //   { id: '5', name: 'Checking Account', bankName: 'Wells Fargo', balance: 3000, isNew: false },
-    //   { id: '6', name: 'Checking Account', bankName: 'Wells Fargo', balance: 3000, isNew: false },
-    //   { id: '7', name: 'Checking Account', bankName: 'Wells Fargo', balance: 3000, isNew: false },
-    //   { id: '8', name: 'Checking Account', bankName: 'Wells Fargo', balance: 3000, isNew: false },
-    // ];
-
     const allAccounts = [...accountsToImport, ...syncedAccounts];
 
     setAccounts(allAccounts);
     setIsLoading(false);
-  }, [accountsToImport, syncedAccounts]); // TODO: LINT ERROR
+  }, [accountsToImport, syncedAccounts]); // TODO (mustfix): LINT ERROR
 
   const toggleAccountSelection = (account: AppAccount | AppDraftAccount) => {
     if ('id' in account && account.id) {
@@ -256,6 +246,9 @@ export default function AccountSelectionScreen({
               }
               contentContainerStyle={styles.accountList}
               stickySectionHeadersEnabled={false}
+              ListEmptyComponent={renderNoStateMessage(
+                'No accounts were found',
+              )}
             />
             <TouchableOpacity
               style={styles.continueButton}

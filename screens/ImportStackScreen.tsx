@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ImportMethodSelectionScreen from './importing/ImportMethodSelection';
 import SimpleFinConnectionScreen from './importing/SimpleFinConnection';
 import AccountSelectionScreen from './importing/AccountSelection';
-import { AccountCustomizationScreen } from './importing/AccountCustomization';
+import AccountCustomizationScreen from './importing/AccountCustomization';
 import ImportSyncConfirmationScreen from './importing/ImportSyncConfirmation';
 import AccountUpdatesScreen from './importing/AccountUpdates';
 import {

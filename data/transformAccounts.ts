@@ -10,7 +10,8 @@ const orderedAccountTypes: AccountSummaryType[] = [
   'debt',
 ];
 
-const getTypeOfAccount = (account: AppAccount): AccountSummaryType => {
+// TODO: rethink the structure of this class
+export const getTypeOfAccount = (account: AppAccount): AccountSummaryType => {
   switch (account.type?.toLowerCase()) {
     case 'cash':
     case 'checking':

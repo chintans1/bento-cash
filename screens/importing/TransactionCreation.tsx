@@ -1,12 +1,11 @@
 import {
   ActivityIndicator,
   StyleSheet,
-  TouchableOpacity,
   SafeAreaView,
   Text,
   View,
 } from 'react-native';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
 import commonStyles from '../../styles/commonStyles';
@@ -63,8 +62,8 @@ export default function TransactionCreationScreen({
 
   const [isCreating, setIsCreating] = useState<boolean>(true);
 
-  const createTransactions = async () => {
-    if (selectedTransactions.length == 0) {
+  const createTransactions = useCallback(async () => {
+    if (selectedTransactions.length === 0) {
       navigation.replace('Completion');
       return;
     }
@@ -77,7 +76,7 @@ export default function TransactionCreationScreen({
       .createTransactions(draftTransactions)
       .then(() => navigation.replace('Completion'))
       .catch(() => setIsCreating(false));
-  };
+  }, [lunchMoneyClient, navigation, selectedTransactions]);
 
   useEffect(() => {
     createTransactions();

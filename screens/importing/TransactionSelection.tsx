@@ -19,7 +19,10 @@ import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { NewBrandingColours } from '../../styles/brandingConstants';
 import commonStyles from '../../styles/commonStyles';
 import { ImportStackParamList } from '../ImportStackScreen';
-import { AppCategory, AppDraftTransaction } from '../../models/lunchmoney/appModels';
+import {
+  AppCategory,
+  AppDraftTransaction,
+} from '../../models/lunchmoney/appModels';
 import { formatAmountString } from '../../data/formatBalance';
 
 import { getGroupedDraftTransactionsByAccount } from '../../data/utils';
@@ -28,11 +31,10 @@ import { getParsedTransactions } from '../../data/transformSimpleFin';
 import { getSimpleFinAuth } from '../../utils/simpleFinAuth';
 import { getAccountsData } from '../../clients/simplefinClient';
 import { useParentContext } from '../../context/app/appContextProvider';
+import renderNoStateMessage from '../../components/EmptyListComponent';
 
-// TODO: Add category support
-
-// Add activity indicator upon date changes to denote loading
-// Add no transactions to import screen
+// TODO (mustfix): Add category support
+// TODO (mustfix): Make sure the date is saved after importing
 
 const { height: screenHeight } = Dimensions.get('window');
 
@@ -79,8 +81,8 @@ const styles = StyleSheet.create({
   },
 
   sectionHeader: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: NewBrandingColours.neutral.lightGray,
     paddingVertical: 8,
     paddingHorizontal: 16,
@@ -95,6 +97,7 @@ const styles = StyleSheet.create({
 
   transactionList: {
     // paddingHorizontal: 16,
+    flexGrow: 1,
     paddingTop: 8,
   },
   transactionItem: {
@@ -254,7 +257,6 @@ const styles = StyleSheet.create({
     paddingTop: 8,
   },
 
-
   // Modal for category choice
   categoryModalContainer: {
     flex: 1,
@@ -370,15 +372,16 @@ export default function TransactionSelectionScreen({
   }, [filterDate]);
 
   const renderTransaction = (item: AppDraftTransaction) => {
-    const [categoryModalVisible, setCategoryModalVisible] = useState<boolean>(false);
+    const [categoryModalVisible, setCategoryModalVisible] =
+      useState<boolean>(false);
 
     const parsedAmount: number = parseFloat(item.amount);
     const transactionAmountString = formatAmountString(parsedAmount);
 
     const handleCategoryChange = (category: AppCategory) => {
-      item.categoryId = category.id,
-      item.categoryName = category.name,
-      setCategoryModalVisible(false);
+      (item.categoryId = category.id),
+        (item.categoryName = category.name),
+        setCategoryModalVisible(false);
     };
 
     return (
@@ -391,11 +394,15 @@ export default function TransactionSelectionScreen({
           <Text style={styles.transactionName}>{item.payee}</Text>
           {item.notes ? (
             <Text style={styles.transactionNotes}>{item.notes}</Text>
-          ) : null
-          }
+          ) : null}
           <TouchableOpacity onPress={() => setCategoryModalVisible(true)}>
             <Text style={styles.transactionNotes}>
-              {item.categoryName || 'Uncategorized'} <Icon name="chevron-down" size={14} color={NewBrandingColours.text.muted} />
+              {item.categoryName || 'Uncategorized'}{' '}
+              <Icon
+                name="chevron-down"
+                size={14}
+                color={NewBrandingColours.text.muted}
+              />
             </Text>
           </TouchableOpacity>
         </View>
@@ -425,11 +432,13 @@ export default function TransactionSelectionScreen({
 
         <Modal
           animationType="slide"
-          transparent={true}
+          transparent
           visible={categoryModalVisible}
           onRequestClose={() => setCategoryModalVisible(false)}
         >
-          <TouchableWithoutFeedback onPress={() => setCategoryModalVisible(false)}>
+          <TouchableWithoutFeedback
+            onPress={() => setCategoryModalVisible(false)}
+          >
             <View style={styles.categoryModalContainer}>
               <View style={styles.categoryModalContent}>
                 <Text style={styles.modalTitle}>Select Category</Text>
@@ -443,7 +452,7 @@ export default function TransactionSelectionScreen({
                       <Text style={styles.categoryText}>{category.name}</Text>
                     </TouchableOpacity>
                   )}
-                  keyExtractor={(item) => item.id.toString()}
+                  keyExtractor={item => item.id.toString()}
                 />
                 <TouchableOpacity
                   style={styles.closeModalButton}
@@ -533,6 +542,7 @@ export default function TransactionSelectionScreen({
             renderSectionHeader={renderSectionHeader}
             keyExtractor={item => item.externalId}
             contentContainerStyle={styles.transactionList}
+            ListEmptyComponent={renderNoStateMessage('No transactions found')}
           />
         )}
         <View style={styles.footer}>

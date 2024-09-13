@@ -18,9 +18,10 @@ import { NewBrandingColours } from '../../styles/brandingConstants';
 import commonStyles from '../../styles/commonStyles';
 import { useParentContext } from '../../context/app/appContextProvider';
 import { ImportStackParamList } from '../ImportStackScreen';
-import { accountTypes, AppDraftAccount } from '../../models/lunchmoney/appModels';
-
-// TODO: need to add category selection too tuff
+import {
+  accountTypes,
+  AppDraftAccount,
+} from '../../models/lunchmoney/appModels';
 
 const { height: screenHeight } = Dimensions.get('window');
 
@@ -162,22 +163,25 @@ interface AccountCustomizationProps {
   navigation: AccountCustomizationNavigationProp;
 }
 
-export function AccountCustomizationScreen({
+export default function AccountCustomizationScreen({
   route,
   navigation,
 }: AccountCustomizationProps) {
-  const accounts = Array.from(useParentContext().appState.accounts.values())
-    .filter(account => account.state === "open");
+  const accounts = Array.from(
+    useParentContext().appState.accounts.values(),
+  ).filter(account => account.state === 'open');
 
   const { selectedNewAccounts } = route.params;
   const [customizedAccounts, setCustomizedAccounts] =
     useState<AppDraftAccount[]>(selectedNewAccounts);
 
-  const [accountModalVisible, setAccountModalVisible] = useState<boolean>(false);
-  const [categoryModalVisible, setCategoryModalVisible] = useState<boolean>(false);
+  const [accountModalVisible, setAccountModalVisible] =
+    useState<boolean>(false);
+  const [categoryModalVisible, setCategoryModalVisible] =
+    useState<boolean>(false);
   const [selectedAccountId, setSelectedAccountId] = useState<string>(null);
 
-  const updateAccount = (id, fieldName: string, fieldValue: any) => {
+  const updateAccount = (id: string, fieldName: string, fieldValue) => {
     setCustomizedAccounts(prevAccounts =>
       prevAccounts.map(account =>
         account.externalAccountId === id
@@ -195,7 +199,7 @@ export function AccountCustomizationScreen({
   const openCategoryModal = (accountId: string) => {
     setSelectedAccountId(accountId);
     setCategoryModalVisible(true);
-  }
+  };
 
   const renderAccountItem = (account: AppDraftAccount) => (
     <View key={account.externalAccountId} style={styles.accountItem}>
@@ -317,7 +321,9 @@ export function AccountCustomizationScreen({
         visible={categoryModalVisible}
         onRequestClose={() => setCategoryModalVisible(false)}
       >
-        <TouchableWithoutFeedback onPress={() => setCategoryModalVisible(false)}>
+        <TouchableWithoutFeedback
+          onPress={() => setCategoryModalVisible(false)}
+        >
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
               <Text style={styles.modalTitle}>Select category of account</Text>
@@ -331,9 +337,7 @@ export function AccountCustomizationScreen({
                       setCategoryModalVisible(false);
                     }}
                   >
-                    <Text style={styles.categoryOptionText}>
-                      {type}
-                    </Text>
+                    <Text style={styles.categoryOptionText}>{type}</Text>
                   </TouchableOpacity>
                 ))}
               </ScrollView>

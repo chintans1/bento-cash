@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
 import { NewBrandingColours } from '../../styles/brandingConstants';
 import commonStyles from '../../styles/commonStyles';
 import {
@@ -154,13 +155,29 @@ export default function AccountUpdatesScreen({
   const createAndSyncAccounts = useCallback(async () => {
     // Should only run once
     console.log('We should only run createAndSyncAccounts once and leave');
-    await handleAccountCreation();
-    await handleSyncingAccounts();
+    try {
+      await handleAccountCreation();
+      await handleSyncingAccounts();
 
-    // TODO: we should show an created/synced toast message
+      Toast.show({
+        type: 'success',
+        text1: 'Accounts Synced',
+        text2: 'All selected accounts are available in Lunch Money.',
+        position: 'top',
+        visibilityTime: 5000,
+      });
+    } catch (error) {
+      setIsUpdating(false);
+      return;
+    }
 
     navigation.replace('TransactionSelection', { transactionsToImport });
-  }, [navigation, selectedNewAccounts, selectedExistingAccounts]);
+  }, [
+    navigation,
+    handleAccountCreation,
+    handleSyncingAccounts,
+    transactionsToImport,
+  ]);
 
   useEffect(() => {
     createAndSyncAccounts();
