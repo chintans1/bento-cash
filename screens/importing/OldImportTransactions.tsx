@@ -27,7 +27,7 @@ import { getSimpleFinAuth } from '../../utils/simpleFinAuth';
 import { StorageKeys } from '../../models/enums/storageKeys';
 import { storeData } from '../../utils/asyncStorage';
 import { getGroupedDraftTransactionsByAccount } from '../../data/utils';
-import ImportTransactionComponent from '../../components/importing/ImportTransaction';
+import ImportTransactionComponent from '../../components/importing/OldImportTransaction';
 import { BrandingColours } from '../../styles/brandingConstants';
 import oldCommonStyles from '../../styles/oldCommonStyles';
 

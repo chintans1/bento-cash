@@ -1,187 +1,252 @@
-import { View, Text, StyleSheet } from 'react-native';
 import { useState } from 'react';
-import { Dropdown } from 'react-native-element-dropdown';
-import Checkbox from 'expo-checkbox';
-import commonStyles from '../../styles/oldCommonStyles';
-import { BrandingColours } from '../../styles/brandingConstants';
+import {
+  Dimensions,
+  FlatList,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
+import Icon from 'react-native-vector-icons/Feather';
 import {
   AppCategory,
   AppDraftTransaction,
 } from '../../models/lunchmoney/appModels';
 import { formatAmountString } from '../../data/formatBalance';
+import { NewBrandingColours } from '../../styles/brandingConstants';
 
-type ImportTransactionProps = {
-  transaction: AppDraftTransaction;
-  availableCategories?: { label: string; value: AppCategory }[];
-  updateTransaction: (transaction: AppDraftTransaction) => void;
-};
+// TODO: not in use yet
+const { height: screenHeight } = Dimensions.get('window');
 
-const transactionStyles = StyleSheet.create({
-  card: {
+const styles = StyleSheet.create({
+  transactionItem: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
     alignItems: 'center',
-
-    backgroundColor: BrandingColours.shadedColour,
-    borderRadius: 5,
-
-    marginVertical: 3,
-    paddingVertical: 10,
-    paddingHorizontal: 10,
+    backgroundColor: NewBrandingColours.neutral.white,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
   },
-  dropdown: {
-    height: 25,
-    backgroundColor: BrandingColours.backgroundColour,
-    borderRadius: 10,
-    paddingHorizontal: 8,
-    color: BrandingColours.darkTextColour,
-  },
-  dropdownText: {
-    color: BrandingColours.darkTextColour,
-    fontSize: 10,
-  },
-  leftSection: {
-    flex: 4,
-    flexDirection: 'column',
-  },
-  rightSection: {
+  transactionInfo: {
     flex: 1,
-    flexDirection: 'column',
-    alignItems: 'flex-end',
+  },
+  transactionDate: {
+    fontSize: 14,
+    color: NewBrandingColours.text.secondary,
+    marginBottom: 4,
   },
   transactionName: {
-    flexWrap: 'wrap',
-    flexShrink: 1,
-    color: BrandingColours.darkTextColour,
     fontSize: 16,
+    fontWeight: '500',
+    color: NewBrandingColours.text.primary,
+    marginBottom: 4,
+  },
+  transactionNotes: {
+    fontSize: 14,
+    color: NewBrandingColours.text.muted,
+    marginBottom: 4,
+  },
+
+  transactionAmount: {
+    marginRight: 16,
+  },
+  amountText: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  positiveAmount: {
+    color: NewBrandingColours.secondary.main,
+  },
+  negativeAmount: {
+    color: NewBrandingColours.accent.red,
+  },
+  checkboxContainer: {
+    width: 24,
+    height: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  selectedIcon: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: NewBrandingColours.primary.main,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  unselectedIcon: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    borderWidth: 2,
+    borderColor: NewBrandingColours.neutral.gray,
+  },
+
+  categoryModalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  categoryModalContent: {
+    maxHeight: screenHeight * 0.6,
+    backgroundColor: NewBrandingColours.neutral.white,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 22,
+    alignItems: 'stretch',
+  },
+  categoryModalTitle: {
+    fontSize: 20,
     fontWeight: 'bold',
+    color: NewBrandingColours.text.primary,
+    marginBottom: 16,
+    textAlign: 'center',
   },
-  smallText: {
-    ...commonStyles.textBase,
-    color: 'grey',
-    fontSize: 12,
+  categoryItem: {
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: NewBrandingColours.neutral.lightGray,
   },
-  date: {
-    ...commonStyles.textBase,
-    color: 'grey',
-    fontSize: 10,
+  categoryText: {
+    fontSize: 16,
+    color: NewBrandingColours.text.primary,
   },
-  amount: {
-    color: BrandingColours.secondaryColour,
-    fontWeight: 'bold',
+  closeModalButton: {
+    marginTop: 16,
+    paddingVertical: 12,
+    alignItems: 'center',
   },
-  amountNegative: {
-    color: BrandingColours.red,
-  },
-  amountPositive: {
-    color: BrandingColours.green,
-  },
-  checkbox: {
-    alignItems: 'flex-end',
-    flexDirection: 'column',
+  closeModalButtonText: {
+    fontSize: 18,
+    color: NewBrandingColours.primary.main,
+    fontWeight: '600',
   },
 });
 
-function ImportTransactionComponent({
+type ImportTransactionProps = {
+  transaction: AppDraftTransaction;
+  categories: AppCategory[];
+  updateTransaction: (
+    transaction: AppDraftTransaction,
+    selected: boolean,
+  ) => void;
+};
+
+export default function ImportTransaction({
   transaction,
-  availableCategories,
+  categories,
   updateTransaction,
 }: ImportTransactionProps) {
-  const [checkboxClicked, setCheckboxClicked] = useState<boolean>(false);
-  const [inputDisabled, setInputDisabled] = useState<boolean>(false);
-
-  const [selectedCategory, setSelectedCategory] = useState<AppCategory>(null);
+  const [categoryModalVisible, setCategoryModalVisible] =
+    useState<boolean>(false);
+  const [selected, setSelected] = useState<boolean>(false);
+  const [categoryChosen, setCategoryChosen] = useState<AppCategory>(null);
 
   const parsedAmount: number = parseFloat(transaction.amount);
   const transactionAmountString = formatAmountString(parsedAmount);
 
-  const handleCategorySelection = (category: AppCategory) => {
-    setSelectedCategory(category);
+  const handleTransactionSelection = () => {
+    const newSelected = !selected;
+    setSelected(newSelected);
+    updateTransaction(transaction, newSelected);
   };
 
-  const handleCheckboxClick = (checked: boolean) => {
-    setCheckboxClicked(checked);
-    setInputDisabled(checked);
-    updateTransaction({
-      ...transaction,
-      categoryId: selectedCategory?.id,
-      categoryName: selectedCategory?.name,
-      importable: checked,
-    });
+  const handleCategoryChange = (category: AppCategory) => {
+    setCategoryChosen(category);
+    updateTransaction(
+      {
+        ...transaction,
+        categoryId: category.id,
+        categoryName: category.name,
+      },
+      selected,
+    );
+    setCategoryModalVisible(false);
   };
 
   return (
-    <View style={transactionStyles.card}>
-      <View style={transactionStyles.leftSection}>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'baseline',
-            justifyContent: 'flex-start',
-          }}
+    <TouchableOpacity
+      style={styles.transactionItem}
+      onPress={() => handleTransactionSelection()}
+    >
+      <View style={styles.transactionInfo}>
+        <Text style={styles.transactionDate}>{transaction.date}</Text>
+        <Text style={styles.transactionName}>{transaction.payee}</Text>
+        {transaction.notes ? (
+          <Text style={styles.transactionNotes}>{transaction.notes}</Text>
+        ) : null}
+        <TouchableOpacity onPress={() => setCategoryModalVisible(true)}>
+          <Text style={styles.transactionNotes}>
+            {categoryChosen?.name || 'Uncategorized'}{' '}
+            <Icon
+              name="chevron-down"
+              size={14}
+              color={NewBrandingColours.text.muted}
+            />
+          </Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.transactionAmount}>
+        <Text
+          style={[
+            styles.amountText,
+            parsedAmount >= 0 ? styles.positiveAmount : styles.negativeAmount,
+          ]}
         >
-          <Text
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            style={transactionStyles.transactionName}
-          >
-            {transaction.payee}
-          </Text>
-          <Text
-            style={[
-              transactionStyles.amount,
-              parsedAmount >= 0
-                ? transactionStyles.amountPositive
-                : transactionStyles.amountNegative,
-            ]}
-          >
-            {' '}
-            {transactionAmountString}
-          </Text>
-          <Text style={transactionStyles.date}> {transaction.date}</Text>
-        </View>
-
-        <View style={{ flexDirection: 'row' }}>
-          <Text style={[transactionStyles.smallText, { flex: 1 }]}>
-            {transaction.notes ?? 'no memo provided'}
-          </Text>
-        </View>
-
-        <Dropdown
-          disable={inputDisabled || availableCategories.length === 0}
-          style={transactionStyles.dropdown}
-          placeholder={
-            availableCategories.length === 0
-              ? 'no category to choose'
-              : 'choose category...'
-          }
-          itemTextStyle={transactionStyles.dropdownText}
-          placeholderStyle={transactionStyles.dropdownText}
-          selectedTextStyle={transactionStyles.dropdownText}
-          data={availableCategories}
-          labelField="label"
-          valueField="value"
-          onChange={valueSelected =>
-            handleCategorySelection(valueSelected.value)
-          }
-        />
+          {transactionAmountString}
+        </Text>
+      </View>
+      <View style={styles.checkboxContainer}>
+        {selected ? (
+          <View style={styles.selectedIcon}>
+            <Icon
+              name="check"
+              size={24}
+              color={NewBrandingColours.neutral.white}
+            />
+          </View>
+        ) : (
+          <View style={styles.unselectedIcon} />
+        )}
       </View>
 
-      <View style={transactionStyles.rightSection}>
-        <View style={transactionStyles.checkbox}>
-          <Checkbox
-            color={BrandingColours.secondaryColour}
-            style={{
-              borderRadius: 15,
-              backgroundColor: BrandingColours.secondaryColour,
-            }}
-            value={checkboxClicked}
-            onValueChange={handleCheckboxClick}
-          />
-        </View>
-      </View>
-    </View>
+      <Modal
+        animationType="slide"
+        transparent
+        visible={categoryModalVisible}
+        onRequestClose={() => setCategoryModalVisible(false)}
+      >
+        <TouchableWithoutFeedback
+          onPress={() => setCategoryModalVisible(false)}
+        >
+          <View style={styles.categoryModalContainer}>
+            <View style={styles.categoryModalContent}>
+              <Text style={styles.categoryModalTitle}>Select Category</Text>
+              <FlatList
+                data={categories}
+                renderItem={({ item: category }) => (
+                  <TouchableOpacity
+                    style={styles.categoryItem}
+                    onPress={() => handleCategoryChange(category)}
+                  >
+                    <Text style={styles.categoryText}>{category.name}</Text>
+                  </TouchableOpacity>
+                )}
+                keyExtractor={item => item.id.toString()}
+              />
+              <TouchableOpacity
+                style={styles.closeModalButton}
+                onPress={() => setCategoryModalVisible(false)}
+              >
+                <Text style={styles.closeModalButtonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+    </TouchableOpacity>
   );
 }
-
-export default ImportTransactionComponent;
