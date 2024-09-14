@@ -1,3 +1,4 @@
+// eslint-disable-next-line max-classes-per-file
 class BrandingColours {
   // TODO: get rid of this
   static primaryColour = '#1B1B1B'; // '#171717'; // "#FCA311";

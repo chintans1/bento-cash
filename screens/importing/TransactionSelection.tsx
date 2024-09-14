@@ -371,33 +371,33 @@ export default function TransactionSelectionScreen({
     // setIsFetchingTransactions(false);
   }, [filterDate]);
 
-  const renderTransaction = (item: AppDraftTransaction) => {
+  const renderTransaction = (transaction: AppDraftTransaction) => {
     const [categoryModalVisible, setCategoryModalVisible] =
       useState<boolean>(false);
 
-    const parsedAmount: number = parseFloat(item.amount);
+    const parsedAmount: number = parseFloat(transaction.amount);
     const transactionAmountString = formatAmountString(parsedAmount);
 
     const handleCategoryChange = (category: AppCategory) => {
-      (item.categoryId = category.id),
-        (item.categoryName = category.name),
-        setCategoryModalVisible(false);
+      transaction.categoryId = category.id;
+      transaction.categoryName = category.name;
+      setCategoryModalVisible(false);
     };
 
     return (
       <TouchableOpacity
         style={styles.transactionItem}
-        onPress={() => toggleTransactionSelection(item)}
+        onPress={() => toggleTransactionSelection(transaction)}
       >
         <View style={styles.transactionInfo}>
-          <Text style={styles.transactionDate}>{item.date}</Text>
-          <Text style={styles.transactionName}>{item.payee}</Text>
-          {item.notes ? (
-            <Text style={styles.transactionNotes}>{item.notes}</Text>
+          <Text style={styles.transactionDate}>{transaction.date}</Text>
+          <Text style={styles.transactionName}>{transaction.payee}</Text>
+          {transaction.notes ? (
+            <Text style={styles.transactionNotes}>{transaction.notes}</Text>
           ) : null}
           <TouchableOpacity onPress={() => setCategoryModalVisible(true)}>
             <Text style={styles.transactionNotes}>
-              {item.categoryName || 'Uncategorized'}{' '}
+              {transaction.categoryName || 'Uncategorized'}{' '}
               <Icon
                 name="chevron-down"
                 size={14}
@@ -417,7 +417,7 @@ export default function TransactionSelectionScreen({
           </Text>
         </View>
         <View style={styles.checkboxContainer}>
-          {selectedTransactions[item.externalId] ? (
+          {selectedTransactions[transaction.externalId] ? (
             <View style={styles.selectedIcon}>
               <Icon
                 name="check"

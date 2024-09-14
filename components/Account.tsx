@@ -56,11 +56,11 @@ const getAccountIcon = (type: AccountType): string => {
     case 'employee compensation':
       return 'trending-up';
     case 'cash':
-      return 'credit-card';
+      return 'dollar-sign';
     case 'vehicle':
-      return 'box';
+      return 'truck';
     case 'loan':
-      return 'box';
+      return 'trending-down';
     case 'cryptocurrency':
       return 'cloud';
     case 'investment':
