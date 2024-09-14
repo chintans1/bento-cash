@@ -20,6 +20,7 @@ const styles = StyleSheet.create({
   },
   content: {
     ...commonStyles.content,
+    // flexGrow: 1,
   },
   headerTitle: {
     ...commonStyles.headerText,
@@ -219,9 +220,9 @@ export default function ImportSyncConfirmationScreen({
     </View>
   );
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.content}>
+  const renderHeader = () => {
+    return (
+      <View>
         <Text style={styles.headerTitle}>Confirm Import & Sync</Text>
 
         <View style={styles.summaryContainer}>
@@ -232,44 +233,59 @@ export default function ImportSyncConfirmationScreen({
             {selectedExistingAccounts.length !== 1 ? 's' : ''}.
           </Text>
         </View>
+      </View>
+    );
+  };
 
-        {renderAccountList(selectedNewAccounts, 'New Accounts to Import')}
-        {renderAccountList(
-          selectedExistingAccounts,
-          'Existing Accounts to Sync',
-        )}
-
-        <TouchableOpacity
-          style={[
-            styles.customizeButton,
-            selectedNewAccounts.length === 0 && styles.buttonDisabled,
-          ]}
-          disabled={selectedNewAccounts.length === 0}
-          onPress={() =>
-            navigation.navigate('AccountCustomization', {
-              ...route.params,
-              selectedNewAccounts,
-            })
-          }
-        >
-          <Text style={styles.customizeButtonText}>Customize New Accounts</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.confirmButton}
-          onPress={() => {
-            // Handle confirmation logic here
-            navigation.navigate('AccountUpdates', {
-              ...route.params,
-              selectedNewAccounts,
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.content}>
+        {renderHeader()}
+        <ScrollView>
+          <View>
+            {renderAccountList(selectedNewAccounts, 'New Accounts to Import')}
+            {renderAccountList(
               selectedExistingAccounts,
-              transactionsToImport,
-            });
-          }}
-        >
-          <Text style={styles.confirmButtonText}>Confirm and Proceed</Text>
-        </TouchableOpacity>
-      </ScrollView>
+              'Existing Accounts to Sync',
+            )}
+          </View>
+        </ScrollView>
+
+        <View>
+          <TouchableOpacity
+            style={[
+              styles.customizeButton,
+              selectedNewAccounts.length === 0 && styles.buttonDisabled,
+            ]}
+            disabled={selectedNewAccounts.length === 0}
+            onPress={() =>
+              navigation.navigate('AccountCustomization', {
+                ...route.params,
+                selectedNewAccounts,
+              })
+            }
+          >
+            <Text style={styles.customizeButtonText}>
+              Customize New Accounts
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.confirmButton}
+            onPress={() => {
+              // Handle confirmation logic here
+              navigation.navigate('AccountUpdates', {
+                ...route.params,
+                selectedNewAccounts,
+                selectedExistingAccounts,
+                transactionsToImport,
+              });
+            }}
+          >
+            <Text style={styles.confirmButtonText}>Confirm and Proceed</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </SafeAreaView>
   );
 }
