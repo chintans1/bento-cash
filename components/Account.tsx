@@ -55,6 +55,7 @@ const getAccountIcon = (type: AccountType): string => {
   switch (type.toLowerCase()) {
     case 'employee compensation':
       return 'trending-up';
+    case 'depository':
     case 'cash':
       return 'dollar-sign';
     case 'vehicle':
@@ -64,6 +65,7 @@ const getAccountIcon = (type: AccountType): string => {
     case 'cryptocurrency':
       return 'cloud';
     case 'investment':
+    case 'brokerage':
       return 'trending-up';
     case 'other liability':
       return 'shopping-cart';

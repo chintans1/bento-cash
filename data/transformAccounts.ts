@@ -15,6 +15,7 @@ export const getTypeOfAccount = (account: AppAccount): AccountSummaryType => {
   switch (account.type?.toLowerCase()) {
     case 'cash':
     case 'checking':
+    case 'depository':
       return 'checking';
     case 'employee compensation':
     case 'cryptocurrency':
@@ -22,6 +23,7 @@ export const getTypeOfAccount = (account: AppAccount): AccountSummaryType => {
     case 'real estate':
     case 'vehicle':
     case 'investment':
+    case 'brokerage':
       return 'investment';
     case 'credit':
     case 'other liability':
