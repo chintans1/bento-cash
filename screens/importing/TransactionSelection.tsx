@@ -26,15 +26,12 @@ import {
 import { formatAmountString } from '../../data/formatBalance';
 
 import { getGroupedDraftTransactionsByAccount } from '../../data/utils';
-import { getLastImportDate } from '../../storage/importDate';
+import { getLastImportDate, storeLastImportDate } from '../../storage/importDate';
 import { getParsedTransactions } from '../../data/transformSimpleFin';
 import { getSimpleFinAuth } from '../../utils/simpleFinAuth';
 import { getAccountsData } from '../../clients/simplefinClient';
 import { useParentContext } from '../../context/app/appContextProvider';
 import renderNoStateMessage from '../../components/EmptyListComponent';
-
-// TODO (mustfix): Add category support
-// TODO (mustfix): Make sure the date is saved after importing
 
 const { height: screenHeight } = Dimensions.get('window');
 
@@ -357,9 +354,8 @@ export default function TransactionSelectionScreen({
 
   const handleDateChange = useCallback(async () => {
     // TODO: we should get simplefinAuth from global state
-    // setIsFetchingTransactions(true);
-    // await storeData(StorageKeys.LAST_DATE_OF_IMPORT, date.toISOString());
     console.log('should not trigger unless date is changed by user');
+    await storeLastImportDate(filterDate);
 
     const parsedTransactions = getParsedTransactions(
       await getAccountsData(await getSimpleFinAuth(), filterDate),
