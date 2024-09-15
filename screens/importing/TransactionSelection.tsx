@@ -93,7 +93,6 @@ const styles = StyleSheet.create({
   },
 
   transactionList: {
-    // paddingHorizontal: 16,
     flexGrow: 1,
     paddingTop: 8,
   },
@@ -104,15 +103,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
-    // shadowColor: NewBrandingColours.neutral.black,
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 0.1,
-    // shadowRadius: 4,
-    // elevation: 3,
   },
-  // selectedTransactionItem: {
-  //   backgroundColor: NewBrandingColours.primary.light,
-  // },
   transactionInfo: {
     flex: 1,
   },
@@ -179,10 +170,6 @@ const styles = StyleSheet.create({
   },
 
   footer: {
-    // padding: 16,
-    // backgroundColor: NewBrandingColours.neutral.white,
-    // borderTopWidth: 1,
-    // borderTopColor: NewBrandingColours.neutral.lightGray,
   },
   continueButton: {
     backgroundColor: NewBrandingColours.primary.main,
@@ -218,7 +205,6 @@ const styles = StyleSheet.create({
   },
   datePicker: {
     width: 320,
-    // height: 260,
   },
   modalButtons: {
     flexDirection: 'row',
@@ -362,9 +348,6 @@ export default function TransactionSelectionScreen({
     );
     setTransactions(parsedTransactions);
     setFilterDateManuallyChanged(false);
-
-    // setImportingTransactions(parsedTransactions);
-    // setIsFetchingTransactions(false);
   }, [filterDate]);
 
   const renderTransaction = (transaction: AppDraftTransaction) => {
