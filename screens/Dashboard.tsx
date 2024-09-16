@@ -78,7 +78,6 @@ interface SectionItem {
 }
 
 export default function Dashboard({ navigation }) {
-  // TODO: gather networth
   const { transactions, accounts: accountsMap } =
     useParentContext()?.appState ?? {};
   const recentTransactions =

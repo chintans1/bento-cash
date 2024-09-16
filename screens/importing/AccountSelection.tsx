@@ -153,7 +153,7 @@ export default function AccountSelectionScreen({
 
     setAccounts(allAccounts);
     setIsLoading(false);
-  }, [accountsToImport, syncedAccounts]); // TODO (mustfix): LINT ERROR
+  }, [accountsToImport, syncedAccounts]);
 
   const toggleAccountSelection = (account: AppAccount | AppDraftAccount) => {
     if ('id' in account && account.id) {

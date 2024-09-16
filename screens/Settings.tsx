@@ -64,12 +64,6 @@ const styles = StyleSheet.create({
     backgroundColor: NewBrandingColours.neutral.white,
     borderRadius: 12,
     overflow: 'hidden',
-    // padding: 16,
-    // shadowColor: NewBrandingColours.neutral.black,
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 0.1,
-    // shadowRadius: 4,
-    // elevation: 3,
   },
   budgetInfoHeader: {
     backgroundColor: NewBrandingColours.primary.main,
@@ -91,8 +85,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 8,
-    // borderBottomWidth: 1,
-    // borderBottomColor: NewBrandingColours.neutral.lightGray,
   },
 
   infoLabel: {

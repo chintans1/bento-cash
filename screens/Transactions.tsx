@@ -22,8 +22,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     backgroundColor: NewBrandingColours.neutral.white,
-    // borderBottomWidth: 1,
-    // borderBottomColor: NewBrandingColours.neutral.lightGray,
   },
   headerTitle: {
     fontSize: 20,
@@ -42,7 +40,6 @@ const styles = StyleSheet.create({
   sortLabel: {
     fontSize: 16,
     color: NewBrandingColours.text.secondary,
-    // marginRight: 8,
   },
   sortButtonsContainer: {
     flexDirection: 'row',
