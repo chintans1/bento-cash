@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
   },
   content: {
     ...commonStyles.content,
-    flex: 0,
+    flex: 1,
   },
 
   headerTitle: {
@@ -255,7 +255,7 @@ export default function Settings({ navigation }) {
         keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
         style={styles.container}
       >
-        <SafeAreaView>
+        <SafeAreaView style={{ flex: 1 }}>
           <Text style={styles.headerTitle}>Settings</Text>
           <View style={styles.content}>
             <ScrollView>
