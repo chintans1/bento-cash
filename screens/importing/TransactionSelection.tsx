@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Dimensions,
   FlatList,
   Modal,
   SafeAreaView,
-  SectionList,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -25,7 +24,6 @@ import {
 } from '../../models/lunchmoney/appModels';
 import { formatAmountString } from '../../data/formatBalance';
 
-import { getGroupedDraftTransactionsByAccount } from '../../data/utils';
 import { getLastImportDate, storeLastImportDate } from '../../storage/importDate';
 import { getParsedTransactions } from '../../data/transformSimpleFin';
 import { getSimpleFinAuth } from '../../utils/simpleFinAuth';
@@ -282,6 +280,148 @@ const styles = StyleSheet.create({
   },
 });
 
+type ImportAccount = {
+  id: string;
+  accountName: string;
+}
+
+const TransactionItem = ({ item, toggleTransactionSelection, selectedTransactions, categories }) => {
+  const parsedAmount = parseFloat(item.amount);
+  const transactionAmountString = formatAmountString(parsedAmount);
+
+  const [categoryModalVisible, setCategoryModalVisible] = useState<boolean>(false);
+
+  const handleCategoryChange = (category: AppCategory) => {
+    item.categoryId = category.id;
+    item.categoryName = category.name;
+    setCategoryModalVisible(false);
+  };
+
+  return (
+    <TouchableOpacity
+      style={styles.transactionItem}
+      onPress={() => toggleTransactionSelection(item)}
+    >
+      <View style={styles.transactionInfo}>
+        <Text style={styles.transactionDate}>{item.date}</Text>
+        <Text style={styles.transactionName}>{item.payee}</Text>
+        {item.notes ? (
+            <Text style={styles.transactionNotes}>{item.notes}</Text>
+          ) : null}
+
+        <TouchableOpacity onPress={() => setCategoryModalVisible(true)}>
+          <Text style={styles.transactionNotes}>
+            {item.categoryName || 'Uncategorized'}{' '}
+            <Icon
+              name="chevron-down"
+              size={14}
+              color={NewBrandingColours.text.muted}
+            />
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.transactionAmount}>
+        <Text
+          style={[
+            styles.amountText,
+            parsedAmount >= 0 ? styles.positiveAmount : styles.negativeAmount,
+          ]}
+        >
+          {transactionAmountString}
+        </Text>
+      </View>
+
+      <View style={styles.checkboxContainer}>
+        {selectedTransactions[item.externalId] ? (
+          <View style={styles.selectedIcon}>
+            <Icon
+              name="check"
+              size={24}
+              color={NewBrandingColours.neutral.white}
+            />
+          </View>
+        ) : (
+          <View style={styles.unselectedIcon} />
+        )}
+      </View>
+
+      <Modal
+        animationType="slide"
+        transparent
+        visible={categoryModalVisible}
+        onRequestClose={() => setCategoryModalVisible(false)}
+      >
+        <TouchableWithoutFeedback
+          onPress={() => setCategoryModalVisible(false)}
+        >
+          <View style={styles.categoryModalContainer}>
+            <View style={styles.categoryModalContent}>
+              <Text style={styles.modalTitle}>Select Category</Text>
+              <FlatList
+                data={categories}
+                renderItem={({ item: category }) => (
+                  <TouchableOpacity
+                    style={styles.categoryItem}
+                    onPress={() => handleCategoryChange(category)}
+                  >
+                    <Text style={styles.categoryText}>{category.name}</Text>
+                  </TouchableOpacity>
+                )}
+                keyExtractor={item => item.id.toString()}
+              />
+              <TouchableOpacity
+                style={styles.closeModalButton}
+                onPress={() => setCategoryModalVisible(false)}
+              >
+                <Text style={styles.closeModalButtonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+    </TouchableOpacity>
+  );
+};
+
+const TransactionSection = ({ account, transactions, toggleTransactionSelection, selectedTransactions, categories }) => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const toggleCollapse = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
+  return (
+    <View>
+      <TouchableOpacity style={styles.sectionHeader} onPress={toggleCollapse}>
+        <Text style={styles.sectionHeaderText}>{account.accountName}</Text>
+        <View style={{ flex: 1, alignItems: "flex-end" }}>
+          <Icon
+            name={isCollapsed ? "chevron-up" : "chevron-down"}
+            size={24}
+            color={NewBrandingColours.text.secondary}
+          />
+        </View>
+      </TouchableOpacity>
+
+      {!isCollapsed && (
+        <FlatList
+          data={transactions}
+          renderItem={({ item }) => (
+            <TransactionItem
+              item={item}
+              toggleTransactionSelection={toggleTransactionSelection}
+              selectedTransactions={selectedTransactions}
+              categories={categories}
+            />
+          )}
+          keyExtractor={(item) => item.externalId}
+        />
+      )}
+    </View>
+  );
+};
+
 type TransactionSelectionNavigationProp = NativeStackNavigationProp<
   ImportStackParamList,
   'TransactionSelection'
@@ -305,6 +445,22 @@ export default function TransactionSelectionScreen({
 
   const [transactions, setTransactions] =
     useState<AppDraftTransaction[]>(transactionsToImport);
+
+  const [accounts, setAccounts] = useState<ImportAccount[]>(
+    transactionsToImport.reduce((acc, transaction) => {
+      const id = transaction.lmAccountId?.toString() || transaction.externalAccountId;
+
+      if (!acc.some(account => account.id === id)) {
+        acc.push({
+          id,
+          accountName: transaction.externalAccountName,
+        });
+      }
+
+      return acc;
+    }, [] as ImportAccount[])
+  );
+
   const [selectedTransactions, setSelectedTransactions] = useState<
     Record<string, AppDraftTransaction>
   >({});
@@ -313,11 +469,6 @@ export default function TransactionSelectionScreen({
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [filterDateManuallyChanged, setFilterDateManuallyChanged] =
     useState<boolean>(false);
-
-  const filteredTransactions = useMemo(
-    () => getGroupedDraftTransactionsByAccount(transactions),
-    [transactions],
-  );
 
   const hydrateFilterDate = useCallback(async () => {
     const lastImportDate = await getLastImportDate();
@@ -347,122 +498,23 @@ export default function TransactionSelectionScreen({
       await getAccountsData(await getSimpleFinAuth(), filterDate),
     );
     setTransactions(parsedTransactions);
+
+    setAccounts(parsedTransactions.reduce((acc, transaction) => {
+      const id = transaction.lmAccountId?.toString() || transaction.externalAccountId;
+
+      if (!acc.some(account => account.id === id)) {
+        acc.push({
+          id,
+          accountName: transaction.externalAccountName,
+        });
+      }
+
+      return acc;
+    }, [] as ImportAccount[]));
+
     setFilterDateManuallyChanged(false);
   }, [filterDate]);
 
-  const renderTransaction = (transaction: AppDraftTransaction) => {
-    const [categoryModalVisible, setCategoryModalVisible] =
-      useState<boolean>(false);
-
-    const parsedAmount: number = parseFloat(transaction.amount);
-    const transactionAmountString = formatAmountString(parsedAmount);
-
-    const handleCategoryChange = (category: AppCategory) => {
-      transaction.categoryId = category.id;
-      transaction.categoryName = category.name;
-      setCategoryModalVisible(false);
-    };
-
-    return (
-      <TouchableOpacity
-        style={styles.transactionItem}
-        onPress={() => toggleTransactionSelection(transaction)}
-      >
-        <View style={styles.transactionInfo}>
-          <Text style={styles.transactionDate}>{transaction.date}</Text>
-          <Text style={styles.transactionName}>{transaction.payee}</Text>
-          {transaction.notes ? (
-            <Text style={styles.transactionNotes}>{transaction.notes}</Text>
-          ) : null}
-          <TouchableOpacity onPress={() => setCategoryModalVisible(true)}>
-            <Text style={styles.transactionNotes}>
-              {transaction.categoryName || 'Uncategorized'}{' '}
-              <Icon
-                name="chevron-down"
-                size={14}
-                color={NewBrandingColours.text.muted}
-              />
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.transactionAmount}>
-          <Text
-            style={[
-              styles.amountText,
-              parsedAmount >= 0 ? styles.positiveAmount : styles.negativeAmount,
-            ]}
-          >
-            {transactionAmountString}
-          </Text>
-        </View>
-        <View style={styles.checkboxContainer}>
-          {selectedTransactions[transaction.externalId] ? (
-            <View style={styles.selectedIcon}>
-              <Icon
-                name="check"
-                size={24}
-                color={NewBrandingColours.neutral.white}
-              />
-            </View>
-          ) : (
-            <View style={styles.unselectedIcon} />
-          )}
-        </View>
-
-        <Modal
-          animationType="slide"
-          transparent
-          visible={categoryModalVisible}
-          onRequestClose={() => setCategoryModalVisible(false)}
-        >
-          <TouchableWithoutFeedback
-            onPress={() => setCategoryModalVisible(false)}
-          >
-            <View style={styles.categoryModalContainer}>
-              <View style={styles.categoryModalContent}>
-                <Text style={styles.modalTitle}>Select Category</Text>
-                <FlatList
-                  data={categories}
-                  renderItem={({ item: category }) => (
-                    <TouchableOpacity
-                      style={styles.categoryItem}
-                      onPress={() => handleCategoryChange(category)}
-                    >
-                      <Text style={styles.categoryText}>{category.name}</Text>
-                    </TouchableOpacity>
-                  )}
-                  keyExtractor={item => item.id.toString()}
-                />
-                <TouchableOpacity
-                  style={styles.closeModalButton}
-                  onPress={() => setCategoryModalVisible(false)}
-                >
-                  <Text style={styles.closeModalButtonText}>Cancel</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </TouchableWithoutFeedback>
-        </Modal>
-      </TouchableOpacity>
-    );
-  };
-
-  const renderSectionHeader = ({ section: { title: accountName } }) => {
-    return (
-      <TouchableOpacity disabled>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionHeaderText}>{accountName}</Text>
-          {/* <View style={{ flex: 1, alignItems: "flex-end" }}>
-            <Icon
-              name="chevron-down"
-              size={18}
-              color={NewBrandingColours.text.secondary}
-            />
-          </View> */}
-        </View>
-      </TouchableOpacity>
-    );
-  };
 
   useEffect(() => {
     hydrateFilterDate();
@@ -503,7 +555,6 @@ export default function TransactionSelectionScreen({
           />
         </TouchableOpacity>
 
-        {/* <Text style={styles.headerSubtitle}>Choose transactions to import or sync</Text> */}
         {filterDateManuallyChanged ? (
           <View
             style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
@@ -515,14 +566,21 @@ export default function TransactionSelectionScreen({
             <Text style={styles.loadingText}>Loading transactions...</Text>
           </View>
         ) : (
-          <SectionList
-            sections={filteredTransactions}
-            renderItem={({ item }) => renderTransaction(item)}
-            renderSectionHeader={renderSectionHeader}
-            keyExtractor={item => item.externalId}
-            contentContainerStyle={styles.transactionList}
-            ListEmptyComponent={renderNoStateMessage('No transactions found')}
-          />
+          <FlatList
+          data={accounts} // TODO need to make this efficient
+          contentContainerStyle={styles.transactionList}
+          renderItem={({ item: account }) => (
+            <TransactionSection
+              account={account}
+              transactions={transactions.filter(t => t.externalAccountId === account.id || t.lmAccountId?.toString() === account.id)}
+              toggleTransactionSelection={toggleTransactionSelection}
+              selectedTransactions={selectedTransactions}
+              categories={categories}
+            />
+          )}
+          keyExtractor={(item) => item.id}
+          ListEmptyComponent={renderNoStateMessage}
+        />
         )}
         <View style={styles.footer}>
           <TouchableOpacity
