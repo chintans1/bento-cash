@@ -4,6 +4,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Toast from 'react-native-toast-message';
+import * as Sentry from '@sentry/react-native';
+import Constants from 'expo-constants';
 import Transactions from './screens/Transactions';
 import Charts from './screens/Charts';
 import { NewBrandingColours } from './styles/brandingConstants';
@@ -25,7 +27,12 @@ const renderTabIcon = (routeName: string, color: string, size: number) => {
   );
 };
 
-export default function App() {
+Sentry.init({
+  dsn: Constants.expoConfig?.extra?.SENTRY_DSN,
+  debug: true, // If `true`, Sentry will try to print out useful debugging information if something goes wrong with sending the event. Set it to `false` in production
+});
+
+function App() {
   return (
     <ErrorBoundary>
       <AppProvider>
@@ -70,3 +77,5 @@ export default function App() {
     </ErrorBoundary>
   );
 }
+
+export default Sentry.wrap(App);
