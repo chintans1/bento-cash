@@ -19,6 +19,7 @@ import { useParentContext } from '../../context/app/appContextProvider';
 import InternalLunchMoneyClient from '../../clients/lunchMoneyClient';
 import { AccountType } from '../../models/lunchmoney/appModels';
 import { ImportStackParamList } from '../ImportStackScreen';
+import { ErrorType, handleError } from '../../utils/errorHandler';
 
 const styles = StyleSheet.create({
   container: {
@@ -102,9 +103,13 @@ export default function AccountUpdatesScreen({
               existingLmAccountId.toString(),
             );
           })
-          .catch(err =>
-            console.error(`Failed to sync account balance: ${err}`),
-          );
+          .catch(err => {
+            console.error(`Failed to sync account balance: ${err}`);
+            handleError({
+              errorType: ErrorType.LUNCH_MONEY_API_ERROR,
+              message: `Failed to sync account balance for account ${accountToCreate.accountName}, error ${err}`,
+            });
+          });
 
         promises.push(updatePromise);
       } else {
@@ -116,9 +121,13 @@ export default function AccountUpdatesScreen({
               createdAccount.id.toString(),
             );
           })
-          .catch(err =>
-            console.error(`Failed to create account in import flow: ${err}`),
-          );
+          .catch(err => {
+            console.error(`Failed to create account in import flow: ${err}`);
+            handleError({
+              errorType: ErrorType.LUNCH_MONEY_API_ERROR,
+              message: `Failed to create account ${accountToCreate.accountName}, error ${err}`,
+            });
+          });
 
         promises.push(createPromise);
       }

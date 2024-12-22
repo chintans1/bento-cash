@@ -14,8 +14,6 @@ import SettingsStackScreen from './screens/SettingsStackScreen';
 import TabBarIcon, { getTabRoute } from './components/icons/TabBarIcon';
 import AppProvider from './context/app/AppProvider';
 
-// https://github.com/expo/expo/issues/28618#issuecomment-2099225578
-import 'react-native-reanimated';
 import ErrorBoundary from './context/app/ErrorBoundary';
 import Dashboard from './screens/Dashboard';
 
@@ -29,7 +27,7 @@ const renderTabIcon = (routeName: string, color: string, size: number) => {
 
 Sentry.init({
   dsn: Constants.expoConfig?.extra?.SENTRY_DSN,
-  debug: true, // If `true`, Sentry will try to print out useful debugging information if something goes wrong with sending the event. Set it to `false` in production
+  debug: __DEV__,
 });
 
 function App() {
