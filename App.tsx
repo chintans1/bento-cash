@@ -4,6 +4,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Toast from 'react-native-toast-message';
+import * as Sentry from '@sentry/react-native';
+import Constants from 'expo-constants';
 import Transactions from './screens/Transactions';
 import Charts from './screens/Charts';
 import { NewBrandingColours } from './styles/brandingConstants';
@@ -12,8 +14,6 @@ import SettingsStackScreen from './screens/SettingsStackScreen';
 import TabBarIcon, { getTabRoute } from './components/icons/TabBarIcon';
 import AppProvider from './context/app/AppProvider';
 
-// https://github.com/expo/expo/issues/28618#issuecomment-2099225578
-import 'react-native-reanimated';
 import ErrorBoundary from './context/app/ErrorBoundary';
 import Dashboard from './screens/Dashboard';
 
@@ -25,7 +25,12 @@ const renderTabIcon = (routeName: string, color: string, size: number) => {
   );
 };
 
-export default function App() {
+Sentry.init({
+  dsn: Constants.expoConfig?.extra?.SENTRY_DSN,
+  debug: __DEV__,
+});
+
+function App() {
   return (
     <ErrorBoundary>
       <AppProvider>
@@ -70,3 +75,5 @@ export default function App() {
     </ErrorBoundary>
   );
 }
+
+export default Sentry.wrap(App);
