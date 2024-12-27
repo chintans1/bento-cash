@@ -18,7 +18,7 @@ function HorizontalLines({ lines, width, yAxisWidth }: HorizontalLinesProps) {
           <Line
             p1={{ x: yAxisWidth, y }}
             p2={{ x: width, y }}
-            color={NewBrandingColours.neutral.darkGray}
+            color={NewBrandingColours.neutral.gray}
             strokeWidth={0.3}
           >
             <DashPathEffect intervals={[10, 5]} />
@@ -28,7 +28,7 @@ function HorizontalLines({ lines, width, yAxisWidth }: HorizontalLinesProps) {
             y={y - 3}
             text={formatNumber(value)}
             font={DefaultChartFont}
-            color={NewBrandingColours.text.muted}
+            color={NewBrandingColours.neutral.gray}
           />
         </Group>
       ))}

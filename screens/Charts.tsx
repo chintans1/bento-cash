@@ -1,203 +1,52 @@
-import axios from 'axios';
-import { Network } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
-import { SafeAreaView, View, Text, StyleSheet, ScrollView, ActivityIndicator, Dimensions } from 'react-native';
-import { LineChart, BarChart } from 'react-native-chart-kit';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import {
+  SafeAreaView,
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator,
+  Dimensions,
+} from 'react-native';
+import { NewBrandingColours } from '../styles/brandingConstants';
+import { useParentContext } from '../context/app/appContextProvider';
+import InternalLunchMoneyClient from '../clients/lunchMoneyClient';
+import { AppTransaction } from '../models/lunchmoney/appModels';
+import { getTransactionsForWholeYear } from '../data/transformLunchMoney';
+import ChartSection from '../components/charts/ChartSection';
 
-const colors = {
-  primary: { main: '#1A73E8', light: '#4285F4', dark: '#0D47A1' },
-  secondary: { main: '#00C853', light: '#69F0AE', dark: '#009624' },
-  accent: { purple: '#7C4DFF', orange: '#FF6D00', red: '#FF3D00', yellow: '#FFD600' },
-  neutral: { white: '#FFFFFF', background: '#F5F5F5', lightGray: '#E0E0E0', gray: '#9E9E9E', darkGray: '#616161', black: '#212121' },
-  text: { primary: '#212121', secondary: '#424242', muted: '#757575' },
-};
-
+const months = Array.from({ length: 12 }, (_, i) => {
+  return {
+    month: new Date(2024, i).toLocaleString('default', { month: 'short' }),
+  };
+});
+const monthLabels = months.map(month => month.month);
 const screenWidth = Dimensions.get('window').width;
+const chartContainerPadding = 16;
 
-const API_KEY = '9cc0bd5893da14da541276200cadd360bf95a62887f6913ee1';
-const BASE_URL = 'https://dev.lunchmoney.app/v1';
-
-export default function Charts() {
-  const [netWorthData, setNetWorthData] = useState([]);
-  const [spendingData, setSpendingData] = useState([]);
-  const [incomeData, setIncomeData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [assetsResponse, transactionsResponse] = await Promise.all([
-          axios.get(`${BASE_URL}/assets`, {
-            headers: { Authorization: `Bearer ${API_KEY}` }
-          }),
-          axios.get(`${BASE_URL}/transactions`, {
-            headers: { Authorization: `Bearer ${API_KEY}` },
-            params: {
-              start_date: '2024-01-01',
-              end_date: '2024-12-31'
-            }
-          })
-        ]);
-
-        // Process net worth data
-        const netWorth = assetsResponse.data.assets.reduce((total, asset) => total + parseFloat(asset.balance), 0);
-        setNetWorthData([
-          { month: 'Jan', value: netWorth * 0.9 },
-          { month: 'Feb', value: netWorth * 0.95 },
-          { month: 'Mar', value: netWorth * 0.97 },
-          { month: 'Apr', value: netWorth * 1.02 },
-          { month: 'May', value: netWorth * 1.05 },
-          { month: 'Jun', value: netWorth},
-        ]);
-
-        // Process spending data
-        const spending = transactionsResponse.data.transactions.filter(t => parseFloat(t.amount) < 0);
-        // console.log(spending);
-        const thisMonth = spending.filter(t => t.date.startsWith('2024-09')).reduce((total, t) => total + Math.abs(parseFloat(t.amount)), 0);
-        const lastMonth = spending.filter(t => t.date.startsWith('2024-08')).reduce((total, t) => total + Math.abs(parseFloat(t.amount)), 0);
-        setSpendingData([
-          { month: 'Last Month', amount: lastMonth },
-          { month: 'This Month', amount: thisMonth },
-        ]);
-
-        // Process income data
-        const income = transactionsResponse.data.transactions.filter(t => parseFloat(t.amount) > 0);
-        // console.log(income);
-        const thisMonthIncome = income.filter(t => t.date.startsWith('2024-09')).reduce((total, t) => total + parseFloat(t.amount), 0);
-        const lastMonthIncome = income.filter(t => t.date.startsWith('2024-08')).reduce((total, t) => total + parseFloat(t.amount), 0);
-
-        setIncomeData([
-          { month: 'Last Month', amount: lastMonthIncome },
-          { month: 'This Month', amount: thisMonthIncome },
-        ]);
-
-        setIsLoading(false);
-
-        // console.log(netWorthData);
-        // console.log(spendingData);
-        // console.log(incomeData);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  if (isLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.primary.main} />
-      </View>
-    );
-  }
-
-  return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Text style={styles.title}>Financial Overview</Text>
-
-        <View style={styles.chartContainer}>
-          <Text style={styles.chartTitle}>Net Worth Trend</Text>
-          <LineChart
-            data={{
-              labels: netWorthData.map(d => d.month),
-              datasets: [{ data: netWorthData.map(d => d.value) }]
-            }}
-            width={350}
-            height={220}
-            yAxisLabel="$"
-            chartConfig={{
-              backgroundColor: colors.neutral.white,
-              backgroundGradientFrom: colors.neutral.white,
-              backgroundGradientTo: colors.neutral.white,
-              decimalPlaces: 0,
-              color: (opacity = 1) => `rgba(26, 115, 232, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-              style: {
-                borderRadius: 16
-              },
-              propsForDots: {
-                r: "6",
-                strokeWidth: "2",
-                stroke: colors.primary.main
-              }
-            }}
-            bezier
-            style={styles.chart}
-          />
-        </View>
-
-        <View style={styles.chartContainer}>
-          <Text style={styles.chartTitle}>Spending Comparison</Text>
-          <BarChart
-            data={{
-              labels: spendingData.map(d => d.month),
-              datasets: [{ data: spendingData.map(d => d.amount) }]
-            }}
-            width={screenWidth - 40}
-            height={220}
-            yAxisLabel="$"
-            chartConfig={{
-              backgroundColor: colors.neutral.white,
-              backgroundGradientFrom: colors.neutral.white,
-              backgroundGradientTo: colors.neutral.white,
-              decimalPlaces: 0,
-              color: (opacity = 1) => `rgba(255, 109, 0, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-              style: {
-                borderRadius: 16
-              },
-              barPercentage: 0.5,
-            }}
-            style={styles.chart}
-            showValuesOnTopOfBars={true}
-            fromZero={true}
-            formatYLabel={(value) => `${(value / 1000).toFixed(0)}k`}
-          />
-        </View>
-
-        <View style={styles.chartContainer}>
-          <Text style={styles.chartTitle}>Income Comparison</Text>
-          <BarChart
-            data={{
-              labels: incomeData.map(d => d.month),
-              datasets: [{ data: incomeData.map(d => d.amount) }]
-            }}
-            width={screenWidth - 40}
-            height={220}
-            yAxisLabel="$"
-            chartConfig={{
-              backgroundColor: colors.neutral.white,
-              backgroundGradientFrom: colors.neutral.white,
-              backgroundGradientTo: colors.neutral.white,
-              decimalPlaces: 0,
-              color: (opacity = 1) => `rgba(0, 200, 83, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-              style: {
-                borderRadius: 16
-              },
-              barPercentage: 0.5,
-            }}
-            style={styles.chart}
-            showValuesOnTopOfBars={true}
-            fromZero={true}
-            formatYLabel={(value) => `${(value / 1000).toFixed(0)}k`}
-          />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
+interface MonthlyData {
+  month: string;
+  netIncome: number;
+  income: number;
+  spending: number;
 };
 
-const styles = StyleSheet.create({
+interface ChartData {
+  totalNetIncome: number;
+  totalSpend: number;
+  totalIncome: number;
+  netIncome: number[];
+  income: number[];
+  spend: number[];
+}
+
+const chartStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.neutral.background,
+    backgroundColor: NewBrandingColours.neutral.background,
   },
   scrollContent: {
-    padding: 16,
+    padding: chartContainerPadding,
   },
   loadingContainer: {
     flex: 1,
@@ -207,15 +56,15 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: colors.text.primary,
+    color: NewBrandingColours.text.primary,
     marginBottom: 20,
   },
   chartContainer: {
-    backgroundColor: colors.neutral.white,
+    backgroundColor: NewBrandingColours.neutral.white,
     borderRadius: 12,
-    padding: 16,
     marginBottom: 20,
-    shadowColor: colors.neutral.black,
+    padding: chartContainerPadding,
+    shadowColor: NewBrandingColours.neutral.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -224,11 +73,133 @@ const styles = StyleSheet.create({
   chartTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: colors.text.primary,
+    color: NewBrandingColours.text.primary,
     marginBottom: 10,
   },
-  chart: {
-    marginVertical: 8,
-    borderRadius: 16,
-  },
 });
+
+export default function ChartsScreen() {
+  const { appState: { lmApiKey, categories } } = useParentContext();
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [chartData, setChartData] = useState<ChartData>({
+    totalNetIncome: 0,
+    totalSpend: 0,
+    totalIncome: 0,
+    netIncome: [],
+    income: [],
+    spend: [],
+  });
+
+  const lunchMoneyClient = useMemo(
+    () => new InternalLunchMoneyClient({ token: lmApiKey }),
+    [lmApiKey],
+  );
+
+  const processTransactionsByMonth = useCallback((
+    transactions: AppTransaction[],
+  ): ChartData => {
+    // Initialize data structure for all months
+    const monthlyData: MonthlyData[] = months.map(month => ({
+      month: month.month,
+      netIncome: 0,
+      income: 0,
+      spending: 0,
+    }));
+
+    const totals = transactions.reduce((acc, transaction) => {
+      const date = new Date(transaction.date);
+      const monthIndex = date.getMonth();
+      const amount = parseFloat(transaction.amount);
+      const monthData = monthlyData[monthIndex];
+
+      if (amount > 0) {
+        monthData.income += amount;
+        monthData.netIncome += amount;
+        acc.totalIncome += amount;
+      } else {
+        monthData.spending += Math.abs(amount);
+        monthData.netIncome -= Math.abs(amount);
+        acc.totalSpend += Math.abs(amount);
+      }
+
+      return acc;
+    }, { totalSpend: 0, totalIncome: 0 });
+
+    return {
+      ...totals,
+      totalNetIncome: totals.totalIncome - totals.totalSpend,
+      netIncome: monthlyData.map(m => m.netIncome),
+      income: monthlyData.map(m => m.income),
+      spend: monthlyData.map(m => m.spending),
+    };
+  }, []);
+
+  useEffect(() => {
+    const fetchAndProcessTransactions = async () => {
+      try {
+        setIsLoading(true);
+
+        const transactions = await getTransactionsForWholeYear(
+          lunchMoneyClient,
+          new Map(categories.map(category => [category.id, category])),
+        );
+
+        const processedData = processTransactionsByMonth(transactions);
+        setChartData(processedData);
+      } catch (error) {
+        console.error('Error fetching transactions:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAndProcessTransactions();
+  }, [lunchMoneyClient, categories, processTransactionsByMonth]);
+
+  const chartConfig = useMemo(() => ({
+    income: {
+      labels: monthLabels,
+      datasets: [{
+        id: 'income',
+        data: chartData.income,
+        color: () => NewBrandingColours.secondary.main,
+        negativeColor: () => NewBrandingColours.accent.red,
+      }],
+    },
+    netIncome: {
+      labels: monthLabels,
+      datasets: [{
+        id: 'netIncome',
+        data: chartData.netIncome,
+        color: () => NewBrandingColours.secondary.main,
+        negativeColor: () => NewBrandingColours.accent.red,
+      }],
+    },
+  }), [chartData]);
+
+  if (isLoading) {
+    return (
+      <View style={chartStyles.loadingContainer}>
+        <ActivityIndicator size="large" color={NewBrandingColours.primary.main} />
+      </View>
+    );
+  }
+
+  return (
+    <SafeAreaView style={chartStyles.container}>
+      <ScrollView contentContainerStyle={chartStyles.scrollContent}>
+        <ChartSection
+          title="Income"
+          data={chartConfig.income}
+          padding={chartContainerPadding}
+        />
+        <ChartSection
+          title="Net income"
+          data={chartConfig.netIncome}
+          padding={chartContainerPadding}
+        />
+      </ScrollView>
+    </SafeAreaView>
+  );
+}

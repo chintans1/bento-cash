@@ -1,6 +1,7 @@
 export type Dataset = {
   data: number[];
   color: () => string;
+  negativeColor?: () => string;
 };
 
 export interface BarChartProps {

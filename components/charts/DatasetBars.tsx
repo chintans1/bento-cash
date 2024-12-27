@@ -1,7 +1,8 @@
-import { Group, RoundedRect, Text } from '@shopify/react-native-skia';
 import { Dataset } from '../../models/charts/chartModels';
-import DefaultChartFont from './Font';
-import { minBarHeight, topMargin } from '../../models/charts/chartConstants';
+import { topMargin } from '../../models/charts/chartConstants';
+import Bar, { calculateBarMetrics } from './Bar';
+
+const xAxisHeight = 1;
 
 type DatasetBarsProps = {
   datasets: Dataset[];
@@ -12,7 +13,9 @@ type DatasetBarsProps = {
   spacing: number;
   labelColor: string;
   yAxisWidth: number;
+  labelOnlyStartEnd?: boolean;
 };
+
 function DatasetBars({
   datasets,
   labels,
@@ -22,41 +25,51 @@ function DatasetBars({
   spacing,
   labelColor,
   yAxisWidth,
+  labelOnlyStartEnd = true,
 }: DatasetBarsProps) {
+  const hasNegativeValues = datasets.some(dataset => dataset.data.some(value => value < 0));
+
+  const baselineY = hasNegativeValues
+    ? (height / 2) + topMargin
+    : height + topMargin;
+
   return (
     <>
       {datasets.map((dataset, datasetIndex) => {
         const barOffset = datasetIndex * (barWidth + 5);
 
         return dataset.data.map((value, index) => {
+          const metrics = calculateBarMetrics(
+            value,
+            index,
+            barWidth,
+            spacing,
+            scaleY,
+            height,
+            barOffset,
+            yAxisWidth,
+            baselineY
+          );
+
+          const color = value === 0
+            ? `${dataset.color()}80`
+            : value < 0 ? dataset.negativeColor() : dataset.color();
           const datasetId = `dataset-${index}`;
 
-          const barHeight = value === 0 ? minBarHeight : value * scaleY;
-          const x = yAxisWidth + index * (barWidth + spacing) + barOffset;
-          const y = height - barHeight + topMargin;
-
-          const roundedRectConfig = {
-            rect: { x, y, width: barWidth, height: barHeight },
-            topLeft: { x: 16, y: 16 },
-            topRight: { x: 16, y: 16 },
-            bottomRight: { x: 0, y: 0 },
-            bottomLeft: { x: 0, y: 0 },
-          };
+          const showLabel = !labelOnlyStartEnd || index === 0 || index === dataset.data.length - 1;
 
           return (
-            <Group key={`${labels[index]}-${datasetId}-${value}`}>
-              <Text
-                x={Math.max(0, Math.min(x, x - 9))}
-                y={y + barHeight + 20}
-                text={labels[index] || ''}
-                color={labelColor}
-                font={DefaultChartFont}
-              />
-              <RoundedRect
-                rect={roundedRectConfig}
-                color={value === 0 ? `${dataset.color()}80` : dataset.color()}
-              />
-            </Group>
+            <Bar
+              key={`${labels[index]}-${datasetId}-${value}`}
+              x={metrics.x}
+              y={metrics.y}
+              width={barWidth}
+              height={metrics.height}
+              color={color}
+              label={showLabel ? labels[index] : ''}
+              labelColor={labelColor}
+              isNegative={metrics.isNegative}
+            />
           );
         });
       })}
