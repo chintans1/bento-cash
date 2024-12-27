@@ -2,6 +2,10 @@ import { Group, RoundedRect, Text } from "@shopify/react-native-skia";
 import DefaultChartFont from "./Font";
 import { minBarHeight } from "../../models/charts/chartConstants";
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9e06081 (more chart changes, neg/positive, net income and income)
 const barCornerRadius = 16;
 
 type BarMetrics = {
