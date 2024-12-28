@@ -39,6 +39,49 @@ const formatFullAccountName = (account: Asset | PlaidAccount): string => {
   return account.name;
 };
 
+export const getTransactionsForWholeYear = async (
+  lmClient: InternalLunchMoneyClient,
+  categories: Map<number, AppCategory>,
+) => {
+  const lmTransactions = await lmClient.getTransactionsForWholeYear();
+
+  const appTransactions: AppTransaction[] = [];
+
+  lmTransactions.forEach(transaction => {
+    const groupTransaction: boolean = transaction.group_id != null;
+    const splitTransaction: boolean | unknown =
+      'has_children' in transaction ? transaction.has_children : false;
+    const assetId: number =
+      transaction.asset_id != null
+        ? transaction.asset_id
+        : transaction.plaid_account_id;
+
+    if (!splitTransaction && !groupTransaction) {
+      appTransactions.push({
+        id: transaction.id,
+        date: transaction.date,
+        payee: transaction.payee,
+        amount: transaction.amount,
+        currency: transaction.currency,
+        notes: transaction.notes,
+
+        assetId,
+        assetName: undefined,
+
+        categoryId: transaction.category_id,
+        categoryName: categories.get(transaction.category_id)?.name,
+
+        isGrouped: transaction.is_group,
+        isSplit: transaction.parent_id != null,
+
+        status: transaction.status,
+      });
+    }
+  });
+
+  return appTransactions;
+};
+
 export const getTransactionsForApp = async (
   lmClient: InternalLunchMoneyClient,
   accounts: Map<number, AppAccount>,

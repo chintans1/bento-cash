@@ -2,7 +2,6 @@ import { Group, RoundedRect, Text } from "@shopify/react-native-skia";
 import DefaultChartFont from "./Font";
 import { minBarHeight } from "../../models/charts/chartConstants";
 
-
 const barCornerRadius = 16;
 
 type BarMetrics = {
