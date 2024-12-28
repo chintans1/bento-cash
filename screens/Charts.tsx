@@ -40,22 +40,13 @@ interface ChartData {
   spend: number[];
 }
 
-interface ChartData {
-  totalNetIncome: number;
-  totalSpend: number;
-  totalIncome: number;
-  netIncome: number[];
-  income: number[];
-  spend: number[];
-}
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: NewBrandingColours.neutral.background,
   },
   scrollContent: {
-    padding: chartContainerPadding,
+    padding: 16,
   },
   header: {
     marginBottom: 24,

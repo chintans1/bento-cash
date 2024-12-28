@@ -8,10 +8,7 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 
 interface ChartSectionProps {
   title: string;
-<<<<<<< HEAD
   subtitle?: string;
-=======
->>>>>>> 9e06081 (more chart changes, neg/positive, net income and income)
   padding: number;
   data: {
     labels: string[];
@@ -20,29 +17,11 @@ interface ChartSectionProps {
 }
 
 const styles = StyleSheet.create({
-<<<<<<< HEAD
   container: {
     backgroundColor: NewBrandingColours.neutral.white,
     borderRadius: 12,
     marginBottom: 20,
     overflow: 'hidden',
-=======
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: NewBrandingColours.text.primary,
-    marginBottom: 20,
-  },
-  chartContainer: {
-    backgroundColor: NewBrandingColours.neutral.white,
-    borderRadius: 12,
-    marginBottom: 20,
->>>>>>> 9e06081 (more chart changes, neg/positive, net income and income)
-    shadowColor: NewBrandingColours.neutral.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
   },
   header: {
     padding: 16,
