@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -71,12 +71,15 @@ export default function TransactionsScreen() {
   const { transactions } = useParentContext()?.appState ?? {};
   const [sortBy, setSortBy] = useState('date'); // 'date' or 'amount'
 
-  const sortedTransactions = [...transactions].sort((a, b) => {
-    if (sortBy === 'date') {
-      return a.date > b.date ? -1 : 1;
-    }
-    return Math.abs(parseFloat(b.amount)) - Math.abs(parseFloat(a.amount));
-  });
+  const sortedTransactions = useMemo(() => {
+    return [...transactions].sort((a, b) => {
+      if (sortBy === 'date') {
+        return new Date(b.date).getTime() - new Date(a.date).getTime(); // return a.date > b.date ? -1 : 1;
+      }
+      return Math.abs(parseFloat(b.amount)) - Math.abs(parseFloat(a.amount));
+    });
+  }, [transactions, sortBy]);
+
 
   return (
     <View style={styles.container}>

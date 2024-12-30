@@ -15,6 +15,7 @@ import { AppTransaction } from '../models/lunchmoney/appModels';
 import { getTransactionsForWholeYear } from '../data/transformLunchMoney';
 import ChartSection from '../components/charts/ChartSection';
 import Icon from 'react-native-vector-icons/Feather';
+import { subMonths, startOfMonth, endOfMonth, format, startOfYear } from 'date-fns';
 
 const months = Array.from({ length: 12 }, (_, i) => {
   return {
@@ -49,6 +50,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   header: {
+    marginHorizontal: 16,
     marginBottom: 24,
   },
   headerTitle: {
@@ -63,8 +65,9 @@ const styles = StyleSheet.create({
   },
   summaryContainer: {
     flexDirection: 'row',
-    marginBottom: 24,
+    marginBottom: 16,
     gap: 12,
+    marginHorizontal: 16,
   },
   summaryCard: {
     flex: 1,
@@ -106,7 +109,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: NewBrandingColours.neutral.lightGray,
     borderRadius: 8,
-    marginBottom: 24,
+    marginHorizontal: 16,
     padding: 4,
   },
   periodButton: {
@@ -152,6 +155,7 @@ const styles = StyleSheet.create({
 
 export default function ChartsScreen() {
   const { appState: { lmApiKey, categories } } = useParentContext();
+
   const [selectedPeriod, setSelectedPeriod] = useState('year');
   const [isLoading, setIsLoading] = useState(true);
   const [chartData, setChartData] = useState<ChartData>({
@@ -168,20 +172,82 @@ export default function ChartsScreen() {
     [lmApiKey],
   );
 
+  const getDateRange = (period: string) => {
+    const endDate = new Date();
+    let startDate: Date;
+
+    switch (period) {
+      case 'month':
+        startDate = startOfMonth(endDate);
+        break;
+      case 'quarter':
+        startDate = subMonths(endDate, 2);
+        break;
+      case 'year':
+        startDate = startOfYear(endDate);
+        break;
+      default:
+        startDate = subMonths(endDate, 12);
+    }
+
+    return { startDate: startOfMonth(startDate), endDate: endOfMonth(endDate) };
+  };
+
   const processTransactionsByMonth = useCallback((
     transactions: AppTransaction[],
+    period: string,
   ): ChartData => {
+    const { startDate, endDate } = getDateRange(period);
+
+    const filteredTransactions = transactions.filter(
+      t => new Date(t.date) >= startDate && new Date(t.date) <= endDate
+    );
+
+    const relevantMonths = Array.from({ length: endDate.getMonth() - startDate.getMonth() + 1 }, (_, i) => {
+      const date = new Date(startDate.getFullYear(), startDate.getMonth() + i);
+      return {
+        month: date.toLocaleString('default', { month: 'short' }),
+      }
+    });
+
     // Initialize data structure for all months
-    const monthlyData: MonthlyData[] = months.map(month => ({
+    const monthlyData: MonthlyData[] = relevantMonths.map(month => ({
       month: month.month,
       netIncome: 0,
       income: 0,
       spending: 0,
     }));
 
-    const totals = transactions.reduce((acc, transaction) => {
+    const categoryData = {};
+
+    filteredTransactions.forEach(transaction => {
       const date = new Date(transaction.date);
-      const monthIndex = date.getMonth();
+      const month = format(date, 'MMM yyyy');
+      const amount = parseFloat(transaction.amount);
+
+      // Monthly income and expenses
+      if (!monthlyData[month]) {
+        monthlyData[month] = { income: 0, expenses: 0 };
+      }
+      if (amount > 0) {
+        monthlyData[month].income += amount;
+      } else {
+        monthlyData[month].expenses += Math.abs(amount);
+      }
+
+      // Category breakdown
+      if (amount < 0) {
+        const category = transaction.categoryName || 'Uncategorized';
+        categoryData[category] = (categoryData[category] || 0) + Math.abs(amount);
+      }
+    });
+
+    const totals = filteredTransactions.reduce((acc, transaction) => {
+      const date = new Date(transaction.date);
+
+      const monthIndex = monthlyData.findIndex(m => m.month === date.toLocaleString('default', { month: 'short' }));
+      if (monthIndex === -1) return acc;
+
       const amount = parseFloat(transaction.amount);
       const monthData = monthlyData[monthIndex];
 
@@ -239,7 +305,7 @@ export default function ChartsScreen() {
           new Map(categories.map(category => [category.id, category])),
         );
 
-        const processedData = processTransactionsByMonth(transactions);
+        const processedData = processTransactionsByMonth(transactions, selectedPeriod);
         setChartData(processedData);
       } catch (error) {
         console.error('Error fetching transactions:', error);
@@ -249,11 +315,11 @@ export default function ChartsScreen() {
     };
 
     fetchAndProcessTransactions();
-  }, [lunchMoneyClient, categories, processTransactionsByMonth]);
+  }, [lunchMoneyClient, categories, processTransactionsByMonth, selectedPeriod]);
 
   const chartConfig = useMemo(() => ({
     income: {
-      labels: monthLabels,
+      labels: monthLabels.slice(-chartData.income.length),
       datasets: [{
         id: 'income',
         data: chartData.income,
@@ -262,7 +328,7 @@ export default function ChartsScreen() {
       }],
     },
     netIncome: {
-      labels: monthLabels,
+      labels: monthLabels.slice(-chartData.netIncome.length),
       datasets: [{
         id: 'netIncome',
         data: chartData.netIncome,
@@ -282,39 +348,37 @@ export default function ChartsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Financial Overview</Text>
-          <Text style={styles.headerSubtitle}>Track your income and spending</Text>
-        </View>
-
-        <View style={styles.summaryContainer}>
-          {renderSummaryCard('Total Income', chartData.totalIncome, 12.5)}
-          {renderSummaryCard('Total Expenses', chartData.totalSpend, -8.3)}
-        </View>
-
-        <View style={styles.periodSelector}>
-          {['month', 'quarter', 'year'].map((period) => (
-            <TouchableOpacity
-              key={period}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Financial Overview</Text>
+        <Text style={styles.headerSubtitle}>Track your income and spending</Text>
+      </View>
+      <View style={styles.summaryContainer}>
+        {renderSummaryCard('Total Income', chartData.totalIncome, 12.5)}
+        {renderSummaryCard('Total Expenses', chartData.totalSpend, -8.3)}
+      </View>
+      <View style={styles.periodSelector}>
+        {['month', 'quarter', 'year'].map((period) => (
+          <TouchableOpacity
+            key={period}
+            style={[
+              styles.periodButton,
+              selectedPeriod === period && styles.periodButtonActive,
+            ]}
+            onPress={() => setSelectedPeriod(period)}
+          >
+            <Text
               style={[
-                styles.periodButton,
-                selectedPeriod === period && styles.periodButtonActive,
+                styles.periodButtonText,
+                selectedPeriod === period && styles.periodButtonTextActive,
               ]}
-              onPress={() => setSelectedPeriod(period)}
             >
-              <Text
-                style={[
-                  styles.periodButtonText,
-                  selectedPeriod === period && styles.periodButtonTextActive,
-                ]}
-              >
-                {period.charAt(0).toUpperCase() + period.slice(1)}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+              {period === 'month' ? '1M' : period === 'quarter' ? '3M' : period === 'year' ? 'YTD' : '1Y'}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
 
+      <ScrollView contentContainerStyle={styles.scrollContent}>
         <ChartSection
           title="Income"
           subtitle="Monthly income breakdown"
