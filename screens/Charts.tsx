@@ -18,6 +18,16 @@ import Icon from 'react-native-vector-icons/Feather';
 import { subMonths, startOfMonth, startOfYear } from 'date-fns';
 import { allMonths, endOfMonthUTC, getMonthNames, startOfMonthUTC } from '../utils/dateUtils';
 
+type Period = 'month' | 'quarter' | 'ytd' | 'year';
+type PeriodLabel = '1M' | '3M' | 'YTD' | '1Y';
+
+const periodLabels: Record<Period, PeriodLabel> = {
+  month: '1M',
+  quarter: '3M',
+  ytd: 'YTD',
+  year: '1Y',
+};
+
 const chartContainerPadding = 16;
 
 interface MonthlyData {
@@ -152,7 +162,7 @@ const styles = StyleSheet.create({
 export default function ChartsScreen() {
   const { appState: { lmApiKey, categories } } = useParentContext();
 
-  const [selectedPeriod, setSelectedPeriod] = useState('year');
+  const [selectedPeriod, setSelectedPeriod] = useState<Period>('ytd');
   const [isLoading, setIsLoading] = useState(true);
   const [chartData, setChartData] = useState<ChartData>({
     relevantMonths: [],
@@ -169,7 +179,7 @@ export default function ChartsScreen() {
     [lmApiKey],
   );
 
-  const getDateRange = (period: string) => {
+  const getDateRange = (period: Period) => {
     const endDate = new Date();
     let startDate: Date;
 
@@ -180,8 +190,11 @@ export default function ChartsScreen() {
       case 'quarter':
         startDate = subMonths(endDate, 2);
         break;
-      case 'year':
+      case 'ytd':
         startDate = startOfYear(endDate);
+        break;
+      case 'year':
+        startDate = subMonths(endDate, 11);
         break;
       default:
         startDate = subMonths(endDate, 12);
@@ -192,7 +205,7 @@ export default function ChartsScreen() {
 
   const processTransactionsByMonth = useCallback((
     transactions: AppTransaction[],
-    period: string,
+    period: Period,
   ): ChartData => {
     const { startDate, endDate } = getDateRange(period);
 
@@ -325,7 +338,7 @@ export default function ChartsScreen() {
         {renderSummaryCard('Total Expenses', chartData.totalSpend, -8.3)}
       </View>
       <View style={styles.periodSelector}>
-        {['month', 'quarter', 'year'].map((period) => (
+        {(Object.keys(periodLabels) as Period[]).map((period) => (
           <TouchableOpacity
             key={period}
             style={[
@@ -340,7 +353,7 @@ export default function ChartsScreen() {
                 selectedPeriod === period && styles.periodButtonTextActive,
               ]}
             >
-              {period === 'month' ? '1M' : period === 'quarter' ? '3M' : period === 'year' ? 'YTD' : '1Y'}
+              {periodLabels[period]}
             </Text>
           </TouchableOpacity>
         ))}

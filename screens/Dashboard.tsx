@@ -19,8 +19,8 @@ import renderNoStateMessage from '../components/EmptyListComponent';
 import InternalLunchMoneyClient from '../clients/lunchMoneyClient';
 import { getBudgetSummary } from '../data/transformLunchMoney';
 import { BudgetSummary } from '../models/lunchmoney/appModels';
-import { endOfMonth, startOfMonth } from 'date-fns';
 import BudgetOverviewCard from '../components/BudgetOverviewCard';
+import { endOfMonthUTC, startOfMonthUTC } from '../utils/dateUtils';
 
 const styles = StyleSheet.create({
   balanceCard: {
@@ -194,15 +194,12 @@ export default function Dashboard({ navigation }) {
   );
 
   const [budgetSummary, setBudgetSummary] = useState<BudgetSummary>(null);
-  const [isLoadingBudget, setIsLoadingBudget] = useState(true);
 
   const fetchBudgetData = async () => {
     try {
-      setBudgetSummary(await getBudgetSummary(lunchMoneyClient, startOfMonth(new Date()), endOfMonth(new Date())));
+      setBudgetSummary(await getBudgetSummary(lunchMoneyClient, startOfMonthUTC(new Date()), endOfMonthUTC(new Date())));
     } catch (error) {
       console.error('Error fetching budget:', error);
-    } finally {
-      setIsLoadingBudget(false);
     }
   };
 
