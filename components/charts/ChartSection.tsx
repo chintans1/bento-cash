@@ -98,7 +98,7 @@ function ChartSection({ title, subtitle, padding, data }: ChartSectionProps) {
             labelColor={NewBrandingColours.text.muted}
           />
         )}
-        {renderLegend()}
+        {/* {renderLegend()} */}
       </View>
     </View>
   );

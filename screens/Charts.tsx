@@ -15,14 +15,9 @@ import { AppTransaction } from '../models/lunchmoney/appModels';
 import { getTransactionsForWholeYear } from '../data/transformLunchMoney';
 import ChartSection from '../components/charts/ChartSection';
 import Icon from 'react-native-vector-icons/Feather';
-import { subMonths, startOfMonth, endOfMonth, format, startOfYear } from 'date-fns';
+import { subMonths, startOfMonth, startOfYear } from 'date-fns';
+import { endOfMonthUTC, getMonthNames, startOfMonthUTC } from '../utils/dateUtils';
 
-const months = Array.from({ length: 12 }, (_, i) => {
-  return {
-    month: new Date(2024, i).toLocaleString('default', { month: 'short' }),
-  };
-});
-const monthLabels = months.map(month => month.month);
 const chartContainerPadding = 16;
 
 interface MonthlyData {
@@ -33,6 +28,7 @@ interface MonthlyData {
 };
 
 interface ChartData {
+  relevantMonths: string[];
   totalNetIncome: number;
   totalSpend: number;
   totalIncome: number;
@@ -159,6 +155,7 @@ export default function ChartsScreen() {
   const [selectedPeriod, setSelectedPeriod] = useState('year');
   const [isLoading, setIsLoading] = useState(true);
   const [chartData, setChartData] = useState<ChartData>({
+    relevantMonths: [],
     totalNetIncome: 0,
     totalSpend: 0,
     totalIncome: 0,
@@ -190,7 +187,7 @@ export default function ChartsScreen() {
         startDate = subMonths(endDate, 12);
     }
 
-    return { startDate: startOfMonth(startDate), endDate: endOfMonth(endDate) };
+    return { startDate: startOfMonthUTC(startDate), endDate: endOfMonthUTC(endDate) };
   };
 
   const processTransactionsByMonth = useCallback((
@@ -203,48 +200,18 @@ export default function ChartsScreen() {
       t => new Date(t.date) >= startDate && new Date(t.date) <= endDate
     );
 
-    const relevantMonths = Array.from({ length: endDate.getMonth() - startDate.getMonth() + 1 }, (_, i) => {
-      const date = new Date(startDate.getFullYear(), startDate.getMonth() + i);
-      return {
-        month: date.toLocaleString('default', { month: 'short' }),
-      }
-    });
+    const relevantMonths = getMonthNames(startDate, endDate);
 
     // Initialize data structure for all months
     const monthlyData: MonthlyData[] = relevantMonths.map(month => ({
-      month: month.month,
+      month: month,
       netIncome: 0,
       income: 0,
       spending: 0,
     }));
 
-    const categoryData = {};
-
-    filteredTransactions.forEach(transaction => {
-      const date = new Date(transaction.date);
-      const month = format(date, 'MMM yyyy');
-      const amount = parseFloat(transaction.amount);
-
-      // Monthly income and expenses
-      if (!monthlyData[month]) {
-        monthlyData[month] = { income: 0, expenses: 0 };
-      }
-      if (amount > 0) {
-        monthlyData[month].income += amount;
-      } else {
-        monthlyData[month].expenses += Math.abs(amount);
-      }
-
-      // Category breakdown
-      if (amount < 0) {
-        const category = transaction.categoryName || 'Uncategorized';
-        categoryData[category] = (categoryData[category] || 0) + Math.abs(amount);
-      }
-    });
-
     const totals = filteredTransactions.reduce((acc, transaction) => {
       const date = new Date(transaction.date);
-
       const monthIndex = monthlyData.findIndex(m => m.month === date.toLocaleString('default', { month: 'short' }));
       if (monthIndex === -1) return acc;
 
@@ -266,6 +233,7 @@ export default function ChartsScreen() {
 
     return {
       ...totals,
+      relevantMonths: relevantMonths,
       totalNetIncome: totals.totalIncome - totals.totalSpend,
       netIncome: monthlyData.map(m => m.netIncome),
       income: monthlyData.map(m => m.income),
@@ -319,7 +287,7 @@ export default function ChartsScreen() {
 
   const chartConfig = useMemo(() => ({
     income: {
-      labels: monthLabels.slice(-chartData.income.length),
+      labels: chartData.relevantMonths,
       datasets: [{
         id: 'income',
         data: chartData.income,
@@ -328,14 +296,14 @@ export default function ChartsScreen() {
       }],
     },
     netIncome: {
-      labels: monthLabels.slice(-chartData.netIncome.length),
+      labels: chartData.relevantMonths,
       datasets: [{
         id: 'netIncome',
         data: chartData.netIncome,
         color: () => NewBrandingColours.secondary.main,
         negativeColor: () => NewBrandingColours.accent.red,
       }],
-    },
+      },
   }), [chartData]);
 
   if (isLoading) {
