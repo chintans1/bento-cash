@@ -112,6 +112,15 @@ export class InternalLunchMoneyClient {
       balance: draftAccount.balance,
     });
   }
+
+  async getBudgetData(startDate: Date, endDate: Date) {
+    const response = await this.lunchMoneyClient.get('/v1/budgets', {
+      start_date: startDate.toISOString().split('T')[0],
+      end_date: endDate.toISOString().split('T')[0],
+    });
+
+    return response;
+  }
 }
 
 export default InternalLunchMoneyClient;

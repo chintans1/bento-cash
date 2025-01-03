@@ -96,3 +96,10 @@ export type AppDraftTransaction = {
 
   importable?: boolean;
 };
+
+export type BudgetSummary = {
+  expectedExpenses: number;
+  actualExpenses: number;
+  expectedIncome: number;
+  actualIncome: number;
+}
