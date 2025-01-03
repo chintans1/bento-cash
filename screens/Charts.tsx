@@ -16,7 +16,7 @@ import { getTransactionsForWholeYear } from '../data/transformLunchMoney';
 import ChartSection from '../components/charts/ChartSection';
 import Icon from 'react-native-vector-icons/Feather';
 import { subMonths, startOfMonth, startOfYear } from 'date-fns';
-import { endOfMonthUTC, getMonthNames, startOfMonthUTC } from '../utils/dateUtils';
+import { allMonths, endOfMonthUTC, getMonthNames, startOfMonthUTC } from '../utils/dateUtils';
 
 const chartContainerPadding = 16;
 
@@ -212,7 +212,7 @@ export default function ChartsScreen() {
 
     const totals = filteredTransactions.reduce((acc, transaction) => {
       const date = new Date(transaction.date);
-      const monthIndex = monthlyData.findIndex(m => m.month === date.toLocaleString('default', { month: 'short' }));
+      const monthIndex = monthlyData.findIndex(m => m.month === allMonths[date.getUTCMonth()]);
       if (monthIndex === -1) return acc;
 
       const amount = parseFloat(transaction.amount);
