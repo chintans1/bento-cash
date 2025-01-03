@@ -11,6 +11,9 @@ export type AppTransaction = {
   assetName?: string;
   categoryName?: string;
 
+  isIncome: boolean;
+  excludeFromTotals: boolean;
+
   isGrouped: boolean;
   isSplit: boolean;
 

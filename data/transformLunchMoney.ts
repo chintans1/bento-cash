@@ -83,6 +83,9 @@ export const getTransactionsForWholeYear = async (
         categoryId: transaction.category_id,
         categoryName: categories.get(transaction.category_id)?.name,
 
+        isIncome: transaction.is_income,
+        excludeFromTotals: transaction.exclude_from_totals,
+
         isGrouped: transaction.is_group,
         isSplit: transaction.parent_id != null,
 
@@ -126,6 +129,9 @@ export const getTransactionsForApp = async (
 
         categoryId: transaction.category_id,
         categoryName: categories.get(transaction.category_id)?.name,
+
+        isIncome: 'is_income' in transaction && typeof transaction.is_income === 'boolean' ? transaction.is_income : false,
+        excludeFromTotals: 'exclude_from_totals' in transaction && typeof transaction.exclude_from_totals === 'boolean' ? transaction.exclude_from_totals : false,
 
         isGrouped: transaction.is_group,
         isSplit: transaction.parent_id != null,

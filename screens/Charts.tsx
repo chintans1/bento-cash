@@ -210,7 +210,7 @@ export default function ChartsScreen() {
     const { startDate, endDate } = getDateRange(period);
 
     const filteredTransactions = transactions.filter(
-      t => new Date(t.date) >= startDate && new Date(t.date) <= endDate
+      t => !t.excludeFromTotals && new Date(t.date) >= startDate && new Date(t.date) <= endDate
     );
 
     const relevantMonths = getMonthNames(startDate, endDate);
@@ -231,7 +231,7 @@ export default function ChartsScreen() {
       const amount = parseFloat(transaction.amount);
       const monthData = monthlyData[monthIndex];
 
-      if (amount > 0) {
+      if (transaction.isIncome || (!transaction.categoryId && amount > 0)) {
         monthData.income += amount;
         monthData.netIncome += amount;
         acc.totalIncome += amount;
