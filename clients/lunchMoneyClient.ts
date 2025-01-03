@@ -1,4 +1,5 @@
 import { Asset, DraftTransaction, LunchMoney, Transaction } from 'lunch-money';
+import { subMonths } from 'date-fns';
 import { AppAccount, AppDraftAccount } from '../models/lunchmoney/appModels';
 import { formatBalance } from '../data/formatBalance';
 
@@ -30,13 +31,13 @@ export class InternalLunchMoneyClient {
 
   async getTransactionsForWholeYear() {
     const today = new Date();
-    const startOfYear = new Date(today.getFullYear(), 0, 1);
+    const yearAgo = subMonths(today, 11);
     const endOfYear = new Date(today.getFullYear(), 11, 31);
 
     const response = await this.lunchMoneyClient.get('/v1/transactions', {
       pending: true,
       debit_as_negative: true,
-      start_date: startOfYear.toISOString().split('T')[0],
+      start_date: yearAgo.toISOString().split('T')[0],
       end_date: endOfYear.toISOString().split('T')[0],
     });
 
