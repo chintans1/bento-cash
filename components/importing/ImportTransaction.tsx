@@ -138,105 +138,107 @@ type ImportTransactionProps = {
   // ) => void;
 };
 
-const TransactionItem = memo(({
-  transaction,
-  isSelected,
-  onSelect,
-  onCategoryChange,
-  categories
-}: ImportTransactionProps) => {
-  const [categoryModalVisible, setCategoryModalVisible] = useState(false);
-  const parsedAmount = parseFloat(transaction.amount);
-  const transactionAmountString = formatAmountString(parsedAmount);
+const TransactionItem = memo(
+  ({
+    transaction,
+    isSelected,
+    onSelect,
+    onCategoryChange,
+    categories,
+  }: ImportTransactionProps) => {
+    const [categoryModalVisible, setCategoryModalVisible] = useState(false);
+    const parsedAmount = parseFloat(transaction.amount);
+    const transactionAmountString = formatAmountString(parsedAmount);
 
-  const handleCategoryChange = (category) => {
-    onCategoryChange(transaction, category);
-    setCategoryModalVisible(false);
-  };
+    const handleCategoryChange = category => {
+      onCategoryChange(transaction, category);
+      setCategoryModalVisible(false);
+    };
 
-  return (
-    <TouchableOpacity
-      style={styles.transactionItem}
-      onPress={() => onSelect(transaction)}
-    >
-      <View style={styles.transactionInfo}>
-        <Text style={styles.transactionDate}>{transaction.date}</Text>
-        <Text style={styles.transactionName}>{transaction.payee}</Text>
-        {transaction.notes ? (
-          <Text style={styles.transactionNotes}>{transaction.notes}</Text>
-        ) : null}
-        <TouchableOpacity onPress={() => setCategoryModalVisible(true)}>
-          <Text style={styles.transactionNotes}>
-            {transaction.categoryName || 'Uncategorized'}{' '}
-            <Icon
-              name="chevron-down"
-              size={14}
-              color={NewBrandingColours.text.muted}
-            />
-          </Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.transactionAmount}>
-        <Text
-          style={[
-            styles.amountText,
-            parsedAmount >= 0 ? styles.positiveAmount : styles.negativeAmount,
-          ]}
-        >
-          {transactionAmountString}
-        </Text>
-      </View>
-      <View style={styles.checkboxContainer}>
-        {isSelected ? (
-          <View style={styles.selectedIcon}>
-            <Icon
-              name="check"
-              size={24}
-              color={NewBrandingColours.neutral.white}
-            />
-          </View>
-        ) : (
-          <View style={styles.unselectedIcon} />
-        )}
-      </View>
-
-      <Modal
-        animationType="slide"
-        transparent
-        visible={categoryModalVisible}
-        onRequestClose={() => setCategoryModalVisible(false)}
+    return (
+      <TouchableOpacity
+        style={styles.transactionItem}
+        onPress={() => onSelect(transaction)}
       >
-        <TouchableWithoutFeedback
-          onPress={() => setCategoryModalVisible(false)}
-        >
-          <View style={styles.categoryModalContainer}>
-            <View style={styles.categoryModalContent}>
-              <Text style={styles.categoryModalTitle}>Select Category</Text>
-              <FlatList
-                data={categories}
-                renderItem={({ item: category }) => (
-                  <TouchableOpacity
-                    style={styles.categoryItem}
-                    onPress={() => handleCategoryChange(category)}
-                  >
-                    <Text style={styles.categoryText}>{category.name}</Text>
-                  </TouchableOpacity>
-                )}
-                keyExtractor={item => item.id.toString()}
+        <View style={styles.transactionInfo}>
+          <Text style={styles.transactionDate}>{transaction.date}</Text>
+          <Text style={styles.transactionName}>{transaction.payee}</Text>
+          {transaction.notes ? (
+            <Text style={styles.transactionNotes}>{transaction.notes}</Text>
+          ) : null}
+          <TouchableOpacity onPress={() => setCategoryModalVisible(true)}>
+            <Text style={styles.transactionNotes}>
+              {transaction.categoryName || 'Uncategorized'}{' '}
+              <Icon
+                name="chevron-down"
+                size={14}
+                color={NewBrandingColours.text.muted}
               />
-              <TouchableOpacity
-                style={styles.closeModalButton}
-                onPress={() => setCategoryModalVisible(false)}
-              >
-                <Text style={styles.closeModalButtonText}>Cancel</Text>
-              </TouchableOpacity>
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.transactionAmount}>
+          <Text
+            style={[
+              styles.amountText,
+              parsedAmount >= 0 ? styles.positiveAmount : styles.negativeAmount,
+            ]}
+          >
+            {transactionAmountString}
+          </Text>
+        </View>
+        <View style={styles.checkboxContainer}>
+          {isSelected ? (
+            <View style={styles.selectedIcon}>
+              <Icon
+                name="check"
+                size={24}
+                color={NewBrandingColours.neutral.white}
+              />
             </View>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
-    </TouchableOpacity>
-  );
-});
+          ) : (
+            <View style={styles.unselectedIcon} />
+          )}
+        </View>
+
+        <Modal
+          animationType="slide"
+          transparent
+          visible={categoryModalVisible}
+          onRequestClose={() => setCategoryModalVisible(false)}
+        >
+          <TouchableWithoutFeedback
+            onPress={() => setCategoryModalVisible(false)}
+          >
+            <View style={styles.categoryModalContainer}>
+              <View style={styles.categoryModalContent}>
+                <Text style={styles.categoryModalTitle}>Select Category</Text>
+                <FlatList
+                  data={categories}
+                  renderItem={({ item: category }) => (
+                    <TouchableOpacity
+                      style={styles.categoryItem}
+                      onPress={() => handleCategoryChange(category)}
+                    >
+                      <Text style={styles.categoryText}>{category.name}</Text>
+                    </TouchableOpacity>
+                  )}
+                  keyExtractor={item => item.id.toString()}
+                />
+                <TouchableOpacity
+                  style={styles.closeModalButton}
+                  onPress={() => setCategoryModalVisible(false)}
+                >
+                  <Text style={styles.closeModalButtonText}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
+      </TouchableOpacity>
+    );
+  },
+);
 
 export default TransactionItem;
 

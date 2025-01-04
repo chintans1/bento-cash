@@ -28,6 +28,25 @@ export class InternalLunchMoneyClient {
     );
   }
 
+  async getTransactionsForWholeYear() {
+    const today = new Date();
+    const startOfYear = new Date(today.getFullYear(), 0, 1);
+    const endOfYear = new Date(today.getFullYear(), 11, 31);
+
+    const response = await this.lunchMoneyClient.get('/v1/transactions', {
+      pending: true,
+      debit_as_negative: true,
+      start_date: startOfYear.toISOString().split('T')[0],
+      end_date: endOfYear.toISOString().split('T')[0],
+    });
+
+    const { transactions } = response;
+    return transactions.sort(
+      (a: Transaction, b: Transaction) =>
+        Date.parse(b.date) - Date.parse(a.date),
+    );
+  }
+
   async getAllTransactions() {
     const today = new Date();
     const thirtyDaysAgo = new Date(new Date().setDate(today.getDate() - 30));
@@ -39,6 +58,7 @@ export class InternalLunchMoneyClient {
       start_date: thirtyDaysAgo.toISOString().split('T')[0],
       end_date: today.toISOString().split('T')[0],
     });
+
     const { transactions } = response;
     return transactions.sort(
       (a: Transaction, b: Transaction) =>

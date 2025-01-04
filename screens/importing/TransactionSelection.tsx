@@ -24,7 +24,10 @@ import {
 } from '../../models/lunchmoney/appModels';
 import { formatAmountString } from '../../data/formatBalance';
 
-import { getLastImportDate, storeLastImportDate } from '../../storage/importDate';
+import {
+  getLastImportDate,
+  storeLastImportDate,
+} from '../../storage/importDate';
 import { getParsedTransactions } from '../../data/transformSimpleFin';
 import { getSimpleFinAuth } from '../../utils/simpleFinAuth';
 import { getAccountsData } from '../../clients/simplefinClient';
@@ -167,8 +170,7 @@ const styles = StyleSheet.create({
     borderColor: NewBrandingColours.neutral.gray,
   },
 
-  footer: {
-  },
+  footer: {},
   continueButton: {
     backgroundColor: NewBrandingColours.primary.main,
     borderRadius: 12,
@@ -283,13 +285,19 @@ const styles = StyleSheet.create({
 type ImportAccount = {
   id: string;
   accountName: string;
-}
+};
 
-const TransactionItem = ({ item, toggleTransactionSelection, selectedTransactions, categories }) => {
+function TransactionItem({
+  item,
+  toggleTransactionSelection,
+  selectedTransactions,
+  categories,
+}) {
   const parsedAmount = parseFloat(item.amount);
   const transactionAmountString = formatAmountString(parsedAmount);
 
-  const [categoryModalVisible, setCategoryModalVisible] = useState<boolean>(false);
+  const [categoryModalVisible, setCategoryModalVisible] =
+    useState<boolean>(false);
 
   const handleCategoryChange = (category: AppCategory) => {
     item.categoryId = category.id;
@@ -306,8 +314,8 @@ const TransactionItem = ({ item, toggleTransactionSelection, selectedTransaction
         <Text style={styles.transactionDate}>{item.date}</Text>
         <Text style={styles.transactionName}>{item.payee}</Text>
         {item.notes ? (
-            <Text style={styles.transactionNotes}>{item.notes}</Text>
-          ) : null}
+          <Text style={styles.transactionNotes}>{item.notes}</Text>
+        ) : null}
 
         <TouchableOpacity onPress={() => setCategoryModalVisible(true)}>
           <Text style={styles.transactionNotes}>
@@ -382,9 +390,15 @@ const TransactionItem = ({ item, toggleTransactionSelection, selectedTransaction
       </Modal>
     </TouchableOpacity>
   );
-};
+}
 
-const TransactionSection = ({ account, transactions, toggleTransactionSelection, selectedTransactions, categories }) => {
+function TransactionSection({
+  account,
+  transactions,
+  toggleTransactionSelection,
+  selectedTransactions,
+  categories,
+}) {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const toggleCollapse = () => {
@@ -395,9 +409,9 @@ const TransactionSection = ({ account, transactions, toggleTransactionSelection,
     <View>
       <TouchableOpacity style={styles.sectionHeader} onPress={toggleCollapse}>
         <Text style={styles.sectionHeaderText}>{account.accountName}</Text>
-        <View style={{ flex: 1, alignItems: "flex-end" }}>
+        <View style={{ flex: 1, alignItems: 'flex-end' }}>
           <Icon
-            name={isCollapsed ? "chevron-up" : "chevron-down"}
+            name={isCollapsed ? 'chevron-up' : 'chevron-down'}
             size={24}
             color={NewBrandingColours.text.secondary}
           />
@@ -415,12 +429,12 @@ const TransactionSection = ({ account, transactions, toggleTransactionSelection,
               categories={categories}
             />
           )}
-          keyExtractor={(item) => item.externalId}
+          keyExtractor={item => item.externalId}
         />
       )}
     </View>
   );
-};
+}
 
 type TransactionSelectionNavigationProp = NativeStackNavigationProp<
   ImportStackParamList,
@@ -448,7 +462,8 @@ export default function TransactionSelectionScreen({
 
   const [accounts, setAccounts] = useState<ImportAccount[]>(
     transactionsToImport.reduce((acc, transaction) => {
-      const id = transaction.lmAccountId?.toString() || transaction.externalAccountId;
+      const id =
+        transaction.lmAccountId?.toString() || transaction.externalAccountId;
 
       if (!acc.some(account => account.id === id)) {
         acc.push({
@@ -458,7 +473,7 @@ export default function TransactionSelectionScreen({
       }
 
       return acc;
-    }, [] as ImportAccount[])
+    }, [] as ImportAccount[]),
   );
 
   const [selectedTransactions, setSelectedTransactions] = useState<
@@ -499,22 +514,24 @@ export default function TransactionSelectionScreen({
     );
     setTransactions(parsedTransactions);
 
-    setAccounts(parsedTransactions.reduce((acc, transaction) => {
-      const id = transaction.lmAccountId?.toString() || transaction.externalAccountId;
+    setAccounts(
+      parsedTransactions.reduce((acc, transaction) => {
+        const id =
+          transaction.lmAccountId?.toString() || transaction.externalAccountId;
 
-      if (!acc.some(account => account.id === id)) {
-        acc.push({
-          id,
-          accountName: transaction.externalAccountName,
-        });
-      }
+        if (!acc.some(account => account.id === id)) {
+          acc.push({
+            id,
+            accountName: transaction.externalAccountName,
+          });
+        }
 
-      return acc;
-    }, [] as ImportAccount[]));
+        return acc;
+      }, [] as ImportAccount[]),
+    );
 
     setFilterDateManuallyChanged(false);
   }, [filterDate]);
-
 
   useEffect(() => {
     hydrateFilterDate();
@@ -567,20 +584,24 @@ export default function TransactionSelectionScreen({
           </View>
         ) : (
           <FlatList
-          data={accounts} // TODO need to make this efficient
-          contentContainerStyle={styles.transactionList}
-          renderItem={({ item: account }) => (
-            <TransactionSection
-              account={account}
-              transactions={transactions.filter(t => t.externalAccountId === account.id || t.lmAccountId?.toString() === account.id)}
-              toggleTransactionSelection={toggleTransactionSelection}
-              selectedTransactions={selectedTransactions}
-              categories={categories}
-            />
-          )}
-          keyExtractor={(item) => item.id}
-          ListEmptyComponent={renderNoStateMessage}
-        />
+            data={accounts} // TODO need to make this efficient
+            contentContainerStyle={styles.transactionList}
+            renderItem={({ item: account }) => (
+              <TransactionSection
+                account={account}
+                transactions={transactions.filter(
+                  t =>
+                    t.externalAccountId === account.id ||
+                    t.lmAccountId?.toString() === account.id,
+                )}
+                toggleTransactionSelection={toggleTransactionSelection}
+                selectedTransactions={selectedTransactions}
+                categories={categories}
+              />
+            )}
+            keyExtractor={item => item.id}
+            ListEmptyComponent={renderNoStateMessage}
+          />
         )}
         <View style={styles.footer}>
           <TouchableOpacity
