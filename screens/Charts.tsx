@@ -117,8 +117,8 @@ const styles = StyleSheet.create({
   },
   periodSelector: {
     flexDirection: 'row',
-    backgroundColor: NewBrandingColours.neutral.lightGray,
-    borderRadius: 8,
+    backgroundColor: NewBrandingColours.primary.main,
+    borderRadius: 12,
     marginHorizontal: 16,
     padding: 4,
 
@@ -132,17 +132,17 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 8,
     alignItems: 'center',
-    borderRadius: 6,
+    borderRadius: 12,
   },
   periodButtonActive: {
-    backgroundColor: NewBrandingColours.neutral.white,
+    backgroundColor: NewBrandingColours.primary.dark,
   },
   periodButtonText: {
     fontSize: 14,
-    color: NewBrandingColours.text.secondary,
+    color: NewBrandingColours.neutral.white,
   },
   periodButtonTextActive: {
-    color: NewBrandingColours.text.primary,
+    color: NewBrandingColours.neutral.white,
     fontWeight: '600',
   },
   chartCard: {
