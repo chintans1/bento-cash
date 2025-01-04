@@ -193,7 +193,7 @@ export default function Dashboard({ navigation }) {
       .reduce((partialNw, balance) => partialNw + balance, 0);
   }, [accounts]);
   const netWorthString = useMemo(
-    () => formatAmountString(netWorth),
+    () => formatAmountString(netWorth, 'USD'),
     [netWorth],
   );
 

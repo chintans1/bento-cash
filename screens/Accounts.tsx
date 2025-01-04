@@ -135,7 +135,7 @@ export default function AccountsScreen() {
       .reduce((partialNw, balance) => partialNw + balance, 0);
   }, [accounts]);
   const netWorthString = useMemo(
-    () => formatAmountString(netWorth),
+    () => formatAmountString(netWorth, 'USD'),
     [netWorth],
   );
 
@@ -193,7 +193,7 @@ export default function AccountsScreen() {
 
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <Text style={styles.sectionHeaderBalance}>
-          {formatAmountString(totalBalance)}
+          {formatAmountString(totalBalance, 'USD')}
         </Text>
         <Icon
           name={

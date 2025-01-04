@@ -247,7 +247,7 @@ export default function ChartsScreen() {
           );
           if (monthIndex === -1) return acc;
 
-          const amount = parseFloat(transaction.amount);
+          const amount = parseFloat(transaction.amountToBase);
           const monthData = monthlyData[monthIndex];
 
           if (transaction.isIncome || (!transaction.categoryId && amount > 0)) {
@@ -277,31 +277,38 @@ export default function ChartsScreen() {
     [],
   );
 
-  const renderSummaryCard = (title: string, amount: number, change: number, showChange: boolean = false) => (
+  const renderSummaryCard = (
+    title: string,
+    amount: number,
+    change: number,
+    showChange: boolean = false,
+  ) => (
     <View style={styles.summaryCard}>
       <Text style={styles.summaryLabel}>{title}</Text>
       <Text style={styles.summaryAmount}>
         ${Math.abs(amount).toLocaleString()}
       </Text>
-      {showChange && <View style={styles.summaryChange}>
-        <Icon
-          name={change >= 0 ? 'arrow-up-right' : 'arrow-down-right'}
-          size={12}
-          color={
-            change >= 0
-              ? NewBrandingColours.secondary.main
-              : NewBrandingColours.accent.red
-          }
-        />
-        <Text
-          style={[
-            styles.changeText,
-            change >= 0 ? styles.changePositive : styles.changeNegative,
-          ]}
-        >
-          {Math.abs(change)}%
-        </Text>
-      </View>}
+      {showChange && (
+        <View style={styles.summaryChange}>
+          <Icon
+            name={change >= 0 ? 'arrow-up-right' : 'arrow-down-right'}
+            size={12}
+            color={
+              change >= 0
+                ? NewBrandingColours.secondary.main
+                : NewBrandingColours.accent.red
+            }
+          />
+          <Text
+            style={[
+              styles.changeText,
+              change >= 0 ? styles.changePositive : styles.changeNegative,
+            ]}
+          >
+            {Math.abs(change)}%
+          </Text>
+        </View>
+      )}
     </View>
   );
 

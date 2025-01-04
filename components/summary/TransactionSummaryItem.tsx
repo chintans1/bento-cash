@@ -76,7 +76,7 @@ function TransactionSummaryItem({ transaction }: TransactionSummaryProps) {
             },
           ]}
         >
-          {formatAmountString(amount)}
+          {formatAmountString(amount, transaction.currency)}
         </Text>
         <Text style={styles.transactionCategory}>{categoryName}</Text>
       </View>

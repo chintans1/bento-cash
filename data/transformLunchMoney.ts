@@ -69,11 +69,15 @@ export const getTransactionsForWholeYear = async (
         : transaction.plaid_account_id;
 
     if (!splitTransaction && !groupTransaction) {
+      const amount = parseFloat(transaction.amount);
       appTransactions.push({
         id: transaction.id,
         date: transaction.date,
         payee: transaction.payee,
-        amount: transaction.amount,
+        amount: amount.toFixed(2),
+        amountToBase: (
+          Math.abs(parseFloat(transaction.to_base)) * Math.sign(amount)
+        ).toFixed(2),
         currency: transaction.currency,
         notes: transaction.notes,
 
@@ -115,11 +119,18 @@ export const getTransactionsForApp = async (
       'has_children' in transaction ? transaction.has_children : false;
 
     if (!splitTransaction && !groupTransaction) {
+      const amount = parseFloat(transaction.amount);
       appTransactions.push({
         id: transaction.id,
         date: transaction.date,
         payee: transaction.payee,
         amount: transaction.amount,
+        amountToBase:
+          'to_base' in transaction && typeof transaction.to_base === 'string'
+            ? (
+                Math.abs(parseFloat(transaction.to_base)) * Math.sign(amount)
+              ).toFixed(2)
+            : transaction.amount,
         currency: transaction.currency,
         notes: transaction.notes,
 

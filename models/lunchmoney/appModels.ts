@@ -3,6 +3,7 @@ export type AppTransaction = {
   date: string;
   payee: string;
   amount: string;
+  amountToBase: string;
   currency: string;
   notes: string;
 

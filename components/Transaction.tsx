@@ -161,7 +161,10 @@ const getCategoryColor = (category: string): string => {
 
 function TransactionComponent({ transaction }: TransactionProps) {
   const transactionAmount = parseFloat(transaction.amount);
-  const transactionAmountString = formatAmountString(transactionAmount);
+  const transactionAmountString = formatAmountString(
+    transactionAmount,
+    transaction.currency,
+  );
 
   return (
     <TouchableOpacity disabled style={styles.transactionItem}>

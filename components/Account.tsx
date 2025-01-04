@@ -82,7 +82,7 @@ const getAccountIcon = (type: AccountType): string => {
 
 function AccountComponent({ account }: AccountProps) {
   const accountBalance = parseFloat(account.balance);
-  const balanceString = formatAmountString(accountBalance);
+  const balanceString = formatAmountString(accountBalance, account.currency);
 
   return (
     <TouchableOpacity disabled style={styles.accountItem}>
