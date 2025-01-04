@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -199,7 +199,7 @@ export default function Dashboard({ navigation }) {
 
   const [budgetSummary, setBudgetSummary] = useState<BudgetSummary>(null);
 
-  const fetchBudgetData = async () => {
+  const fetchBudgetData = useCallback(async () => {
     try {
       setBudgetSummary(
         await getBudgetSummary(
@@ -211,7 +211,7 @@ export default function Dashboard({ navigation }) {
     } catch (error) {
       console.error('Error fetching budget:', error);
     }
-  };
+  }, [lunchMoneyClient]);
 
   useEffect(() => {
     fetchBudgetData();
