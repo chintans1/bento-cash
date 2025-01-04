@@ -1,8 +1,8 @@
-import { useCallback, useState } from "react";
-import { Dimensions, StyleSheet, Text, View } from "react-native";
-import { NewBrandingColours } from "../../styles/brandingConstants";
-import BarChart from "./BarChart";
-import { Dataset } from "../../models/charts/chartModels";
+import { useCallback, useState } from 'react';
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { NewBrandingColours } from '../../styles/brandingConstants';
+import BarChart from './BarChart';
+import { Dataset } from '../../models/charts/chartModels';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -20,13 +20,8 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: NewBrandingColours.neutral.white,
     borderRadius: 12,
-    marginBottom: 20,
-    overflow: 'hidden',
-    shadowColor: NewBrandingColours.neutral.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    marginBottom: 16,
+    overflow: 'hidden'
   },
   header: {
     padding: 16,
@@ -72,16 +67,21 @@ const styles = StyleSheet.create({
 function ChartSection({ title, subtitle, padding, data }: ChartSectionProps) {
   const [chartWidth, setChartWidth] = useState(SCREEN_WIDTH);
 
-  const onLayout = useCallback((event: any) => {
-    const containerWidth = event.nativeEvent.layout.width;
-    setChartWidth(containerWidth - padding * 2);
-  }, [padding]);
+  const onLayout = useCallback(
+    (event: any) => {
+      const containerWidth = event.nativeEvent.layout.width;
+      setChartWidth(containerWidth - padding * 2);
+    },
+    [padding],
+  );
 
   const renderLegend = () => (
     <View style={styles.legend}>
       {data.datasets.map((dataset, index) => (
         <View key={index} style={styles.legendItem}>
-          <View style={[styles.legendColor, { backgroundColor: dataset.color() }]} />
+          <View
+            style={[styles.legendColor, { backgroundColor: dataset.color() }]}
+          />
           <Text style={styles.legendText}>{index}</Text>
         </View>
       ))}
@@ -103,10 +103,10 @@ function ChartSection({ title, subtitle, padding, data }: ChartSectionProps) {
             labelColor={NewBrandingColours.text.muted}
           />
         )}
-        {renderLegend()}
+        {/* {renderLegend()} */}
       </View>
     </View>
   );
-};
+}
 
 export default ChartSection;

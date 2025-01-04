@@ -1,6 +1,6 @@
-import { Group, RoundedRect, Text } from "@shopify/react-native-skia";
-import DefaultChartFont from "./Font";
-import { minBarHeight } from "../../models/charts/chartConstants";
+import { Group, RoundedRect, Text } from '@shopify/react-native-skia';
+import DefaultChartFont from './Font';
+import { minBarHeight } from '../../models/charts/chartConstants';
 
 const barCornerRadius = 16;
 
@@ -17,10 +17,9 @@ export const calculateBarMetrics = (
   barWidth: number,
   spacing: number,
   scaleY: number,
-  chartHeight: number,
   barOffset: number,
   yAxisWidth: number,
-  baselineY: number
+  baselineY: number,
 ): BarMetrics => {
   const isNegative = value < 0;
   const absoluteHeight = Math.max(minBarHeight, Math.abs(value) * scaleY);
@@ -34,7 +33,7 @@ export const calculateBarMetrics = (
     x,
     y,
     height: absoluteHeight,
-    isNegative
+    isNegative,
   };
 };
 
@@ -57,21 +56,33 @@ function Bar({
   color,
   label,
   labelColor,
-  isNegative
+  isNegative,
 }: BarProps) {
   const roundedRectConfig = {
     rect: { x, y, width, height },
-    topLeft: { x: isNegative ? 0 : barCornerRadius, y: isNegative ? 0 : barCornerRadius },
-    topRight: { x: isNegative ? 0 : barCornerRadius, y: isNegative ? 0 : barCornerRadius },
-    bottomRight: { x: isNegative ? barCornerRadius : 0, y: isNegative ? barCornerRadius : 0 },
-    bottomLeft: { x: isNegative ? barCornerRadius : 0, y: isNegative ? barCornerRadius : 0 },
+    topLeft: {
+      x: isNegative ? 0 : barCornerRadius,
+      y: isNegative ? 0 : barCornerRadius,
+    },
+    topRight: {
+      x: isNegative ? 0 : barCornerRadius,
+      y: isNegative ? 0 : barCornerRadius,
+    },
+    bottomRight: {
+      x: isNegative ? barCornerRadius : 0,
+      y: isNegative ? barCornerRadius : 0,
+    },
+    bottomLeft: {
+      x: isNegative ? barCornerRadius : 0,
+      y: isNegative ? barCornerRadius : 0,
+    },
   };
 
   return (
     <Group>
       <Text
         x={Math.max(0, Math.min(x, x - 9))}
-        y={y + height + 15}// (isNegative ? height + 35 : -5)}
+        y={y + height + 15} // (isNegative ? height + 35 : -5)}
         text={label}
         color={labelColor}
         font={DefaultChartFont}

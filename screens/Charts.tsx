@@ -8,20 +8,31 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/Feather';
+import { subMonths, startOfMonth, startOfYear } from 'date-fns';
 import { NewBrandingColours } from '../styles/brandingConstants';
 import { useParentContext } from '../context/app/appContextProvider';
 import InternalLunchMoneyClient from '../clients/lunchMoneyClient';
 import { AppTransaction } from '../models/lunchmoney/appModels';
 import { getTransactionsForWholeYear } from '../data/transformLunchMoney';
 import ChartSection from '../components/charts/ChartSection';
-import Icon from 'react-native-vector-icons/Feather';
+import {
+  allMonths,
+  endOfMonthUTC,
+  getMonthNames,
+  startOfMonthUTC,
+} from '../utils/dateUtils';
 
-const months = Array.from({ length: 12 }, (_, i) => {
-  return {
-    month: new Date(2024, i).toLocaleString('default', { month: 'short' }),
-  };
-});
-const monthLabels = months.map(month => month.month);
+type Period = 'month' | 'quarter' | 'ytd' | 'year';
+type PeriodLabel = '1M' | '3M' | 'YTD' | '1Y';
+
+const periodLabels: Record<Period, PeriodLabel> = {
+  month: '1M',
+  quarter: '3M',
+  ytd: 'YTD',
+  year: '1Y',
+};
+
 const chartContainerPadding = 16;
 
 interface MonthlyData {
@@ -29,9 +40,10 @@ interface MonthlyData {
   netIncome: number;
   income: number;
   spending: number;
-};
+}
 
 interface ChartData {
+  relevantMonths: string[];
   totalNetIncome: number;
   totalSpend: number;
   totalIncome: number;
@@ -49,6 +61,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   header: {
+    marginHorizontal: 16,
     marginBottom: 24,
   },
   headerTitle: {
@@ -63,7 +76,7 @@ const styles = StyleSheet.create({
   },
   summaryContainer: {
     flexDirection: 'row',
-    marginBottom: 24,
+    marginBottom: 16,
     gap: 12,
   },
   summaryCard: {
@@ -71,11 +84,11 @@ const styles = StyleSheet.create({
     backgroundColor: NewBrandingColours.neutral.white,
     borderRadius: 12,
     padding: 16,
-    shadowColor: NewBrandingColours.neutral.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    // shadowColor: NewBrandingColours.neutral.black,
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.1,
+    // shadowRadius: 4,
+    // elevation: 3,
   },
   summaryLabel: {
     fontSize: 14,
@@ -104,26 +117,32 @@ const styles = StyleSheet.create({
   },
   periodSelector: {
     flexDirection: 'row',
-    backgroundColor: NewBrandingColours.neutral.lightGray,
-    borderRadius: 8,
-    marginBottom: 24,
+    backgroundColor: NewBrandingColours.primary.main,
+    borderRadius: 12,
+    marginHorizontal: 16,
     padding: 4,
+
+    shadowColor: NewBrandingColours.neutral.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   periodButton: {
     flex: 1,
     paddingVertical: 8,
     alignItems: 'center',
-    borderRadius: 6,
+    borderRadius: 12,
   },
   periodButtonActive: {
-    backgroundColor: NewBrandingColours.neutral.white,
+    backgroundColor: NewBrandingColours.primary.dark,
   },
   periodButtonText: {
     fontSize: 14,
-    color: NewBrandingColours.text.secondary,
+    color: NewBrandingColours.neutral.white,
   },
   periodButtonTextActive: {
-    color: NewBrandingColours.text.primary,
+    color: NewBrandingColours.neutral.white,
     fontWeight: '600',
   },
   chartCard: {
@@ -151,10 +170,14 @@ const styles = StyleSheet.create({
 });
 
 export default function ChartsScreen() {
-  const { appState: { lmApiKey, categories } } = useParentContext();
-  const [selectedPeriod, setSelectedPeriod] = useState('year');
+  const {
+    appState: { lmApiKey, categories },
+  } = useParentContext();
+
+  const [selectedPeriod, setSelectedPeriod] = useState<Period>('ytd');
   const [isLoading, setIsLoading] = useState(true);
   const [chartData, setChartData] = useState<ChartData>({
+    relevantMonths: [],
     totalNetIncome: 0,
     totalSpend: 0,
     totalIncome: 0,
@@ -168,64 +191,124 @@ export default function ChartsScreen() {
     [lmApiKey],
   );
 
-  const processTransactionsByMonth = useCallback((
-    transactions: AppTransaction[],
-  ): ChartData => {
-    // Initialize data structure for all months
-    const monthlyData: MonthlyData[] = months.map(month => ({
-      month: month.month,
-      netIncome: 0,
-      income: 0,
-      spending: 0,
-    }));
+  const getDateRange = (period: Period) => {
+    const endDate = new Date();
+    let startDate: Date;
 
-    const totals = transactions.reduce((acc, transaction) => {
-      const date = new Date(transaction.date);
-      const monthIndex = date.getMonth();
-      const amount = parseFloat(transaction.amount);
-      const monthData = monthlyData[monthIndex];
-
-      if (amount > 0) {
-        monthData.income += amount;
-        monthData.netIncome += amount;
-        acc.totalIncome += amount;
-      } else {
-        monthData.spending += Math.abs(amount);
-        monthData.netIncome -= Math.abs(amount);
-        acc.totalSpend += Math.abs(amount);
-      }
-
-      return acc;
-    }, { totalSpend: 0, totalIncome: 0 });
+    switch (period) {
+      case 'month':
+        startDate = startOfMonth(endDate);
+        break;
+      case 'quarter':
+        startDate = subMonths(endDate, 2);
+        break;
+      case 'ytd':
+        startDate = startOfYear(endDate);
+        break;
+      case 'year':
+        startDate = subMonths(endDate, 11);
+        break;
+      default:
+        startDate = subMonths(endDate, 12);
+    }
 
     return {
-      ...totals,
-      totalNetIncome: totals.totalIncome - totals.totalSpend,
-      netIncome: monthlyData.map(m => m.netIncome),
-      income: monthlyData.map(m => m.income),
-      spend: monthlyData.map(m => m.spending),
+      startDate: startOfMonthUTC(startDate),
+      endDate: endOfMonthUTC(endDate),
     };
-  }, []);
+  };
 
-  const renderSummaryCard = (title: string, amount: number, change: number) => (
+  const processTransactionsByMonth = useCallback(
+    (transactions: AppTransaction[], period: Period): ChartData => {
+      const { startDate, endDate } = getDateRange(period);
+
+      const filteredTransactions = transactions.filter(
+        t =>
+          !t.excludeFromTotals &&
+          new Date(t.date) >= startDate &&
+          new Date(t.date) <= endDate,
+      );
+
+      const relevantMonths = getMonthNames(startDate, endDate);
+
+      // Initialize data structure for all months
+      const monthlyData: MonthlyData[] = relevantMonths.map(month => ({
+        month,
+        netIncome: 0,
+        income: 0,
+        spending: 0,
+      }));
+
+      const totals = filteredTransactions.reduce(
+        (acc, transaction) => {
+          const date = new Date(transaction.date);
+          const monthIndex = monthlyData.findIndex(
+            m => m.month === allMonths[date.getUTCMonth()],
+          );
+          if (monthIndex === -1) return acc;
+
+          const amount = parseFloat(transaction.amountToBase);
+          const monthData = monthlyData[monthIndex];
+
+          if (transaction.isIncome || (!transaction.categoryId && amount > 0)) {
+            monthData.income += amount;
+            monthData.netIncome += amount;
+            acc.totalIncome += amount;
+          } else {
+            monthData.spending += Math.abs(amount);
+            monthData.netIncome -= Math.abs(amount);
+            acc.totalSpend += Math.abs(amount);
+          }
+
+          return acc;
+        },
+        { totalSpend: 0, totalIncome: 0 },
+      );
+
+      return {
+        ...totals,
+        relevantMonths,
+        totalNetIncome: totals.totalIncome - totals.totalSpend,
+        netIncome: monthlyData.map(m => m.netIncome),
+        income: monthlyData.map(m => m.income),
+        spend: monthlyData.map(m => m.spending),
+      };
+    },
+    [],
+  );
+
+  const renderSummaryCard = (
+    title: string,
+    amount: number,
+    change: number,
+    showChange: boolean = false,
+  ) => (
     <View style={styles.summaryCard}>
       <Text style={styles.summaryLabel}>{title}</Text>
-      <Text style={styles.summaryAmount}>${Math.abs(amount).toLocaleString()}</Text>
-      <View style={styles.summaryChange}>
-        <Icon
-          name={change >= 0 ? 'arrow-up-right' : 'arrow-down-right'}
-          size={12}
-          color={change >= 0 ? NewBrandingColours.secondary.main : NewBrandingColours.accent.red}
-        />
-        <Text
-          style={[
-            styles.changeText,
-            change >= 0 ? styles.changePositive : styles.changeNegative,
-          ]}
-        >
-          {Math.abs(change)}%
-        </Text>
-      </View>
+      <Text style={styles.summaryAmount}>
+        ${Math.abs(amount).toLocaleString()}
+      </Text>
+      {showChange && (
+        <View style={styles.summaryChange}>
+          <Icon
+            name={change >= 0 ? 'arrow-up-right' : 'arrow-down-right'}
+            size={12}
+            color={
+              change >= 0
+                ? NewBrandingColours.secondary.main
+                : NewBrandingColours.accent.red
+            }
+          />
+          <Text
+            style={[
+              styles.changeText,
+              change >= 0 ? styles.changePositive : styles.changeNegative,
+            ]}
+          >
+            {Math.abs(change)}%
+          </Text>
+        </View>
+      )}
     </View>
   );
 
@@ -239,7 +322,10 @@ export default function ChartsScreen() {
           new Map(categories.map(category => [category.id, category])),
         );
 
-        const processedData = processTransactionsByMonth(transactions);
+        const processedData = processTransactionsByMonth(
+          transactions,
+          selectedPeriod,
+        );
         setChartData(processedData);
       } catch (error) {
         console.error('Error fetching transactions:', error);
@@ -249,72 +335,86 @@ export default function ChartsScreen() {
     };
 
     fetchAndProcessTransactions();
-  }, [lunchMoneyClient, categories, processTransactionsByMonth]);
+  }, [
+    lunchMoneyClient,
+    categories,
+    processTransactionsByMonth,
+    selectedPeriod,
+  ]);
 
-  const chartConfig = useMemo(() => ({
-    income: {
-      labels: monthLabels,
-      datasets: [{
-        id: 'income',
-        data: chartData.income,
-        color: () => NewBrandingColours.secondary.main,
-        negativeColor: () => NewBrandingColours.accent.red,
-      }],
-    },
-    netIncome: {
-      labels: monthLabels,
-      datasets: [{
-        id: 'netIncome',
-        data: chartData.netIncome,
-        color: () => NewBrandingColours.secondary.main,
-        negativeColor: () => NewBrandingColours.accent.red,
-      }],
-    },
-  }), [chartData]);
+  const chartConfig = useMemo(
+    () => ({
+      income: {
+        labels: chartData.relevantMonths,
+        datasets: [
+          {
+            id: 'income',
+            data: chartData.income,
+            color: () => NewBrandingColours.secondary.main,
+            negativeColor: () => NewBrandingColours.accent.red,
+          },
+        ],
+      },
+      netIncome: {
+        labels: chartData.relevantMonths,
+        datasets: [
+          {
+            id: 'netIncome',
+            data: chartData.netIncome,
+            color: () => NewBrandingColours.secondary.main,
+            negativeColor: () => NewBrandingColours.accent.red,
+          },
+        ],
+      },
+    }),
+    [chartData],
+  );
 
   if (isLoading) {
     return (
-      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-        <ActivityIndicator size="large" color={NewBrandingColours.primary.main} />
+      <View
+        style={[
+          styles.container,
+          { justifyContent: 'center', alignItems: 'center' },
+        ]}
+      >
+        <ActivityIndicator
+          size="large"
+          color={NewBrandingColours.primary.main}
+        />
       </View>
     );
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Financial Overview</Text>
-          <Text style={styles.headerSubtitle}>Track your income and spending</Text>
-        </View>
+      <View style={styles.periodSelector}>
+        {(Object.keys(periodLabels) as Period[]).map(period => (
+          <TouchableOpacity
+            key={period}
+            style={[
+              styles.periodButton,
+              selectedPeriod === period && styles.periodButtonActive,
+            ]}
+            onPress={() => setSelectedPeriod(period)}
+          >
+            <Text
+              style={[
+                styles.periodButtonText,
+                selectedPeriod === period && styles.periodButtonTextActive,
+              ]}
+            >
+              {periodLabels[period]}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
 
+      <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.summaryContainer}>
           {renderSummaryCard('Total Income', chartData.totalIncome, 12.5)}
           {renderSummaryCard('Total Expenses', chartData.totalSpend, -8.3)}
         </View>
-
-        <View style={styles.periodSelector}>
-          {['month', 'quarter', 'year'].map((period) => (
-            <TouchableOpacity
-              key={period}
-              style={[
-                styles.periodButton,
-                selectedPeriod === period && styles.periodButtonActive,
-              ]}
-              onPress={() => setSelectedPeriod(period)}
-            >
-              <Text
-                style={[
-                  styles.periodButtonText,
-                  selectedPeriod === period && styles.periodButtonTextActive,
-                ]}
-              >
-                {period.charAt(0).toUpperCase() + period.slice(1)}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-
         <ChartSection
           title="Income"
           subtitle="Monthly income breakdown"

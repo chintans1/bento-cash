@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -6,7 +6,9 @@ import {
   StyleSheet,
   SafeAreaView,
   StatusBar,
+  TouchableOpacity,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/Feather';
 import { useParentContext } from '../context/app/appContextProvider';
 import { formatAmountString } from '../data/formatBalance';
 import { AppAccount } from '../models/lunchmoney/appModels';
@@ -81,6 +83,33 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: NewBrandingColours.text.primary,
   },
+
+  chartContainer: {
+    alignItems: 'center',
+    marginVertical: 16,
+  },
+  legendContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    marginTop: 16,
+  },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 16,
+    marginBottom: 8,
+  },
+  legendColor: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginRight: 4,
+  },
+  legendText: {
+    fontSize: 12,
+    color: NewBrandingColours.text.secondary,
+  },
 });
 
 export default function AccountsScreen() {
@@ -94,13 +123,19 @@ export default function AccountsScreen() {
     [accountsMap],
   );
 
+  const [expandedSections, setExpandedSections] = useState<string[]>(
+    accounts
+      .map(account => account.institutionName)
+      .filter((value, index, self) => self.indexOf(value) === index), // Remove duplicates
+  );
+
   const netWorth = useMemo(() => {
     return accounts
       .map(account => parseFloat(account.balance))
       .reduce((partialNw, balance) => partialNw + balance, 0);
   }, [accounts]);
   const netWorthString = useMemo(
-    () => formatAmountString(netWorth),
+    () => formatAmountString(netWorth, 'USD'),
     [netWorth],
   );
 
@@ -126,6 +161,14 @@ export default function AccountsScreen() {
     }));
   }, [accounts]);
 
+  const toggleSection = (institution: string) => {
+    setExpandedSections(prev =>
+      prev.includes(institution)
+        ? prev.filter(i => i !== institution)
+        : [...prev, institution],
+    );
+  };
+
   const renderListHeaderComponent = () => {
     return (
       <View>
@@ -142,24 +185,42 @@ export default function AccountsScreen() {
   }: {
     section: GroupedAccounts;
   }) => (
-    <View style={styles.sectionHeader}>
+    <TouchableOpacity
+      style={styles.sectionHeader}
+      onPress={() => toggleSection(institution)}
+    >
       <Text style={styles.sectionHeaderText}>{institution}</Text>
-      <Text style={styles.sectionHeaderBalance}>
-        {formatAmountString(totalBalance)}
-      </Text>
-    </View>
+
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <Text style={styles.sectionHeaderBalance}>
+          {formatAmountString(totalBalance, 'USD')}
+        </Text>
+        <Icon
+          name={
+            expandedSections.includes(institution)
+              ? 'chevron-down'
+              : 'chevron-up'
+          }
+          size={20}
+          color={NewBrandingColours.text.secondary}
+          style={{ marginLeft: 8 }}
+        />
+      </View>
+    </TouchableOpacity>
   );
 
   return (
     <SafeAreaView style={styles.container}>
       <SectionList
-        ListHeaderComponent={renderListHeaderComponent}
         sections={groupedAccounts}
-        renderItem={({ item: account }) => (
-          <AccountComponent account={account} />
-        )}
-        renderSectionHeader={renderSectionHeader}
         keyExtractor={item => item.id.toString()}
+        renderItem={({ item, section }) =>
+          expandedSections.includes(section.institution) ? (
+            <AccountComponent account={item} />
+          ) : null
+        }
+        renderSectionHeader={renderSectionHeader}
+        ListHeaderComponent={renderListHeaderComponent}
         contentContainerStyle={styles.accountList}
         stickySectionHeadersEnabled={false}
         ListEmptyComponent={renderNoStateMessage('No accounts found')}

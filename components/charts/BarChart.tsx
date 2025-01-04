@@ -63,36 +63,43 @@ function BarChart({
 
   // Calculate chart values
   const rawMaxValue =
-    maxValue || Math.max(...datasets.flatMap(dataset => dataset.data.map(Math.abs)));
+    maxValue ||
+    Math.max(...datasets.flatMap(dataset => dataset.data.map(Math.abs)));
 
-  const hasNegativeValues = datasets.some(dataset => dataset.data.some(value => value < 0));
+  const hasNegativeValues = datasets.some(dataset =>
+    dataset.data.some(value => value < 0),
+  );
 
   const chartMaxValue = calculateNiceMaxValue(rawMaxValue);
-  const scaleY = hasNegativeValues ? (height / 2) / chartMaxValue : height / chartMaxValue;
-    //height / chartMaxValue;
+  const scaleY = hasNegativeValues
+    ? height / 2 / chartMaxValue
+    : height / chartMaxValue;
+  // height / chartMaxValue;
 
   // Calculate the horizontal dashed lines
   const numberOfLines = 2;
   const horizontalLines = hasNegativeValues
     ? [
-      // Positive lines
-      ...Array.from({ length: numberOfLines }, (_, i) => {
-        const value = Math.round((chartMaxValue * (i + 1)) / numberOfLines);
-        const y = (height / 2) - (height / 2 * (i + 1)) / numberOfLines + topMargin;
-        return { y, value };
-      }),
-      // Negative lines
-      ...Array.from({ length: numberOfLines }, (_, i) => {
-        const value = -Math.round((chartMaxValue * (i + 1)) / numberOfLines);
-        const y = (height / 2) + (height / 2 * (i + 1)) / numberOfLines + topMargin;
-        return { y, value };
-      })
-    ]
+        // Positive lines
+        ...Array.from({ length: numberOfLines }, (_, i) => {
+          const value = Math.round((chartMaxValue * (i + 1)) / numberOfLines);
+          const y =
+            height / 2 - ((height / 2) * (i + 1)) / numberOfLines + topMargin;
+          return { y, value };
+        }),
+        // Negative lines
+        ...Array.from({ length: numberOfLines }, (_, i) => {
+          const value = -Math.round((chartMaxValue * (i + 1)) / numberOfLines);
+          const y =
+            height / 2 + ((height / 2) * (i + 1)) / numberOfLines + topMargin;
+          return { y, value };
+        }),
+      ]
     : Array.from({ length: numberOfLines }, (_, i) => {
-      const y = height - (height * (i + 1)) / numberOfLines + topMargin;
-      const value = Math.round((chartMaxValue * (i + 1)) / numberOfLines);
-      return { y, value };
-    });
+        const y = height - (height * (i + 1)) / numberOfLines + topMargin;
+        const value = Math.round((chartMaxValue * (i + 1)) / numberOfLines);
+        return { y, value };
+      });
 
   const barWidth = calculateBarDimensions(
     adjustedWidth,

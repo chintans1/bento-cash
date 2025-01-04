@@ -3,6 +3,7 @@ export type AppTransaction = {
   date: string;
   payee: string;
   amount: string;
+  amountToBase: string;
   currency: string;
   notes: string;
 
@@ -10,6 +11,9 @@ export type AppTransaction = {
   assetId?: number;
   assetName?: string;
   categoryName?: string;
+
+  isIncome: boolean;
+  excludeFromTotals: boolean;
 
   isGrouped: boolean;
   isSplit: boolean;
@@ -95,4 +99,11 @@ export type AppDraftTransaction = {
   externalAccountName: string;
 
   importable?: boolean;
+};
+
+export type BudgetSummary = {
+  expectedExpenses: number;
+  actualExpenses: number;
+  expectedIncome: number;
+  actualIncome: number;
 };

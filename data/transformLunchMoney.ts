@@ -10,8 +10,20 @@ import {
   AppCategory,
   AppDraftTransaction,
   AppTransaction,
+  BudgetSummary,
 } from '../models/lunchmoney/appModels';
 import { formatBalance } from './formatBalance';
+
+type BudgetCategoryInfo = {
+  categoryName: string;
+  categoryGroupName?: string;
+  id: number;
+  expectedAmount?: number;
+  actualAmount?: number;
+  isIncome: boolean;
+  isGroup: boolean;
+  groupId?: number;
+};
 
 const formatAccountName = (account: Asset | PlaidAccount): string => {
   const accountNameToUse =
@@ -57,11 +69,15 @@ export const getTransactionsForWholeYear = async (
         : transaction.plaid_account_id;
 
     if (!splitTransaction && !groupTransaction) {
+      const amount = parseFloat(transaction.amount);
       appTransactions.push({
         id: transaction.id,
         date: transaction.date,
         payee: transaction.payee,
-        amount: transaction.amount,
+        amount: amount.toFixed(2),
+        amountToBase: (
+          Math.abs(parseFloat(transaction.to_base)) * Math.sign(amount)
+        ).toFixed(2),
         currency: transaction.currency,
         notes: transaction.notes,
 
@@ -70,6 +86,9 @@ export const getTransactionsForWholeYear = async (
 
         categoryId: transaction.category_id,
         categoryName: categories.get(transaction.category_id)?.name,
+
+        isIncome: transaction.is_income,
+        excludeFromTotals: transaction.exclude_from_totals,
 
         isGrouped: transaction.is_group,
         isSplit: transaction.parent_id != null,
@@ -100,11 +119,18 @@ export const getTransactionsForApp = async (
       'has_children' in transaction ? transaction.has_children : false;
 
     if (!splitTransaction && !groupTransaction) {
+      const amount = parseFloat(transaction.amount);
       appTransactions.push({
         id: transaction.id,
         date: transaction.date,
         payee: transaction.payee,
         amount: transaction.amount,
+        amountToBase:
+          'to_base' in transaction && typeof transaction.to_base === 'string'
+            ? (
+                Math.abs(parseFloat(transaction.to_base)) * Math.sign(amount)
+              ).toFixed(2)
+            : transaction.amount,
         currency: transaction.currency,
         notes: transaction.notes,
 
@@ -114,6 +140,17 @@ export const getTransactionsForApp = async (
 
         categoryId: transaction.category_id,
         categoryName: categories.get(transaction.category_id)?.name,
+
+        isIncome:
+          'is_income' in transaction &&
+          typeof transaction.is_income === 'boolean'
+            ? transaction.is_income
+            : false,
+        excludeFromTotals:
+          'exclude_from_totals' in transaction &&
+          typeof transaction.exclude_from_totals === 'boolean'
+            ? transaction.exclude_from_totals
+            : false,
 
         isGrouped: transaction.is_group,
         isSplit: transaction.parent_id != null,
@@ -197,4 +234,137 @@ export const getDraftTransactions = (
     });
   });
   return draftTransactions;
+};
+
+const getBudgetCategoryInfo = (
+  category,
+  currentMonth: string,
+): BudgetCategoryInfo => {
+  return {
+    id: category.category_id,
+    categoryName: category.category_name,
+    categoryGroupName: category.category_group_name,
+    expectedAmount: category.data[currentMonth].budget_to_base
+      ? parseFloat(category.data[currentMonth].budget_to_base)
+      : undefined,
+    actualAmount: category.data[currentMonth].spending_to_base
+      ? parseFloat(category.data[currentMonth].spending_to_base)
+      : undefined,
+    isIncome: category.is_income,
+    isGroup: category.is_group,
+    groupId: category.is_group ? category.group_id : undefined,
+  };
+};
+
+const getBudgetCategoryInfoMap = (
+  budgetData,
+): Map<BudgetCategoryInfo, BudgetCategoryInfo[]> => {
+  const categoryInfoMap = new Map<BudgetCategoryInfo, BudgetCategoryInfo[]>();
+  const groupsMap: Map<number, BudgetCategoryInfo> = new Map<
+    number,
+    BudgetCategoryInfo
+  >();
+
+  // Gather all the category groups
+  const groups = budgetData.filter(category => category.is_group);
+  groups.forEach(group => {
+    if (group.data) {
+      const currentMonth = Object.keys(group.data)[0]; // Most recent month
+      const categoryInfo = getBudgetCategoryInfo(group, currentMonth);
+      categoryInfoMap.set(categoryInfo, []);
+      groupsMap.set(group.category_id, categoryInfo);
+    }
+  });
+
+  // Gather all non-group categories
+  const categories = budgetData.filter(category => !category.is_group);
+  categories.forEach(category => {
+    if (category.data) {
+      const currentMonth = Object.keys(category.data)[0]; // Most recent month
+      const categoryInfo = getBudgetCategoryInfo(category, currentMonth);
+
+      if (category.group_id && groupsMap.has(category.group_id)) {
+        const existingCategories = categoryInfoMap.get(
+          groupsMap.get(category.group_id),
+        );
+        existingCategories.push(categoryInfo);
+
+        categoryInfoMap.set(
+          groupsMap.get(category.group_id),
+          existingCategories,
+        );
+      } else {
+        categoryInfoMap.set(categoryInfo, []);
+      }
+    }
+  });
+
+  return categoryInfoMap;
+};
+
+export const getBudgetSummary = async (
+  lmClient: InternalLunchMoneyClient,
+  startDate: Date,
+  endDate: Date,
+): Promise<BudgetSummary> => {
+  const budgetData = await lmClient.getBudgetData(startDate, endDate);
+  const categoryInfos: Map<BudgetCategoryInfo, BudgetCategoryInfo[]> =
+    getBudgetCategoryInfoMap(budgetData);
+
+  const budgetSummary: BudgetSummary = {
+    expectedExpenses: 0,
+    actualExpenses: 0,
+    expectedIncome: 0,
+    actualIncome: 0,
+  };
+
+  /*
+    I have a map of groups -> categories under group
+    It is possible for a key to have no categories under it, its just a category on its own
+    Categories have the summed up actual values at the group level
+    Categories have the expected values either at the group level or at each individual category level
+    We need to return BudgetSummary with the summed up values of expected and actual expenses + income
+  */
+
+  categoryInfos.forEach((categories, group) => {
+    let setExpectedAtGroup: boolean = false;
+    if (group.expectedAmount !== undefined) {
+      if (group.isIncome) {
+        budgetSummary.expectedIncome += group.expectedAmount;
+      } else {
+        budgetSummary.expectedExpenses += group.expectedAmount;
+      }
+      setExpectedAtGroup = true;
+    }
+
+    let setActualAtGroup: boolean = false;
+    if (group.actualAmount !== undefined) {
+      if (group.isIncome) {
+        budgetSummary.actualIncome += Math.abs(group.actualAmount);
+      } else {
+        budgetSummary.actualExpenses += group.actualAmount;
+      }
+      setActualAtGroup = true;
+    }
+
+    categories.forEach(category => {
+      if (!setExpectedAtGroup && category.expectedAmount !== undefined) {
+        if (category.isIncome) {
+          budgetSummary.expectedIncome += category.expectedAmount;
+        } else {
+          budgetSummary.expectedExpenses += category.expectedAmount;
+        }
+      }
+
+      if (!setActualAtGroup && category.actualAmount !== undefined) {
+        if (category.isIncome) {
+          budgetSummary.actualIncome += Math.abs(group.actualAmount);
+        } else {
+          budgetSummary.actualExpenses += category.actualAmount;
+        }
+      }
+    });
+  });
+
+  return budgetSummary;
 };

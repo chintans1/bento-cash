@@ -1,7 +1,7 @@
 import base64 from 'react-native-base64';
 import { AccountsResponse } from '../models/simplefin/accounts';
 import { SimpleFinAuthentication } from '../models/simplefin/authentication';
-import getDateForSimpleFin from '../utils/dateUtils';
+import { getDateForSimpleFin } from '../utils/dateUtils';
 import { storeAuthenticationDetails } from '../utils/simpleFinAuth';
 import { ErrorType, handleError } from '../utils/errorHandler';
 

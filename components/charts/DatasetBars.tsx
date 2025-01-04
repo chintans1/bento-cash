@@ -2,8 +2,6 @@ import { Dataset } from '../../models/charts/chartModels';
 import { topMargin } from '../../models/charts/chartConstants';
 import Bar, { calculateBarMetrics } from './Bar';
 
-const xAxisHeight = 1;
-
 type DatasetBarsProps = {
   datasets: Dataset[];
   labels: string[];
@@ -27,10 +25,12 @@ function DatasetBars({
   yAxisWidth,
   labelOnlyStartEnd = true,
 }: DatasetBarsProps) {
-  const hasNegativeValues = datasets.some(dataset => dataset.data.some(value => value < 0));
+  const hasNegativeValues = datasets.some(dataset =>
+    dataset.data.some(value => value < 0),
+  );
 
   const baselineY = hasNegativeValues
-    ? (height / 2) + topMargin
+    ? height / 2 + topMargin
     : height + topMargin;
 
   return (
@@ -45,18 +45,23 @@ function DatasetBars({
             barWidth,
             spacing,
             scaleY,
-            height,
             barOffset,
             yAxisWidth,
-            baselineY
+            baselineY,
           );
 
-          const color = value === 0
-            ? `${dataset.color()}80`
-            : value < 0 ? dataset.negativeColor() : dataset.color();
+          const color =
+            value === 0
+              ? `${dataset.color()}80`
+              : value < 0
+                ? dataset.negativeColor()
+                : dataset.color();
           const datasetId = `dataset-${index}`;
 
-          const showLabel = !labelOnlyStartEnd || index === 0 || index === dataset.data.length - 1;
+          const showLabel =
+            !labelOnlyStartEnd ||
+            index === 0 ||
+            index === dataset.data.length - 1;
 
           return (
             <Bar

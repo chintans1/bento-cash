@@ -1,6 +1,8 @@
 import { Asset, DraftTransaction, LunchMoney, Transaction } from 'lunch-money';
+import { subMonths } from 'date-fns';
 import { AppAccount, AppDraftAccount } from '../models/lunchmoney/appModels';
 import { formatBalance } from '../data/formatBalance';
+import { startOfMonthUTC } from '../utils/dateUtils';
 
 // TODO: handle response format
 export class InternalLunchMoneyClient {
@@ -30,18 +32,35 @@ export class InternalLunchMoneyClient {
 
   async getTransactionsForWholeYear() {
     const today = new Date();
-    const startOfYear = new Date(today.getFullYear(), 0, 1);
-    const endOfYear = new Date(today.getFullYear(), 11, 31);
+    const yearAgo = startOfMonthUTC(subMonths(today, 11));
+    const endOfYear = new Date(today.getUTCFullYear(), 11, 31);
 
-    const response = await this.lunchMoneyClient.get('/v1/transactions', {
+    let response = await this.lunchMoneyClient.get('/v1/transactions', {
       pending: true,
       debit_as_negative: true,
-      start_date: startOfYear.toISOString().split('T')[0],
+      start_date: yearAgo.toISOString().split('T')[0],
       end_date: endOfYear.toISOString().split('T')[0],
     });
 
-    const { transactions } = response;
-    return transactions.sort(
+    const allTransactions = [];
+
+    let { transactions, has_more: hasMore } = response;
+    allTransactions.push(...transactions);
+
+    while (hasMore) {
+      response = await this.lunchMoneyClient.get('/v1/transactions', {
+        pending: true,
+        debit_as_negative: true,
+        start_date: yearAgo.toISOString().split('T')[0],
+        end_date: endOfYear.toISOString().split('T')[0],
+        offset: transactions.length,
+      });
+      transactions = response.transactions;
+      hasMore = response.has_more;
+      allTransactions.push(...transactions);
+    }
+
+    return allTransactions.sort(
       (a: Transaction, b: Transaction) =>
         Date.parse(b.date) - Date.parse(a.date),
     );
@@ -111,6 +130,15 @@ export class InternalLunchMoneyClient {
       id: draftAccount.lmAccount.id,
       balance: draftAccount.balance,
     });
+  }
+
+  async getBudgetData(startDate: Date, endDate: Date) {
+    const response = await this.lunchMoneyClient.get('/v1/budgets', {
+      start_date: startDate.toISOString().split('T')[0],
+      end_date: endDate.toISOString().split('T')[0],
+    });
+
+    return response;
   }
 }
 
