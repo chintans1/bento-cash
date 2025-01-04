@@ -24,7 +24,6 @@ const isTokenValid = async (token: string): Promise<boolean> => {
       return false;
     }
 
-    console.log('Token was good and valid');
     return true;
   } catch (error) {
     handleError({

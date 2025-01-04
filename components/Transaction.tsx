@@ -113,14 +113,15 @@ const getCategoryIcon = (category: string): string => {
   }
   if (
     lowerCaseCategory.includes('income') ||
-    lowerCaseCategory.includes('deposit')
+    lowerCaseCategory.includes('deposit') ||
+    lowerCaseCategory.includes('paycheck')
   ) {
     return 'dollar-sign';
   }
   if (lowerCaseCategory.includes('Uncategorized')) {
     return 'help-circle';
   }
-  return 'circle';
+  return 'help-circle';
 };
 
 const getCategoryColor = (category: string): string => {
@@ -149,7 +150,8 @@ const getCategoryColor = (category: string): string => {
   }
   if (
     lowerCaseCategory.includes('income') ||
-    lowerCaseCategory.includes('deposit')
+    lowerCaseCategory.includes('deposit') ||
+    lowerCaseCategory.includes('paycheck')
   ) {
     return NewBrandingColours.secondary.main;
   }
