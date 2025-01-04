@@ -80,7 +80,6 @@ export default function TransactionsScreen() {
     });
   }, [transactions, sortBy]);
 
-
   return (
     <View style={styles.container}>
       <View style={styles.sortContainer}>

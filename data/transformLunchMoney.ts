@@ -23,7 +23,7 @@ type BudgetCategoryInfo = {
   isIncome: boolean;
   isGroup: boolean;
   groupId?: number;
-}
+};
 
 const formatAccountName = (account: Asset | PlaidAccount): string => {
   const accountNameToUse =
@@ -130,8 +130,16 @@ export const getTransactionsForApp = async (
         categoryId: transaction.category_id,
         categoryName: categories.get(transaction.category_id)?.name,
 
-        isIncome: 'is_income' in transaction && typeof transaction.is_income === 'boolean' ? transaction.is_income : false,
-        excludeFromTotals: 'exclude_from_totals' in transaction && typeof transaction.exclude_from_totals === 'boolean' ? transaction.exclude_from_totals : false,
+        isIncome:
+          'is_income' in transaction &&
+          typeof transaction.is_income === 'boolean'
+            ? transaction.is_income
+            : false,
+        excludeFromTotals:
+          'exclude_from_totals' in transaction &&
+          typeof transaction.exclude_from_totals === 'boolean'
+            ? transaction.exclude_from_totals
+            : false,
 
         isGrouped: transaction.is_group,
         isSplit: transaction.parent_id != null,
@@ -217,22 +225,34 @@ export const getDraftTransactions = (
   return draftTransactions;
 };
 
-const getBudgetCategoryInfo = (category, currentMonth: string): BudgetCategoryInfo => {
+const getBudgetCategoryInfo = (
+  category,
+  currentMonth: string,
+): BudgetCategoryInfo => {
   return {
     id: category.category_id,
     categoryName: category.category_name,
     categoryGroupName: category.category_group_name,
-    expectedAmount: category.data[currentMonth]["budget_to_base"] ? parseFloat(category.data[currentMonth]["budget_to_base"]) : undefined,
-    actualAmount: category.data[currentMonth]["spending_to_base"] ? parseFloat(category.data[currentMonth]["spending_to_base"]) : undefined,
+    expectedAmount: category.data[currentMonth].budget_to_base
+      ? parseFloat(category.data[currentMonth].budget_to_base)
+      : undefined,
+    actualAmount: category.data[currentMonth].spending_to_base
+      ? parseFloat(category.data[currentMonth].spending_to_base)
+      : undefined,
     isIncome: category.is_income,
     isGroup: category.is_group,
     groupId: category.is_group ? category.group_id : undefined,
   };
-}
+};
 
-const getBudgetCategoryInfoMap = (budgetData): Map<BudgetCategoryInfo, BudgetCategoryInfo[]> => {
+const getBudgetCategoryInfoMap = (
+  budgetData,
+): Map<BudgetCategoryInfo, BudgetCategoryInfo[]> => {
   const categoryInfoMap = new Map<BudgetCategoryInfo, BudgetCategoryInfo[]>();
-  const groupsMap: Map<number, BudgetCategoryInfo> = new Map<number, BudgetCategoryInfo>();
+  const groupsMap: Map<number, BudgetCategoryInfo> = new Map<
+    number,
+    BudgetCategoryInfo
+  >();
 
   // Gather all the category groups
   const groups = budgetData.filter(category => category.is_group);
@@ -253,10 +273,15 @@ const getBudgetCategoryInfoMap = (budgetData): Map<BudgetCategoryInfo, BudgetCat
       const categoryInfo = getBudgetCategoryInfo(category, currentMonth);
 
       if (category.group_id && groupsMap.has(category.group_id)) {
-        const existingCategories = categoryInfoMap.get(groupsMap.get(category.group_id));
+        const existingCategories = categoryInfoMap.get(
+          groupsMap.get(category.group_id),
+        );
         existingCategories.push(categoryInfo);
 
-        categoryInfoMap.set(groupsMap.get(category.group_id), existingCategories);
+        categoryInfoMap.set(
+          groupsMap.get(category.group_id),
+          existingCategories,
+        );
       } else {
         categoryInfoMap.set(categoryInfo, []);
       }
@@ -266,16 +291,20 @@ const getBudgetCategoryInfoMap = (budgetData): Map<BudgetCategoryInfo, BudgetCat
   return categoryInfoMap;
 };
 
-export const getBudgetSummary = async (lmClient: InternalLunchMoneyClient, startDate: Date, endDate: Date): Promise<BudgetSummary> => {
+export const getBudgetSummary = async (
+  lmClient: InternalLunchMoneyClient,
+  startDate: Date,
+  endDate: Date,
+): Promise<BudgetSummary> => {
   const budgetData = await lmClient.getBudgetData(startDate, endDate);
-  const categoryInfos: Map<BudgetCategoryInfo, BudgetCategoryInfo[]>
-    = getBudgetCategoryInfoMap(budgetData);
+  const categoryInfos: Map<BudgetCategoryInfo, BudgetCategoryInfo[]> =
+    getBudgetCategoryInfoMap(budgetData);
 
   const budgetSummary: BudgetSummary = {
     expectedExpenses: 0,
     actualExpenses: 0,
     expectedIncome: 0,
-    actualIncome: 0
+    actualIncome: 0,
   };
 
   /*
@@ -307,7 +336,7 @@ export const getBudgetSummary = async (lmClient: InternalLunchMoneyClient, start
       setActualAtGroup = true;
     }
 
-    categories.forEach((category) => {
+    categories.forEach(category => {
       if (!setExpectedAtGroup && category.expectedAmount !== undefined) {
         if (category.isIncome) {
           budgetSummary.expectedIncome += category.expectedAmount;
@@ -327,5 +356,4 @@ export const getBudgetSummary = async (lmClient: InternalLunchMoneyClient, start
   });
 
   return budgetSummary;
-}
-
+};

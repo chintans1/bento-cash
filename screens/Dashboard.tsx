@@ -147,11 +147,15 @@ interface SectionItem {
 }
 
 export default function Dashboard({ navigation }) {
-  const { lmApiKey, transactions, accounts: accountsMap } = useParentContext()?.appState ?? {};
+  const {
+    lmApiKey,
+    transactions,
+    accounts: accountsMap,
+  } = useParentContext()?.appState ?? {};
 
   const lunchMoneyClient = useMemo(
     () => new InternalLunchMoneyClient({ token: lmApiKey }),
-    [lmApiKey]
+    [lmApiKey],
   );
 
   // const renderCategoryGrid = () => (
@@ -197,7 +201,13 @@ export default function Dashboard({ navigation }) {
 
   const fetchBudgetData = async () => {
     try {
-      setBudgetSummary(await getBudgetSummary(lunchMoneyClient, startOfMonthUTC(new Date()), endOfMonthUTC(new Date())));
+      setBudgetSummary(
+        await getBudgetSummary(
+          lunchMoneyClient,
+          startOfMonthUTC(new Date()),
+          endOfMonthUTC(new Date()),
+        ),
+      );
     } catch (error) {
       console.error('Error fetching budget:', error);
     }
@@ -205,7 +215,7 @@ export default function Dashboard({ navigation }) {
 
   useEffect(() => {
     fetchBudgetData();
-  }, []);
+  }, [fetchBudgetData]);
 
   const viewMoreButton = (
     viewText: string,
@@ -277,16 +287,14 @@ export default function Dashboard({ navigation }) {
       case 'budget':
         // TODO: need to be styling this better, let's focus on showing a small glimpse of the budget
         // In the future, there should be a budget screen with more details
-        return <BudgetOverviewCard
-          expectedIncome={budgetSummary?.expectedIncome}
-          actualIncome={budgetSummary?.actualIncome}
-          expectedExpenses={budgetSummary?.expectedExpenses}
-          actualExpenses={budgetSummary?.actualExpenses}
-        />
-          // <View style={styles.sectionCard}>
-            {/* <Text style={styles.sectionTitle}>Monthly Budget</Text> */}
-          {/* </View> */}
-
+        return (
+          <BudgetOverviewCard
+            expectedIncome={budgetSummary?.expectedIncome}
+            actualIncome={budgetSummary?.actualIncome}
+            expectedExpenses={budgetSummary?.expectedExpenses}
+            actualExpenses={budgetSummary?.actualExpenses}
+          />
+        );
       default:
         return null;
     }
@@ -294,7 +302,7 @@ export default function Dashboard({ navigation }) {
 
   const sections: SectionItem[] = [
     { type: 'balance' },
-    { type: 'budget'},
+    { type: 'budget' },
     { type: 'accounts' },
     { type: 'transactions' },
   ];

@@ -44,10 +44,10 @@ export class InternalLunchMoneyClient {
 
     const allTransactions = [];
 
-    let { transactions, has_more } = response;
+    let { transactions, has_more: hasMore } = response;
     allTransactions.push(...transactions);
 
-    while (has_more) {
+    while (hasMore) {
       response = await this.lunchMoneyClient.get('/v1/transactions', {
         pending: true,
         debit_as_negative: true,
@@ -56,7 +56,7 @@ export class InternalLunchMoneyClient {
         offset: transactions.length,
       });
       transactions = response.transactions;
-      has_more = response.has_more;
+      hasMore = response.has_more;
       allTransactions.push(...transactions);
     }
 

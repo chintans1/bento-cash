@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
   },
   setupCard: {
     alignItems: 'center',
-    //padding: 24,
+    // padding: 24,
   },
   setupIcon: {
     width: 48,
@@ -138,10 +138,14 @@ export default function BudgetOverviewCard({
   onSetupBudget,
 }: BudgetOverviewProps) {
   const isBudgetConfigured = expectedIncome > 0 || expectedExpenses > 0;
-  const currentMonth = new Date().toLocaleDateString('default', { month: 'long' });
+  const currentMonth = new Date().toLocaleDateString('default', {
+    month: 'long',
+  });
 
-  const incomeProgress = expectedIncome > 0 ? (actualIncome / expectedIncome) * 100 : 0;
-  const expenseProgress = expectedExpenses > 0 ? (actualExpenses / expectedExpenses) * 100 : 100;
+  const incomeProgress =
+    expectedIncome > 0 ? (actualIncome / expectedIncome) * 100 : 0;
+  const expenseProgress =
+    expectedExpenses > 0 ? (actualExpenses / expectedExpenses) * 100 : 100;
 
   // if (!isBudgetConfigured) {
   //   return (
@@ -190,13 +194,19 @@ export default function BudgetOverviewCard({
           <Text style={styles.title}>{currentMonth} Budget</Text>
           <Text style={styles.subtitle}>
             {isBudgetConfigured
-              ? (actualExpenses > expectedExpenses ? 'You are over budget :(' : 'You are on track! :)')
+              ? actualExpenses > expectedExpenses
+                ? 'You are over budget :('
+                : 'You are on track! :)'
               : 'Set your budget to see your progress'}
           </Text>
         </View>
         {onSetupBudget && (
           <TouchableOpacity onPress={onSetupBudget}>
-            <Icon name="edit-2" size={20} color={NewBrandingColours.text.secondary} />
+            <Icon
+              name="edit-2"
+              size={20}
+              color={NewBrandingColours.text.secondary}
+            />
           </TouchableOpacity>
         )}
       </View>
@@ -205,7 +215,12 @@ export default function BudgetOverviewCard({
         <View style={styles.statItem}>
           <View style={styles.statContent}>
             <Text style={styles.statLabel}>Income</Text>
-            <Text style={[styles.statValue, { color: getProgressColor(incomeProgress) }]}>
+            <Text
+              style={[
+                styles.statValue,
+                { color: getProgressColor(incomeProgress) },
+              ]}
+            >
               {formatCurrency(actualIncome)}
             </Text>
             {expectedIncome > 0 && (
@@ -214,9 +229,7 @@ export default function BudgetOverviewCard({
               </Text>
             )}
             {expectedIncome === 0 && (
-              <Text style={styles.statSubtext}>
-                None planned
-              </Text>
+              <Text style={styles.statSubtext}>None planned</Text>
             )}
           </View>
         </View>
@@ -224,7 +237,12 @@ export default function BudgetOverviewCard({
         <View style={styles.statItem}>
           <View style={styles.statContent}>
             <Text style={styles.statLabel}>Expenses</Text>
-            <Text style={[styles.statValue, { color: getProgressColor(expenseProgress) }]}>
+            <Text
+              style={[
+                styles.statValue,
+                { color: getProgressColor(expenseProgress) },
+              ]}
+            >
               {formatCurrency(actualExpenses)}
             </Text>
             {expectedExpenses > 0 && (
@@ -233,9 +251,7 @@ export default function BudgetOverviewCard({
               </Text>
             )}
             {expectedExpenses === 0 && (
-              <Text style={styles.statSubtext}>
-                None planned
-              </Text>
+              <Text style={styles.statSubtext}>None planned</Text>
             )}
           </View>
         </View>
@@ -244,8 +260,13 @@ export default function BudgetOverviewCard({
       {expectedExpenses > 0 && (
         <View style={[styles.progressSection, { marginTop: 16 }]}>
           <Text style={styles.progressLabel}>Expense Budget</Text>
-          {renderProgressBar(expenseProgress, getProgressColor(expenseProgress))}
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          {renderProgressBar(
+            expenseProgress,
+            getProgressColor(expenseProgress),
+          )}
+          <View
+            style={{ flexDirection: 'row', justifyContent: 'space-between' }}
+          >
             <Text style={styles.subtitle}>
               {expenseProgress > 100
                 ? `${(expenseProgress - 100).toFixed(0)}% over budget`
@@ -260,12 +281,16 @@ export default function BudgetOverviewCard({
 
       {(!expectedIncome || !expectedExpenses) && (
         <Text style={styles.warningText}>
-          <Icon name="alert-circle" size={12} color={NewBrandingColours.accent.orange} />{' '}
+          <Icon
+            name="alert-circle"
+            size={12}
+            color={NewBrandingColours.accent.orange}
+          />{' '}
           {!expectedIncome && !expectedExpenses
             ? 'Set your expected income and expenses'
             : !expectedIncome
-            ? 'Set your expected income'
-            : 'Set your expected expenses'}
+              ? 'Set your expected income'
+              : 'Set your expected expenses'}
         </Text>
       )}
     </View>

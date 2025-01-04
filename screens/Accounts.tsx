@@ -8,13 +8,13 @@ import {
   StatusBar,
   TouchableOpacity,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/Feather';
 import { useParentContext } from '../context/app/appContextProvider';
 import { formatAmountString } from '../data/formatBalance';
 import { AppAccount } from '../models/lunchmoney/appModels';
 import { NewBrandingColours } from '../styles/brandingConstants';
 import AccountComponent from '../components/Account';
 import renderNoStateMessage from '../components/EmptyListComponent';
-import Icon from 'react-native-vector-icons/Feather';
 
 interface GroupedAccounts {
   institution: string;
@@ -126,7 +126,7 @@ export default function AccountsScreen() {
   const [expandedSections, setExpandedSections] = useState<string[]>(
     accounts
       .map(account => account.institutionName)
-      .filter((value, index, self) => self.indexOf(value) === index) // Remove duplicates
+      .filter((value, index, self) => self.indexOf(value) === index), // Remove duplicates
   );
 
   const netWorth = useMemo(() => {
@@ -165,7 +165,7 @@ export default function AccountsScreen() {
     setExpandedSections(prev =>
       prev.includes(institution)
         ? prev.filter(i => i !== institution)
-        : [...prev, institution]
+        : [...prev, institution],
     );
   };
 
@@ -196,7 +196,11 @@ export default function AccountsScreen() {
           {formatAmountString(totalBalance)}
         </Text>
         <Icon
-          name={expandedSections.includes(institution) ? 'chevron-down' : 'chevron-up'}
+          name={
+            expandedSections.includes(institution)
+              ? 'chevron-down'
+              : 'chevron-up'
+          }
           size={20}
           color={NewBrandingColours.text.secondary}
           style={{ marginLeft: 8 }}

@@ -105,4 +105,4 @@ export type BudgetSummary = {
   actualExpenses: number;
   expectedIncome: number;
   actualIncome: number;
-}
+};
