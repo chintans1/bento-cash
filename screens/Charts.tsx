@@ -78,18 +78,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginBottom: 16,
     gap: 12,
-    marginHorizontal: 16,
   },
   summaryCard: {
     flex: 1,
     backgroundColor: NewBrandingColours.neutral.white,
     borderRadius: 12,
     padding: 16,
-    shadowColor: NewBrandingColours.neutral.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    // shadowColor: NewBrandingColours.neutral.black,
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.1,
+    // shadowRadius: 4,
+    // elevation: 3,
   },
   summaryLabel: {
     fontSize: 14,
@@ -122,6 +121,12 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginHorizontal: 16,
     padding: 4,
+
+    shadowColor: NewBrandingColours.neutral.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   periodButton: {
     flex: 1,
@@ -272,13 +277,13 @@ export default function ChartsScreen() {
     [],
   );
 
-  const renderSummaryCard = (title: string, amount: number, change: number) => (
+  const renderSummaryCard = (title: string, amount: number, change: number, showChange: boolean = false) => (
     <View style={styles.summaryCard}>
       <Text style={styles.summaryLabel}>{title}</Text>
       <Text style={styles.summaryAmount}>
         ${Math.abs(amount).toLocaleString()}
       </Text>
-      <View style={styles.summaryChange}>
+      {showChange && <View style={styles.summaryChange}>
         <Icon
           name={change >= 0 ? 'arrow-up-right' : 'arrow-down-right'}
           size={12}
@@ -296,7 +301,7 @@ export default function ChartsScreen() {
         >
           {Math.abs(change)}%
         </Text>
-      </View>
+      </View>}
     </View>
   );
 
@@ -376,16 +381,6 @@ export default function ChartsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Financial Overview</Text>
-        <Text style={styles.headerSubtitle}>
-          Track your income and spending
-        </Text>
-      </View>
-      <View style={styles.summaryContainer}>
-        {renderSummaryCard('Total Income', chartData.totalIncome, 12.5)}
-        {renderSummaryCard('Total Expenses', chartData.totalSpend, -8.3)}
-      </View>
       <View style={styles.periodSelector}>
         {(Object.keys(periodLabels) as Period[]).map(period => (
           <TouchableOpacity
@@ -409,6 +404,10 @@ export default function ChartsScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.summaryContainer}>
+          {renderSummaryCard('Total Income', chartData.totalIncome, 12.5)}
+          {renderSummaryCard('Total Expenses', chartData.totalSpend, -8.3)}
+        </View>
         <ChartSection
           title="Income"
           subtitle="Monthly income breakdown"

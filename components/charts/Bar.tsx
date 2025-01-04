@@ -17,7 +17,6 @@ export const calculateBarMetrics = (
   barWidth: number,
   spacing: number,
   scaleY: number,
-  chartHeight: number,
   barOffset: number,
   yAxisWidth: number,
   baselineY: number,

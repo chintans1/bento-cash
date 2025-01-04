@@ -45,7 +45,6 @@ function DatasetBars({
             barWidth,
             spacing,
             scaleY,
-            height,
             barOffset,
             yAxisWidth,
             baselineY,

@@ -20,8 +20,8 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: NewBrandingColours.neutral.white,
     borderRadius: 12,
-    marginBottom: 20,
-    overflow: 'hidden',
+    marginBottom: 16,
+    overflow: 'hidden'
   },
   header: {
     padding: 16,
