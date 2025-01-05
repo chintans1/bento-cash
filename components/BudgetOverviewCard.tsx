@@ -201,8 +201,8 @@ export default function BudgetOverviewCard({
           <Text style={styles.subtitle}>
             {isBudgetConfigured
               ? actualExpenses > expectedExpenses
-                ? 'You are over budget :('
-                : 'You are on track! :)'
+                ? 'You are over budget 😬'
+                : 'You are on track! 😊'
               : 'Set your budget to see your progress'}
           </Text>
         </View>
