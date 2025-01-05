@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 20,
+    marginBottom: 8,
   },
   title: {
     fontSize: 20,
@@ -264,7 +264,7 @@ export default function BudgetOverviewCard({
       </View>
 
       {expectedExpenses > 0 && (
-        <View style={[styles.progressSection, { marginTop: 16 }]}>
+        <View style={[styles.progressSection, { marginTop: 8 }]}>
           <Text style={styles.progressLabel}>Expense Budget</Text>
           {renderProgressBar(
             expenseProgress,
