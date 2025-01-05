@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  ReactElement,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {
   View,
   Text,
@@ -144,6 +150,7 @@ type SectionType = 'balance' | 'accounts' | 'transactions' | 'budget';
 
 interface SectionItem {
   type: SectionType;
+  render: () => ReactElement;
 }
 
 export default function Dashboard({ navigation }) {
@@ -157,27 +164,6 @@ export default function Dashboard({ navigation }) {
     () => new InternalLunchMoneyClient({ token: lmApiKey }),
     [lmApiKey],
   );
-
-  // const renderCategoryGrid = () => (
-  //   <View style={styles.categoryGrid}>
-  //     {Object.entries(categorySpending).map(([category, amount]) => (
-  //       <View key={category} style={styles.categoryCard}>
-  //         <View style={styles.categoryContent}>
-  //           <View
-  //             style={[
-  //               styles.categoryIcon,
-  //               { backgroundColor: NewBrandingColours.primary.main },
-  //             ]}
-  //           >
-  //             <Icon name="box" size={16} color={NewBrandingColours.neutral.white} />
-  //           </View>
-  //           <Text style={styles.categoryName}>{category}</Text>
-  //           <Text style={styles.categoryAmount}>${amount.toLocaleString()}</Text>
-  //         </View>
-  //       </View>
-  //     ))}
-  //   </View>
-  // );
 
   const recentTransactions =
     transactions.length > 3 ? transactions.slice(0, 3) : transactions;
@@ -236,81 +222,69 @@ export default function Dashboard({ navigation }) {
     );
   };
 
-  const renderSection = (section: SectionItem) => {
-    switch (section.type) {
-      case 'balance':
-        return (
-          <View style={styles.balanceCard}>
-            <Text style={styles.balanceTitle}>Net Worth</Text>
-            <Text style={styles.balanceAmount}>{netWorthString}</Text>
-            {/* <View style={styles.balanceChange}>
-              <Icon
-                name="arrow-up-right"
-                size={16}
-                color={NewBrandingColours.secondary.main}
-              />
-              <Text style={styles.balanceChangeText}>
-                +2.5% from last month
-              </Text>
-            </View> */}
-          </View>
-        );
-      case 'accounts':
-        return (
-          <View style={styles.sectionCard}>
-            <Text style={styles.sectionTitle}>Accounts Summary</Text>
-            <FlatList
-              data={accounts}
-              renderItem={({ item }) => (
-                <AccountSummaryItem accountSummary={item} showTrend={false} />
-              )}
-              ListEmptyComponent={renderNoStateMessage('No accounts found')}
-            />
-            {viewMoreButton('View Accounts', 'Accounts')}
-          </View>
-        );
-      // TODO: need to be rendering it closer to Transactions screen
-      case 'transactions':
-        return (
-          <View style={[styles.sectionCard, { marginBottom: 16 }]}>
-            <Text style={styles.sectionTitle}>Recent Transactions</Text>
-            <FlatList
-              data={recentTransactions}
-              renderItem={({ item }) => (
-                <TransactionSummaryItem transaction={item} />
-              )}
-              ListEmptyComponent={renderNoStateMessage('No transactions found')}
-            />
-            {viewMoreButton('View All Transactions', 'Transactions')}
-          </View>
-        );
-      case 'budget':
-        // TODO: need to be styling this better, let's focus on showing a small glimpse of the budget
-        // In the future, there should be a budget screen with more details
-        return (
-          <BudgetOverviewCard
-            expectedIncome={budgetSummary?.expectedIncome}
-            actualIncome={budgetSummary?.actualIncome}
-            expectedExpenses={budgetSummary?.expectedExpenses}
-            actualExpenses={budgetSummary?.actualExpenses}
-          />
-        );
-      default:
-        return null;
-    }
-  };
+  const renderBalanceCard = () => (
+    <View style={styles.balanceCard}>
+      <Text style={styles.balanceTitle}>Net Worth</Text>
+      <Text style={styles.balanceAmount}>{netWorthString}</Text>
+      {/* <View style={styles.balanceChange}>
+        <Icon
+          name="arrow-up-right"
+          size={16}
+          color={NewBrandingColours.secondary.main}
+        />
+        <Text style={styles.balanceChangeText}>
+          +2.5% from last month
+        </Text>
+      </View> */}
+    </View>
+  );
+
+  const renderAccountsCard = () => (
+    <View style={styles.sectionCard}>
+      <Text style={styles.sectionTitle}>Accounts Summary</Text>
+      <FlatList
+        data={accounts}
+        renderItem={({ item }) => (
+          <AccountSummaryItem accountSummary={item} showTrend={false} />
+        )}
+        ListEmptyComponent={renderNoStateMessage('No accounts found')}
+      />
+      {viewMoreButton('View Accounts', 'Accounts')}
+    </View>
+  );
+
+  const renderTransactionsCard = () => (
+    <View style={[styles.sectionCard, { marginBottom: 16 }]}>
+      <Text style={styles.sectionTitle}>Recent Transactions</Text>
+      <FlatList
+        data={recentTransactions}
+        renderItem={({ item }) => <TransactionSummaryItem transaction={item} />}
+        ListEmptyComponent={renderNoStateMessage('No transactions found')}
+      />
+      {viewMoreButton('View All Transactions', 'Transactions')}
+    </View>
+  );
+
+  const renderBudgetCard = () => (
+    <BudgetOverviewCard
+      expectedIncome={budgetSummary?.expectedIncome}
+      actualIncome={budgetSummary?.actualIncome}
+      expectedExpenses={budgetSummary?.expectedExpenses}
+      actualExpenses={budgetSummary?.actualExpenses}
+    />
+  );
 
   const sections: SectionItem[] = [
-    { type: 'balance' },
-    { type: 'budget' },
-    { type: 'accounts' },
-    { type: 'transactions' },
+    { type: 'balance', render: renderBalanceCard },
+    { type: 'budget', render: renderBudgetCard },
+    { type: 'accounts', render: renderAccountsCard },
+    { type: 'transactions', render: renderTransactionsCard },
   ];
 
   return (
     <FlatList
       data={sections}
-      renderItem={({ item }) => renderSection(item)}
+      renderItem={({ item }) => item.render()}
       keyExtractor={item => item.type}
     />
   );
