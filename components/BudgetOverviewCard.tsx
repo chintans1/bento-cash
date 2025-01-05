@@ -181,7 +181,13 @@ export default function BudgetOverviewCard({
   const formatCurrency = (amount: number) =>
     `$${amount.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
 
-  const getProgressColor = (progress: number) => {
+  const getProgressColor = (progress: number, income: boolean = false) => {
+    if (income) {
+      if (progress > 100) return NewBrandingColours.secondary.main;
+      if (progress > 90) return NewBrandingColours.accent.orange;
+      return NewBrandingColours.accent.red;
+    }
+
     if (progress > 100) return NewBrandingColours.accent.red;
     if (progress > 90) return NewBrandingColours.accent.orange;
     return NewBrandingColours.secondary.main;
@@ -218,7 +224,7 @@ export default function BudgetOverviewCard({
             <Text
               style={[
                 styles.statValue,
-                { color: getProgressColor(incomeProgress) },
+                { color: getProgressColor(incomeProgress, true) },
               ]}
             >
               {formatCurrency(actualIncome)}
