@@ -208,17 +208,32 @@ function TransactionComponent({ transaction }: TransactionProps) {
           {transactionAmountString}
         </Text>
         <Text style={styles.transactionDate}>{transaction.date}</Text>
-        {transaction.status === 'pending' && (
-          <Text style={styles.pendingTag}>Pending</Text>
-        )}
-        {transaction.isSplit && (
-          <Icon
-            name="git-branch"
-            size={16}
-            color={NewBrandingColours.accent.purple}
-            style={styles.splitIcon}
-          />
-        )}
+        <View style={{ flexDirection: 'row', gap: 4 }}>
+          {transaction.status === 'pending' && (
+            <Text style={styles.pendingTag}>Pending</Text>
+          )}
+          {(transaction.status === 'uncleared' ||
+            transaction.status === 'cleared') && (
+            <Icon
+              name="check-circle"
+              size={14}
+              color={
+                transaction.status === 'uncleared'
+                  ? NewBrandingColours.neutral.gray
+                  : NewBrandingColours.secondary.main
+              }
+              style={styles.splitIcon}
+            />
+          )}
+          {transaction.isSplit && (
+            <Icon
+              name="git-branch"
+              size={14}
+              color={NewBrandingColours.accent.purple}
+              style={styles.splitIcon}
+            />
+          )}
+        </View>
       </View>
     </TouchableOpacity>
   );
