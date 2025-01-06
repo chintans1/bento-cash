@@ -74,7 +74,6 @@ function BarChart({
   const scaleY = hasNegativeValues
     ? height / 2 / chartMaxValue
     : height / chartMaxValue;
-  // height / chartMaxValue;
 
   // Calculate the horizontal dashed lines
   const numberOfLines = 2;
