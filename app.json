@@ -12,7 +12,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#F7F9F2"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "config": {
@@ -25,7 +27,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#F7F9F2"
-      }
+      },
+      "package": "com.chintans98.lunchmoney.mobile"
     },
     "web": {
       "favicon": "./assets/favicon.png"

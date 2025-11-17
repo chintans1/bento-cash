@@ -13,8 +13,8 @@ type HorizontalLinesProps = {
 function HorizontalLines({ lines, width, yAxisWidth }: HorizontalLinesProps) {
   return (
     <>
-      {lines.map(({ y, value }) => (
-        <Group key={`line-${value}`}>
+      {lines.map(({ y, value }, index) => (
+        <Group key={`line-${y}-${value}-${index}`}>
           <Line
             p1={{ x: yAxisWidth, y }}
             p2={{ x: width, y }}

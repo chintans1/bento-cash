@@ -4,8 +4,8 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "eslint . --ext=.tsx,.ts --fix",
     "prepare": "husky install"
@@ -19,7 +19,7 @@
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.17",
     "@sentry/react-native": "~6.3.0",
-    "@shopify/react-native-skia": "1.5.0",
+    "@shopify/react-native-skia": "1.8.0",
     "@types/react": "~18.3.12",
     "date-fns": "^3.6.0",
     "expo": "^52.0.21",
@@ -39,7 +39,8 @@
     "react-native-screens": "~4.1.0",
     "react-native-skia": "^0.0.1",
     "react-native-toast-message": "^2.2.0",
-    "react-native-vector-icons": "^10.1.0"
+    "react-native-vector-icons": "^10.1.0",
+    "react-native-gesture-handler": "~2.20.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

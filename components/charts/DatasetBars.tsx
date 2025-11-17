@@ -1,6 +1,7 @@
 import { Dataset } from '../../models/charts/chartModels';
 import { topMargin } from '../../models/charts/chartConstants';
 import Bar, { calculateBarMetrics } from './Bar';
+import { Group } from '@shopify/react-native-skia';
 
 type DatasetBarsProps = {
   datasets: Dataset[];
@@ -12,6 +13,7 @@ type DatasetBarsProps = {
   labelColor: string;
   yAxisWidth: number;
   labelOnlyStartEnd?: boolean;
+  activeIndex: number;
 };
 
 function DatasetBars({
@@ -24,6 +26,7 @@ function DatasetBars({
   labelColor,
   yAxisWidth,
   labelOnlyStartEnd = true,
+  activeIndex,
 }: DatasetBarsProps) {
   const hasNegativeValues = datasets.some(dataset =>
     dataset.data.some(value => value < 0),
@@ -34,7 +37,7 @@ function DatasetBars({
     : height + topMargin;
 
   return (
-    <>
+    <Group>
       {datasets.map((dataset, datasetIndex) => {
         const barOffset = datasetIndex * (barWidth + 5);
 
@@ -56,7 +59,6 @@ function DatasetBars({
               : value < 0
                 ? dataset.negativeColor()
                 : dataset.color();
-          const datasetId = `dataset-${index}`;
 
           const showLabel =
             !labelOnlyStartEnd ||
@@ -65,7 +67,7 @@ function DatasetBars({
 
           return (
             <Bar
-              key={`${labels[index]}-${datasetId}-${value}`}
+              key={`${datasetIndex}-${labels[index]}-${value}`}
               x={metrics.x}
               y={metrics.y}
               width={barWidth}
@@ -74,11 +76,14 @@ function DatasetBars({
               label={showLabel ? labels[index] : ''}
               labelColor={labelColor}
               isNegative={metrics.isNegative}
+              index={index}
+              activeIndex={activeIndex}
+              value={value}
             />
           );
         });
       })}
-    </>
+    </Group>
   );
 }
 

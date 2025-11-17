@@ -1,10 +1,15 @@
-import React from 'react';
-import { Dimensions } from 'react-native';
+import React, { useState } from 'react';
+import { Dimensions, TouchableWithoutFeedback, View } from 'react-native';
 import { Canvas } from '@shopify/react-native-skia';
 import { NewBrandingColours } from '../../styles/brandingConstants';
 import { BarChartProps } from '../../models/charts/chartModels';
 import HorizontalLines from './HorizontalLines';
 import DatasetBars from './DatasetBars';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import Animated, { useSharedValue } from 'react-native-reanimated';
+import UsePanGesture from './UsePanGesture';
+import DefaultChartFont from './Font';
+import { PanResponder } from 'react-native';
 
 // Sizing constants
 const topMargin = 20;
@@ -61,6 +66,8 @@ function BarChart({
     calculateChartDimensions(propWidth, propHeight);
   const { labels, datasets } = data;
 
+  const [activeIndex, setActiveIndex] = useState(-1);
+
   // Calculate chart values
   const rawMaxValue =
     maxValue ||
@@ -106,24 +113,55 @@ function BarChart({
     spacing,
   );
 
+  const getActiveBarIndex = (x: number) => {
+    const tapX = x - yAxisWidth;
+    const index = Math.floor(tapX / (barWidth + spacing));
+    return (index >= 0 && index < labels.length) ? index : -1;
+  };
+
+  const panResponder = PanResponder.create({
+    onStartShouldSetPanResponder: () => true,
+    onMoveShouldSetPanResponder: () => true,
+    onPanResponderGrant: (evt) => {
+      const locationX = evt.nativeEvent.locationX;
+      setActiveIndex(getActiveBarIndex(locationX));
+    },
+    onPanResponderMove: (evt) => {
+      const locationX = evt.nativeEvent.locationX;
+      setActiveIndex(getActiveBarIndex(locationX));
+    },
+    onPanResponderRelease: () => {
+      setActiveIndex(-1);
+    },
+    onPanResponderTerminate: () => {
+      setActiveIndex(-1);
+    },
+  });
+
   return (
-    <Canvas style={{ width, height: chartHeight + 22 }}>
-      <HorizontalLines
-        lines={horizontalLines}
-        width={width}
-        yAxisWidth={yAxisWidth}
-      />
-      <DatasetBars
-        datasets={datasets}
-        labels={labels}
-        barWidth={barWidth}
-        height={height}
-        scaleY={scaleY}
-        spacing={spacing}
-        labelColor={labelColor}
-        yAxisWidth={yAxisWidth}
-      />
-    </Canvas>
+    <View
+      style={{ width, height: chartHeight + 22 }}
+      {...panResponder.panHandlers}
+    >
+      <Canvas style={{ width: '100%', height: '100%' }}>
+        <HorizontalLines
+          lines={horizontalLines}
+          width={width}
+          yAxisWidth={yAxisWidth}
+        />
+        <DatasetBars
+          datasets={datasets}
+          labels={labels}
+          barWidth={barWidth}
+          height={height}
+          scaleY={scaleY}
+          spacing={spacing}
+          labelColor={labelColor}
+          yAxisWidth={yAxisWidth}
+          activeIndex={activeIndex}
+        />
+      </Canvas>
+    </View>
   );
 }
 
