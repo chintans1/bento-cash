@@ -15,3 +15,38 @@ export interface BarChartProps {
   spacing?: number;
   maxValue?: number;
 }
+
+export type LineDataset = {
+  data: number[];
+  color: string;
+  label: string;
+};
+
+export interface LineChartProps {
+  data: {
+    labels: string[];
+    datasets: LineDataset[];
+  };
+  width?: number;
+  height?: number;
+  labelColor?: string;
+  showDots?: boolean;
+}
+
+export type StackedDataset = {
+  data: number[];
+  color: string;
+  label: string;
+};
+
+export interface StackedBarChartProps {
+  data: {
+    labels: string[];
+    datasets: StackedDataset[];
+  };
+  width?: number;
+  height?: number;
+  labelColor?: string;
+  spacing?: number;
+  stacked?: boolean;
+}

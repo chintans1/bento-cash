@@ -71,6 +71,17 @@ class NewBrandingColours {
     secondary: '#424242',
     muted: '#757575',
   };
+
+  // Monarch-inspired colors (olive/green palette)
+  static monarch = {
+    oliveGreen: '#6B8E23', // Olive green from Monarch
+    darkOlive: '#556B2F', // Dark olive
+    sage: '#9CAF88', // Sage green
+    chartGreen: '#8BC34A', // Chart green
+    chartOrange: '#FF9800', // Chart orange
+    chartRed: '#E57373', // Soft red for expenses
+    backgroundGreen: '#F1F8E9', // Light green background
+  };
 }
 
 export { BrandingColours, NewBrandingColours };
